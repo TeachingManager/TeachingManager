@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}"
+>
 <head>
     <meta charset="UTF-8">
-    <title>스케쥴 생성</title>
+    <title>일정 추가</title>
 </head>
-<body>
-<div th:replace="~{../base.html :: content}">
-    <h2>추가 페이지 내용</h2>
-    <p>이곳에 추가 페이지의 내용을 작성하세요.</p>
+<div layout:fragment="content">
+    일정 추가 페이지 입니다.
 </div>
-</body>
 </html>
