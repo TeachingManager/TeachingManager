@@ -31,7 +31,7 @@ public class ScheduleController {
     /*     일정 홈   */
     @GetMapping("/Schedule")
     public String Schedule(Model model){
-        model.addAttribute("schedules", scheduleService.search_all_marker());
+        model.addAttribute("schedules", scheduleService.searchAll_schedule());
         return "schedule/schedule_main";
     }
 
@@ -79,8 +79,9 @@ public class ScheduleController {
         model.addAttribute("start_date", sc.getStart_date());
         model.addAttribute("end_date", sc.getEnd_date());
         model.addAttribute("memo", sc.getMemo());
+        model.addAttribute("pk", pk);
 
-        return "schedule/schedule_detail/" + pk;
+        return "schedule/schedule_detail";
     }
 
 
@@ -96,8 +97,9 @@ public class ScheduleController {
         model.addAttribute("start_date", sc.getStart_date());
         model.addAttribute("end_date", sc.getEnd_date());
         model.addAttribute("memo", sc.getMemo());
+        model.addAttribute("pk", pk);
 
-        return "schedule/schedule_update" + pk;
+        return "schedule/schedule_update";
     }
 
     @PostMapping("/Schedule/Update")

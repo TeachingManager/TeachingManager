@@ -15,11 +15,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     // 저장소
     private static Map<Long, Schedule> local_store = new HashMap<>();
+    private static Long sequence = 0L;
     
     // 저장소에 저장
     @Override
     public void save(Schedule sc) {
-        local_store.put(sc.getCid(), sc);
+        sc.setSchedule_id(++sequence);
+        local_store.put(sc.getSchedule_id(), sc);
     }
 
 

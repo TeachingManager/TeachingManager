@@ -18,22 +18,22 @@
     </div>
     <div class="menu-btn-area">
         <ul id="menu-btn-list">
-            <li class="menu-btn">
+            <li class="menu-btn" id="lecture-btn">
                 <a href="/Lecture"><span>강의</span></a>
             </li>
-            <li class="menu-btn">
+            <li class="menu-btn" id="schedule-btn">
                 <a href="/Schedule"><span>일정</span></a>
             </li>
-            <li class="menu-btn">
+            <li class="menu-btn" id="student-btn">
                 <a href="/Students"><span>학생 관리</span></a>
             </li>
-            <li class="menu-btn">
+            <li class="menu-btn" id="teacher-btn">
                 <a href="#"><span>강사 관리</span></a>
             </li>
-            <li class="menu-btn">
+            <li class="menu-btn" id="budget-btn">
                 <a href="#"><span>수강료</span></a>
             </li>
-            <li class="menu-btn">
+            <li class="menu-btn" id="attend-btn">
                 <a href="#"><span>출석부</span></a>
             </li>
         </ul>
@@ -42,9 +42,12 @@
 
     </div>
 </header>
-<main class="main" layout:fragment="content">
+<main class="main">
+    <div class="main-header">
+
+    </div>
     <!-- 메인 콘텐츠 영역 -->
-    <div>
+    <div class="main-container" layout:fragment="content">
         메인공간
     </div>
 </main>
