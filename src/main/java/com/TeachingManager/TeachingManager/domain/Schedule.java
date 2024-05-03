@@ -2,16 +2,15 @@ package com.TeachingManager.TeachingManager.domain;
 
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Time;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 
 @Entity
+//@Getter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule {
 
@@ -82,5 +81,20 @@ public class Schedule {
 
     public void setCid(Long cid) {
         this.cid = cid;
+    }
+
+    @Builder
+    public Schedule(String title, LocalDateTime start_date, LocalDateTime end_date, String memo){
+        this.title = title;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.memo = memo;
+    }
+
+    public void update(String title, LocalDateTime start_date, LocalDateTime end_date, String memo) {
+        this.title = title;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.memo = memo;
     }
 }

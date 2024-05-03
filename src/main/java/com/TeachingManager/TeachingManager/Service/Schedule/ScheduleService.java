@@ -1,8 +1,9 @@
 package com.TeachingManager.TeachingManager.Service.Schedule;
 
 
+import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.domain.Schedule;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -11,20 +12,22 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ScheduleService {
+
+
     // 내부에서 scid 를 만든다.
-    void create_schedule(Schedule sc);
+    Schedule create_schedule(AddScheduleRequest request);
 
     //    강의 불러오기
     void import_schedule(List<Schedule> scList);
 
-    void update_schedule(Schedule sc);
+    Schedule update_schedule(Long scid, UpdateScheduleRequest request);
 
     void delete_schedule(Long scid);
 
 
     /* 검색 관련 */
 //    디테일 검색
-    Schedule search_schedule(Long schedule_id);
+    Optional<Schedule> search_schedule(Long schedule_id);
 
     // 목록 검색
     List<Map<String, String>> search_all_marker();
