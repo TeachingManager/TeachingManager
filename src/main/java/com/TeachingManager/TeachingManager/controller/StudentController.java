@@ -7,10 +7,7 @@ import com.TeachingManager.TeachingManager.dto.StudentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +34,13 @@ public class StudentController {
 
         return ResponseEntity.ok()
                 .body(students);
+    }
+
+    @GetMapping("/api/students/{id}")
+    public ResponseEntity<StudentResponse> findStudent(@PathVariable(name = "id") long id){
+        Student student = studentService.findById(id);
+
+        return ResponseEntity.ok()
+                .body(new StudentResponse(student));
     }
 }

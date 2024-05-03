@@ -23,4 +23,9 @@ public class StudentService {
     public List<Student> findAll(){
         return studentRepository.findAll();
     }
+
+    public Student findById(long id){
+        return studentRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
+    }
 }
