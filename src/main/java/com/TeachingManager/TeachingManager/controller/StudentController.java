@@ -4,6 +4,7 @@ import com.TeachingManager.TeachingManager.Service.student.StudentService;
 import com.TeachingManager.TeachingManager.domain.Student;
 import com.TeachingManager.TeachingManager.dto.AddStudentRequest;
 import com.TeachingManager.TeachingManager.dto.StudentResponse;
+import com.TeachingManager.TeachingManager.dto.UpdateStudentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,15 @@ public class StudentController {
 
         return ResponseEntity.ok()
                 .build();
+    }
+
+    @PutMapping("/api/students/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable(name = "id") long id, @RequestBody UpdateStudentRequest request) {
+        Student updatedStudent = studentService.update(id, request);
+
+        return ResponseEntity.ok()
+                .body(updatedStudent);
+
     }
 
 }

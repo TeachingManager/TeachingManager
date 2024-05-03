@@ -51,4 +51,15 @@ public class Student {
         this.gender = gender;
         this.level = level;
     }
+    //업데이트 함수
+    public void update(String name, int age, int grade, String phoneNumber, String parentName, String parentNumber, String gender, String level){
+        this.name = name;
+        this.age = age;
+        this.grade = grade;
+        this.phoneNumber = phoneNumber;
+        this.parentName = parentName;
+        this.parentNumber = parentNumber;
+        this.gender = gender;
+        this.level = level;
+    }
 }

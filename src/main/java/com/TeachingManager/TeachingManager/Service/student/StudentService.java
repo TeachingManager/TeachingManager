@@ -3,6 +3,8 @@ package com.TeachingManager.TeachingManager.Service.student;
 import com.TeachingManager.TeachingManager.Repository.student.StudentRepository;
 import com.TeachingManager.TeachingManager.domain.Student;
 import com.TeachingManager.TeachingManager.dto.AddStudentRequest;
+import com.TeachingManager.TeachingManager.dto.UpdateStudentRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,4 +34,16 @@ public class StudentService {
     public void delete(long id){
         studentRepository.deleteById(id);
     }
+
+    @Transactional
+    public Student update(long id, UpdateStudentRequest request) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+
+        student.update(request.getName(), request.getAge(), request.getGrade(), request.getPhoneNumber(), request.getParentName(), request.getParentNumber(), request.getGender(), request.getLevel());
+
+        return student;
+    }
+
+
 }
