@@ -1,22 +1,39 @@
 package com.TeachingManager.TeachingManager.domain;
 
 
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.sql.Time;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule {
 
-
+    @Id
+    @Column(name="schedule_id", updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schedule_id; // 시스템이 분류할때 쓰는 id  즉 pk
-    private String title;
-    private LocalDateTime start_date;
-    private LocalDateTime end_date;
-    private String memo;
-    
-// 강의 외래키
-    private Long cid;
 
+    @Column(name="title", nullable = false)
+    private String title;
+
+    @Column(name="start_date", nullable = false)
+    private LocalDateTime start_date;
+
+    @Column(name="end_date", nullable = false)
+    private LocalDateTime end_date;
+
+    @Column(name="memo", nullable = true)
+    private String memo;
+
+    // 강의 외래키
+    private Long cid;
 
 
     public Long getSchedule_id() {

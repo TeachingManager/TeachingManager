@@ -19,6 +19,16 @@
                     <span> 종료일 : <span th:text="${end_date}"></span></span><br>
                     <span th:text="${memo}"></span>
                 </td>
+                <td>
+                    <div>
+                        <form th:action="@{'/Schedule/Delete' + '?pk=' + ${pk}}" method="POST">
+                            <a th:href="@{'/Schedule/Update' + '?pk=' + ${pk}}">
+                                <div>수정</div>
+                            </a>
+                            <button type="submit">삭제하기</button>
+                        </form>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>

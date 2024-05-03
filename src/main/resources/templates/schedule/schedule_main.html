@@ -17,7 +17,7 @@
                 <tbody>
                     <tr th:each="schedule : ${schedules}">
                         <td>
-                            <a th:href="@{'/Schedule/Detail' + '?pk=' + ${schedule.schedule_id}}">
+                            <a th:href="@{'/Schedule/' + '?pk=' + ${schedule.schedule_id}}">
                             <span th:text="${schedule.title}"></span>
                         </td>
                     </tr>

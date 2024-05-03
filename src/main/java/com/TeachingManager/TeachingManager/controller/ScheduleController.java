@@ -70,7 +70,7 @@ public class ScheduleController {
 
 
     /*     일정 디테일    */
-    @GetMapping("/Schedule/Detail")
+    @GetMapping("/Schedule/")
     public String Detail_Schedule(@RequestParam("pk") Long pk, Model model) {
 
         Schedule sc = scheduleService.search_schedule(pk);
@@ -115,8 +115,6 @@ public class ScheduleController {
 
         return "redirect:/Schedule";
     }
-
-
 
 
     /*     일정 삭제   */

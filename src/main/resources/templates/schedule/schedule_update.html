@@ -9,6 +9,21 @@
     <title>일정 수정</title>
 </head>
 <div layout:fragment="content">
-    일정 수정 페이지입니다.
+    <form action="/Schedule/Create" method="post">
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" placeholder="일정 제목을 입력하세요" th:value="${title}">
+
+            <label for="start_date">시작일</label>
+            <input type="datetime-local" id="start_date" name="start_date" placeholder="시작일을 입력하세요" th:value="${start_date}">
+
+            <label for="end_date">종료일</label>
+            <input type="datetime-local" id="end_date" name="end_date" placeholder="종료일을 입력하세요" th:value="${end_date}">
+
+            <label for="memo">메모</label>
+            <input type="text" id="memo" name="memo" placeholder="추가 메모사항을 입력하세요" th:value="${memo}">
+        </div>
+        <button type="submit">수정</button>
+    </form>
 </div>
 </html>
