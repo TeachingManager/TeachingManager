@@ -28,4 +28,8 @@ public class StudentService {
         return studentRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
     }
+
+    public void delete(long id){
+        studentRepository.deleteById(id);
+    }
 }

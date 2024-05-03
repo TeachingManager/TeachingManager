@@ -43,4 +43,13 @@ public class StudentController {
         return ResponseEntity.ok()
                 .body(new StudentResponse(student));
     }
+
+    @PostMapping("/api/delete/students/{id}")
+    public ResponseEntity<Void> deleteArticle(@PathVariable(name="id") long id){
+        studentService.delete(id);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }
