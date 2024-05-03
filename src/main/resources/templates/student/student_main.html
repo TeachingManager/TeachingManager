@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>학생 페이지 홈</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="schedule-btn-list">
+        <a href="/student/create">학생 추가</a>
+    </div>
+    <div class="container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>나이</th>
+                <th>학년</th>
+                <th>전화번호</th>
+                <th>부모님 성함</th>
+                <th>부모님 번호</th>
+                <th>성별</th>
+                <th>레벨</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student : ${students}">
+                <td th:text="${student.id}">ID</td>
+                <td th:text="${student.name}">Name</td>
+                <td th:text="${student.age}">Age</td>
+                <td th:text="${student.grade}">Grade</td>
+                <td th:text="${student.phoneNumber}">Phone Number</td>
+                <td th:text="${student.parentName}">Parent's Name</td>
+                <td th:text="${student.parentNumber}">Parent's Number</td>
+                <td th:text="${student.gender}">Gender</td>
+                <td th:text="${student.level}">Level</td>
+                <td>
+                    <button type="button" id="delete-btn-${student.id}" data-student-id="${student.id}">삭제</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 모든 삭제 버튼에 대한 이벤트 핸들러 설정
+        const deleteButtons = document.querySelectorAll('[id^="delete-btn-"]');
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                // 클릭된 버튼의 data-student-id 속성에서 학생 ID 가져오기
+                const studentId = button.getAttribute('data-student-id');
+                console.log('삭제할 학생의 ID:', studentId);
+                // 여기에 삭제 작업을 수행하는 코드를 추가
+                fetch(`/api/delete/students/${studentId}`,{
+                    method: 'POST'
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>학생 생성 홈</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2>새로운 학생 추가</h2>
+    <form id="studentForm">
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="age">나이:</label>
+        <input type="number" id="age" name="age"><br><br>
+
+        <label for="grade">학년:</label>
+        <input type="number" id="grade" name="grade"><br><br>
+
+        <label for="phoneNumber">전화번호:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber"><br><br>
+
+        <label for="parentName">부모님 성함:</label>
+        <input type="text" id="parentName" name="parentName"><br><br>
+
+        <label for="parentNumber">부모님 번호:</label>
+        <input type="tel" id="parentNumber" name="parentNumber"><br><br>
+
+        <label for="gender">성별:</label>
+        <select id="gender" name="gender">
+            <option value="male">남성</option>
+            <option value="female">여성</option>
+        </select><br><br>
+
+        <label for="level">레벨:</label>
+        <input type="text" id="level" name="level"><br><br>
+
+        <input type="submit" value="추가">
+    </form>
+</div>
+<script>
+    document.getElementById('studentForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 제출 동작 방지
+
+        var form = event.target;
+        var formData = new FormData(form);
+        var jsonObject = {};
+
+        formData.forEach(function(value, key){
+            jsonObject[key] = value;
+        });
+
+        var jsonBody = JSON.stringify(jsonObject);
+
+        fetch('/api/students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonBody
+        })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data); // 요청 성공 시 반환된 데이터
+            })
+            .catch(function(error) {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    });
+</script>
+</body>
+</html>
