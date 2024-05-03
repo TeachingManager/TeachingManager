@@ -6,6 +6,8 @@ import com.TeachingManager.TeachingManager.dto.AddStudentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class StudentService {
@@ -15,5 +17,10 @@ public class StudentService {
     public Student save(AddStudentRequest request){
 
         return studentRepository.save(request.toEntity());
+    }
+
+    //모든 학생 조회 메서드
+    public List<Student> findAll(){
+        return studentRepository.findAll();
     }
 }
