@@ -10,14 +10,14 @@
     </head>
     <div layout:fragment="content">
         <div class="schedule-btn-list">
-            <a href="/Schedule/Create">새 일정 추가</a>
+            <a href="/Schedule/form">새 일정 추가</a>
         </div>
         <div>
             <table>
                 <tbody>
                     <tr th:each="schedule : ${schedules}">
                         <td>
-                            <a th:href="@{'/Schedule/' + '?pk=' + ${schedule.schedule_id}}">
+                            <a th:href="@{'/Schedule/Detail' + '?pk=' + ${schedule.schedule_id}}">
                             <span th:text="${schedule.title}"></span>
                         </td>
                     </tr>

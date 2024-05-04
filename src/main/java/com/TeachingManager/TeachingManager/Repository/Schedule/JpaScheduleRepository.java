@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Transactional
+@Component
 public class JpaScheduleRepository  implements ScheduleRepository{
 
     private final EntityManager em;

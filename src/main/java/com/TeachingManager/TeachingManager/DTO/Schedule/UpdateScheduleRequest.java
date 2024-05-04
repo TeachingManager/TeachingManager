@@ -21,7 +21,6 @@ public class UpdateScheduleRequest {
                 .title(title)
                 .start_date(start_date)
                 .end_date(end_date)
-                .memo(memo)
-                .build();
+                .memo(memo).build();
     }
 }

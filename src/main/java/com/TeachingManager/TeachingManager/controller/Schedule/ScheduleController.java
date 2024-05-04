@@ -44,22 +44,26 @@ public class ScheduleController {
     }
 
 
-    /*  일정  작성 폼  */
+//    /*  일정  작성 폼  */
+//    @GetMapping("/Schedule/form")
+//    public String Create_Schedule() {
+//        return "schedule/schedule_form";
+//    }
+
+
+    /*     일정  폼   */
     @GetMapping("/Schedule/form")
-    public String Create_Schedule() {
-        return "schedule/schedule_create";
-    }
+    public String Update_Schedule(@RequestParam(required = false, name = "pk") Long pk, Model model) {
 
+        if (pk == null){
+            model.addAttribute("schedule", new ScheduleResponse());
+        }
+        else {
+            ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
+            model.addAttribute("schedule", response);
+        }
 
-    /*     일정 수정 폼   */
-    @GetMapping("/Schedule/form/{pk}")
-    public String Update_Schedule(@PathVariable("pk") Long pk, Model model) {
-        
-        ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
-
-        model.addAttribute("response", response);
-
-        return "schedule/form";
+        return "schedule/schedule_form";
     }
 
 

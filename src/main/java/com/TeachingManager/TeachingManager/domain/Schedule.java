@@ -9,8 +9,8 @@ import java.text.DateFormat;
 import java.time.LocalDateTime;
 
 @Entity
-//@Getter
-//@Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule {
 
@@ -34,54 +34,6 @@ public class Schedule {
     // 강의 외래키
     private Long cid;
 
-
-    public Long getSchedule_id() {
-        return schedule_id;
-    }
-
-    public void setSchedule_id(Long schedule_id) {
-        this.schedule_id = schedule_id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDateTime getStart_date() {
-        return start_date;
-    }
-
-    public void setStart_date(LocalDateTime start_date) {
-        this.start_date = start_date;
-    }
-
-    public LocalDateTime getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(LocalDateTime end_date) {
-        this.end_date = end_date;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
-    }
-
-    public Long getCid() {
-        return cid;
-    }
-
-    public void setCid(Long cid) {
-        this.cid = cid;
-    }
 
     @Builder
     public Schedule(String title, LocalDateTime start_date, LocalDateTime end_date, String memo){

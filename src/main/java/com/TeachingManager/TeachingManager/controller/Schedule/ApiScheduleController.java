@@ -22,15 +22,15 @@ public class ApiScheduleController {
 
     /*  일정 삭제 api  */
     @PostMapping("/api/Schedule/Detail/{pk}")
-    public ResponseEntity<Void> Delete_Schedule(@PathVariable Long pk) {
+    public ResponseEntity<Void> Delete_Schedule(@PathVariable("pk") Long pk) {
         scheduleService.delete_schedule(pk);
         return ResponseEntity.ok().build();
     }
 
     /*  일정 수정 api  */
-    @PutMapping("/api/Schedule/Detail/{id}")
-    public String Revise_Schedule(@PathVariable Long id, @RequestBody UpdateScheduleRequest request) {
-        Schedule sc = scheduleService.update_schedule(id, request);
+    @PutMapping("/api/Schedule/Detail/{pk}")
+    public String Revise_Schedule(@PathVariable("pk") Long pk, @RequestBody UpdateScheduleRequest request) {
+        Schedule sc = scheduleService.update_schedule(pk, request);
         return "redirect:/Schedule/?pk=" + sc.getSchedule_id();
     }
 
