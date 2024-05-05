@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class StudentResponse {
+    private Long id;
     private final String name;
     private final int age;
     private final int grade;
@@ -16,6 +17,7 @@ public class StudentResponse {
 
 
     public StudentResponse(Student student){
+        this.id = student.getId();
         this.name = student.getName();
         this.age = student.getAge();
         this.grade = student.getGrade();
