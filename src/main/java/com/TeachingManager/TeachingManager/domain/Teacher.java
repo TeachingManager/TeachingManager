@@ -19,6 +19,9 @@ public class Teacher implements UserDetails {
     @Column(name = "teacher_id", updatable = false)
     private Long teacher_id;
 
+    @Column(name = "email", nullable = false, unique = true, updatable = false)
+    private String email;
+
     @Column(name = "teacher_name", nullable = false)
     private String teacher_name;
 
@@ -40,8 +43,15 @@ public class Teacher implements UserDetails {
     @Column(name = "salary", nullable = false)
     private Long salary;
 
+    @ManyToOne
+    @JoinColumn(name = "institute_id")
+    private Institute institute;
+
+
+
     @Builder
-    public Teacher(String teacher_name, Byte age, LocalDateTime birth, String phoneNum, Character gender, String bank_account, Long salary) {
+    public Teacher(String email, String teacher_name, Byte age, LocalDateTime birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+        this.email = email;
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
@@ -49,6 +59,7 @@ public class Teacher implements UserDetails {
         this.gender = gender;
         this.bank_account = bank_account;
         this.salary = salary;
+        this.institute = institute;
     }
 
     public void update(String teacher_name, Byte age, LocalDateTime birth, String phoneNum, Character gender, String bank_account, Long salary) {
