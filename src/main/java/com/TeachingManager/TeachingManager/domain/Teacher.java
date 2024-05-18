@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -29,7 +30,7 @@ public class Teacher implements UserDetails {
     private Byte age;
 
     @Column(name = "birth", nullable = false)
-    private LocalDateTime birth;
+    private Date birth;
 
     @Column(name = "phoneNum", nullable = false)
     private String phoneNum;
@@ -50,7 +51,7 @@ public class Teacher implements UserDetails {
 
 
     @Builder
-    public Teacher(String email, String teacher_name, Byte age, LocalDateTime birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+    public Teacher(String email, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
         this.email = email;
         this.teacher_name = teacher_name;
         this.age = age;
@@ -62,7 +63,7 @@ public class Teacher implements UserDetails {
         this.institute = institute;
     }
 
-    public void update(String teacher_name, Byte age, LocalDateTime birth, String phoneNum, Character gender, String bank_account, Long salary) {
+    public void update(String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary) {
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
