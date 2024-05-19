@@ -1,19 +1,26 @@
 package com.TeachingManager.TeachingManager.Service.Institute;
 
+import com.TeachingManager.TeachingManager.DTO.Institute.AddInstituteRequest;
 import com.TeachingManager.TeachingManager.Repository.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.domain.Institute;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor
-public class InstituteServiceImpl implements UserDetailsService {
+public class InstituteRegisterServiceImpl{
     private final InstituteRepository instRepo;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) {
-        return instRepo.searchByEmail(email).orElseThrow(() -> new IllegalArgumentException(email));
+    public Long register(AddInstituteRequest dto){
+        return instRepo
+        .save(Institute.builder()
+                .email(dto.getEmail())
+                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                .institute_name(dto.getInsName())
+                .address(dto.getAddress())
+                .phoneNum(dto.getPhoneNum()).build()
+        ).getInstitute_id();
     }
 }
