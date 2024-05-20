@@ -1,7 +1,10 @@
 import React from 'react'
+import Sidenavbar from '../../common/component/sidebar/Sidenavbar.js'
 
-export default function Student(){
+export default function Students(){
     return(
-        <h1>학생 페이지 입니다.</h1>
+        <div>
+            <Sidenavbar/>
+        </div>
     )
 }
