@@ -4,12 +4,23 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import Students from './pages/student/Students.js';
+import Teachers from './pages/teacher/Teachers.js';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello world!</div>
+    element: <div>Hello world!!</div>
   },
+  {
+    path: "/students",
+    element: <Students/>
+  }
+  ,
+  {
+    path: "/teachers",
+    element: <Teachers/>
+  }
 ]);
 
 
