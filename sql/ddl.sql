@@ -54,9 +54,12 @@ create table schedule
 (
  schedule_id bigint AUTO_INCREMENT PRIMARY KEY,
  title varchar(255),
-start_time TIMESTAMP,
-end_time TIMESTAMP,
-memo varchar(255)
+ start_time TIMESTAMP,
+ end_time TIMESTAMP,
+ memo varchar(255),
+ institute_id bigint NOT NULL,
+
+ FOREIGN KEY (institute_id) REFERENCES institute (institute_id) ON DELETE CASCADE
  );
 
 
@@ -66,8 +69,10 @@ memo varchar(255)
  institute_id bigint AUTO_INCREMENT PRIMARY KEY,
   email varchar(255) UNIQUE NOT NULL,
   institute_name varchar(255) NOT NULL,
-  phoneNum varchar(255) NOT NULL,
-  address varchar(255) UNIQUE
+  phone_num varchar(255) NOT NULL,
+  address varchar(255),
+  password varchar(255) NOT NULL,
+
 
  );
 
@@ -78,11 +83,12 @@ teacher_id bigint AUTO_INCREMENT PRIMARY KEY,
  teacher_name varchar(255) NOT NULL,
  age tinyint NOT NULL,
  birth DATE NOT NULL,
- phoneNum varchar(255) NOT NULL,
+ phone_num varchar(255) NOT NULL,
  gender char(1) NOT NULL,
- bank_account  varchar(255) NOT NULL,
- salary bigint NOT NULL,
+ bank_account  varchar(255),
+ salary bigint,
  email varchar(255) UNIQUE NOT NULL,
+ password varchar(255) NOT NULL,
 
  institute_id bigint,
 

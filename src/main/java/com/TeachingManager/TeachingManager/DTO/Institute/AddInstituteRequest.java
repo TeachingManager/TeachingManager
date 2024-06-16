@@ -5,7 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddInstitueRequest {
+public class AddInstituteRequest {
     private String email;
     private String password;
+    private String insName;
+    private String address;
+    private String phoneNum;
 }

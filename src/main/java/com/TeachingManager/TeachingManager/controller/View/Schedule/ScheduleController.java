@@ -1,4 +1,4 @@
-package com.TeachingManager.TeachingManager.controller.Schedule;
+package com.TeachingManager.TeachingManager.controller.View.Schedule;
 
 import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
 import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse;

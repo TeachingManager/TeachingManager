@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class InstituteRegisterServiceImpl{
+public class InstituteServiceImpl {
     private final InstituteRepository instRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 

@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Teacher implements UserDetails {
 
     @Id
@@ -38,11 +38,14 @@ public class Teacher implements UserDetails {
     @Column(name = "gender", nullable = false)
     private Character gender;
 
-    @Column(name = "bank_account", nullable = false)
+    @Column(name = "bank_account", nullable = true)
     private String bank_account;
 
-    @Column(name = "salary", nullable = false)
+    @Column(name = "salary", nullable = true)
     private Long salary;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "institute_id")
@@ -51,8 +54,9 @@ public class Teacher implements UserDetails {
 
 
     @Builder
-    public Teacher(String email, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+    public Teacher(String email,String password, String auth, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
         this.email = email;
+        this.password = password;
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
@@ -80,31 +84,31 @@ public class Teacher implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
