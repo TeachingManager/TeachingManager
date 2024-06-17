@@ -1,7 +1,16 @@
 import React from 'react'
 
+import Topbar from '../../common/component/topbar/Topbar.js'
+import Sidenavbar from '../../common/component/sidebar/Sidenavbar'
+import TeacherContents from './TeacherContents.js'
+
 export default function Teachers(){
     return(
-        <h1>선생님 페이지 입니다.</h1>
+        <div>
+            <Topbar/> 
+            <Sidenavbar/>
+            <TeacherContents/>
+            
+        </div>
     )
 }
