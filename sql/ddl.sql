@@ -1,4 +1,4 @@
-
+create database teachingManager;
 
 drop table if exists schedule CASCADE;
 drop table if exists teacher CASCADE;
