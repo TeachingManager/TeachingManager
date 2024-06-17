@@ -3,14 +3,21 @@ package com.TeachingManager.TeachingManager.controller.View.Schedule;
 import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
 import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse;
 import com.TeachingManager.TeachingManager.Service.Schedule.ScheduleService;
+import com.TeachingManager.TeachingManager.domain.Institute;
+import com.TeachingManager.TeachingManager.domain.InstituteAdapter;
 import com.TeachingManager.TeachingManager.domain.Schedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.util.Optional;
 
 @Controller
@@ -27,8 +34,21 @@ public class ScheduleController {
 
     /*     일정 홈   */
     @GetMapping("/Schedule")
-    public String Schedule(Model model){
-        model.addAttribute("schedules", scheduleService.searchAll_schedule());
+    public String Schedule(Model model, @AuthenticationPrincipal Institute institute){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+
+        System.out.println("principal.getClass() = " + principal.getClass());
+
+        System.out.println("institute = " + institute);
+        if (institute != null) {
+//            model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getPk()));
+            model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getInstitute_id()));
+        }
+        else{
+            return "redirect:/login/institute";
+        }
         return "schedule/schedule_main";
     }
 

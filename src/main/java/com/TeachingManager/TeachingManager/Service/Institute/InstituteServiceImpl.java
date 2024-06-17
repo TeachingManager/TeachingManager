@@ -23,4 +23,6 @@ public class InstituteServiceImpl {
                 .phoneNum(dto.getPhoneNum()).build()
         ).getInstitute_id();
     }
+
+    //현재 접속중인
 }

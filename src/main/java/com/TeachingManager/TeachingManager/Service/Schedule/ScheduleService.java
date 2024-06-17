@@ -6,10 +6,7 @@ import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.domain.Schedule;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public interface ScheduleService {
 
@@ -30,11 +27,12 @@ public interface ScheduleService {
     Optional<Schedule> search_schedule(Long schedule_id);
 
     // 목록 검색
-    List<Map<String, String>> search_all_marker();
+
+    List<Map<String, String>> search_all_marker(Long institute_id);
 //    전체 검색
-    Collection<Schedule> searchAll_schedule();
+    Collection<Schedule> searchAll_schedule(Long institute_id);
 //    날짜 단위
-    Optional<Schedule> findByDate(LocalDateTime start_time, LocalDateTime end_time);
+    Optional<Schedule> findByDate(Long institute_id, Date date_info);
 //    강의 단위 검색
 //    강사 단위 검색
 }

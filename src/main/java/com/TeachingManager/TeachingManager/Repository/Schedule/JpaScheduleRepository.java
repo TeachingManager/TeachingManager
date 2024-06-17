@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @Transactional
@@ -40,13 +41,13 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     }
 
     @Override
-    public Collection<Schedule> search_all() {
+    public Collection<Schedule> search_all(Long institute_id) {
         return em.createQuery("select sc from Schedule sc", Schedule.class)
                 .getResultList();
     }
 
     @Override
-    public Optional<Schedule> filter_by_date(LocalDateTime start_time, LocalDateTime end_time) {
+    public Optional<Schedule> filter_by_date(Long institute_id, Date date_info) {
         return Optional.empty();
     }
 }

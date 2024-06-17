@@ -52,8 +52,6 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     }
 
 
-
-
 //    단일 스케쥴 검색
     @Override
     @Transactional
@@ -64,9 +62,9 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     
 //    스케줄 제목, (날짜 등 추후 추가 예정) 만 뽑아오기
     @Override
-    public List<Map<String, String>> search_all_marker() {
+    public List<Map<String, String>> search_all_marker(Long institute_id) {
 
-        Collection<Schedule> scList = scheduleRepository.search_all();
+        Collection<Schedule> scList = scheduleRepository.search_all(institute_id);
         List<Map<String, String>> schedules = new ArrayList<>();
         Map<String, String> temp_sc = new HashMap<>();
 
@@ -81,13 +79,13 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
     //    스케쥴 전체 검색
     @Override
-    public Collection<Schedule> searchAll_schedule() {
-        return scheduleRepository.search_all();
+    public Collection<Schedule> searchAll_schedule(Long institute_id) {
+        return scheduleRepository.search_all(institute_id);
     }
 
 //    스케쥴 날짜로 검색
     @Override
-    public Optional<Schedule> findByDate(LocalDateTime start_time, LocalDateTime end_time) {
-        return scheduleRepository.filter_by_date(start_time, end_time);
+    public Optional<Schedule> findByDate(Long institute_id, Date date_info) {
+        return scheduleRepository.filter_by_date(institute_id, date_info);
     }
 }
