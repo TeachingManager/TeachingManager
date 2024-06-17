@@ -1,0 +1,25 @@
+.studentbar-container {
+    width: 100%;
+    height: 48px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.studentbar-content {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin-left: 16px; /* Adjusted to align the content to the left */
+}
+
+.studentbar-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-shadow: 1px 1px 2px rgba(185, 42, 42, 0.2);
+}

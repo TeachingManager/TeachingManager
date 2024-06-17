@@ -1,0 +1,46 @@
+/* src/common/component/topbar/Topbar.css */
+.topbar-container {
+    margin-left: 64px;
+    width: 100%;
+    height: 56px;
+    background-color: #fff; /* Background color */
+    box-shadow: 0 2px 4px #033c561a, 0 0 1px #033c5680; /* Slight shadow for depth */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.topbar-left {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    padding-right: 48px;
+    margin-right: 88px;
+}
+
+.topbar-right i {
+    font-size: 18px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.user-name {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.user-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #e0e0e0; /* Grey background similar to the user icon */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
