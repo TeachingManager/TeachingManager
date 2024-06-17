@@ -19,7 +19,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+//	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// MySQL JDBC 드라이버 의존성 추가
+	implementation 'mysql:mysql-connector-java'// 사용하려는 MySQL 버전에 맞는 버전으로 변경
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	
+//	스프링 시큐리티 관련
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+//	oauth2.0 관련
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeachingManager</title>
     <!-- 수정 필요! -->
     <link rel="stylesheet" href="/base.css"/>
     <link rel="stylesheet" href="/reset.css"/>
@@ -11,44 +10,52 @@
     <th:block layout:fragment="css"></th:block>
 </head>
 <body>
-<header class="sidebar" id="allUserSidebar">
-    <div class="home-btn-area">
-        <h3 id="home-btn">
-            <a href="/"><span>TeachingManager</span></a>
-        </h3>
-    </div>
-    <div class="menu-btn-area">
-        <ul id="menu-btn-list">
-            <li class="menu-btn">
-                <a href="/Lecture"><span>강의</span></a>
-            </li>
-            <li class="menu-btn">
-                <a href="/Schedule"><span>일정</span></a>
-            </li>
-            <li class="menu-btn">
-                <a href="/Students"><span>학생 관리</span></a>
-            </li>
-            <li class="menu-btn">
-                <a href="#"><span>강사 관리</span></a>
-            </li>
-            <li class="menu-btn">
-                <a href="#"><span>수강료</span></a>
-            </li>
-            <li class="menu-btn">
-                <a href="#"><span>출석부</span></a>
-            </li>
-        </ul>
-    </div>
-    <div>
+    <header class="sidebar" id="allUserSidebar">
+        <div class="home-btn-area">
+            <h3 id="home-btn">
+                <a href="/"><span>TeachingManager</span></a>
+            </h3>
+        </div>
+        <div class="menu-btn-area">
+            <ul id="menu-btn-list">
+                <li class="menu-btn" id="lecture-btn">
+                    <a href="/Lecture"><span>강의</span></a>
+                </li>
+                <li class="menu-btn" id="schedule-btn">
+                    <a href="/Schedule"><span>일정</span></a>
+                </li>
+                <li class="menu-btn" id="student-btn">
+                    <a href="/Students"><span>학생 관리</span></a>
+                </li>
+                <li class="menu-btn" id="teacher-btn">
+                    <a href="#"><span>강사 관리</span></a>
+                </li>
+                <li class="menu-btn" id="budget-btn">
+                    <a href="#"><span>수강료</span></a>
+                </li>
+                <li class="menu-btn" id="attend-btn">
+                    <a href="#"><span>출석부</span></a>
+                </li>
 
-    </div>
-</header>
-<main class="main" layout:fragment="content">
-    <!-- 메인 콘텐츠 영역 -->
-    <div>
-        메인공간
-    </div>
-</main>
+                <li class="menu-btn" id="logout-btn">
+                    <form action="/logout" method="POST">
+                        <button><span>로그아웃</span></button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <div>
 
+        </div>
+    </header>
+    <main class="main">
+        <div class="main-header">
+
+        </div>
+        <!-- 메인 콘텐츠 영역 -->
+        <div class="main-container" layout:fragment="content">
+            메인공간
+        </div>
+    </main>
 </body>
 </html>
