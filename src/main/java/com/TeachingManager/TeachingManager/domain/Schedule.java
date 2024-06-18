@@ -36,8 +36,11 @@ public class Schedule {
     @JoinColumn(name = "institute_id", nullable = false)
     private Institute institute;
 
+
     // 강의 외래키
-    private Long cid;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "lecture_id", nullable = true)
+//    private Long lid;
 
 
     @Builder
