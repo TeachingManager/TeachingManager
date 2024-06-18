@@ -8,6 +8,7 @@ import Students from './pages/student/Students.js';
 import Teachers from './pages/teacher/Teachers.js';
 import { Calendar } from 'react-big-calendar';
 import CalendarContainer from './pages/calendar/CalendarContainer.js';
+import Calendars from './pages/calendar/Calendars.js';
 
 const router = createBrowserRouter([
   {
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
   ,
   {
     path: "/calendar",
-    element: <CalendarContainer/>
+    element: <Calendars/>
   }
 ]);
 

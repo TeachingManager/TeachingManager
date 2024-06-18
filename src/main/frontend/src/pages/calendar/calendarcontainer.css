@@ -1,0 +1,23 @@
+.calendar-container {
+    height: 80%;
+    padding: 24px;
+    margin-left :64px;
+   
+    
+    
+}
+
+.fc {
+    width: 100%;
+}
+
+.fc-event {
+    background-color: #b3e5fc;
+    padding: 2px;
+    border-radius: 4px; 
+    color: black; 
+  }
+  
+  .fc-event-custom-content {
+    color: #0d0b6d !important; /* Custom class for additional text */
+  }

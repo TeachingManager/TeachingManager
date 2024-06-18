@@ -120,7 +120,7 @@ export default function StudentList() {
           </Stack>
         </Box>
       </Modal>
-      <Typography variant="h6" component="h3">선택된 행 ID: {selectedRows.join(', ')}</Typography>
+      
     </Box>
   );
 }

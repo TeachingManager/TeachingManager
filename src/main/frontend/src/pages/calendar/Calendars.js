@@ -2,17 +2,17 @@ import React from 'react'
 
 import Topbar from '../../common/component/topbar/Topbar.js'
 import Sidenavbar from '../../common/component/sidebar/Sidenavbar'
-import TeacherContents from './TeacherContents.js'
+import CalendarContents from './CalendarContainer.js'
 
-import "./teachers.css"
+import "./calendars.css"
 
-export default function Teachers(){
+export default function Calendars(){
     return(
-        <div className='teacherpage-container'>
+        <div className='calendarpage-container'>
             <Topbar/> 
             <Sidenavbar/>
-            <TeacherContents/>
-
+            <CalendarContents/>
+            
         </div>
     )
 }

@@ -20,19 +20,19 @@ export default function Sidenavbar() {
                     {isHovered ? <p className='logo'>Teaching Manager</p> : <p className='logo'>T</p>}
                 </span>
             </div>
-            <a href="#home">
+            <a href="/">
                 <FaHome className="icon" />
                 <span className="text">Home</span>
             </a>
-            <a href="#services">
+            <a href="teachers">
                 <PiChalkboardTeacher className="icon" />
                 <span className="text">Teachers</span>
             </a>
-            <a href="#clients">
+            <a href="students">
                 <IoMdPeople className="icon" />
                 <span className="text">Students</span>
             </a>
-            <a href="#contact">
+            <a href="calendar">
                 <CiCalendarDate className="icon" />
                 <span className="text">Calendar</span>
             </a>
