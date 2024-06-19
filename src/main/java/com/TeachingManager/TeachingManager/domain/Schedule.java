@@ -31,7 +31,7 @@ public class Schedule {
     @Column(name="memo", nullable = true)
     private String memo;
 
-    // Institute와의 Many-to-One 관계 설정
+    // Institute와의 Many-to-One 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institute_id", nullable = false)
     private Institute institute;
