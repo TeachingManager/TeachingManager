@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 export default function StudentList() {
   const [rows, setRows] = useState([
-    { id: 1, name: 'Kim', age: 10, phone: '010-1234-5678',  gender: '남성', account: '937702', birthday: '2012-04-01' },
+    
   ]);
 
   const [open, setOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function StudentList() {
   return (
     <Box sx={{ height: 600, mt: 6 }}>
       <Stack direction="row" spacing={2} mb={2}>
-        <Button variant="contained" onClick={handleOpen}>선생님 추가하기</Button>
+        <Button variant="contained" onClick={handleOpen}>선생님 초대하기</Button>
         <Button variant="contained" color="error" onClick={handleDeleteSelected}>선택된 선생님 삭제</Button>
       </Stack>
       <DataGrid

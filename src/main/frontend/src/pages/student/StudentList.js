@@ -4,11 +4,12 @@ import { DataGrid } from '@mui/x-data-grid';
 
 export default function StudentList() {
   const [rows, setRows] = useState([
-    { id: 1, name: 'Kim', age: 10, grade: '4', phone: '010-1234-5678', guardianName: 'Kim Senior', guardianContact: '010-9876-5432', gender: '남성', level: 'A', birthday: '2012-04-01' },
-    { id: 2, name: 'Lee', age: 10, grade: '4', phone: '010-8765-4321', guardianName: 'Lee Senior', guardianContact: '010-1234-5678', gender: '여성', level: 'B', birthday: '2012-05-02' }
+    { id: 1, name: '홍길동', age: 12, grade: '4', phone: '010-1234-5678', guardianName: '김철수', guardianContact: '010-9876-5432', gender: '남성', level: 'A', birthday: '2012-04-01' },
+    { id: 2, name: '김철수', age: 12, grade: '4', phone: '010-8765-4321', guardianName: '박철수', guardianContact: '010-1234-5678', gender: '여성', level: 'B', birthday: '2012-05-02' }
   ]);
 
   const [open, setOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [newStudent, setNewStudent] = useState({
     id: '',
     name: '',
@@ -25,20 +26,9 @@ export default function StudentList() {
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewStudent(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleAddStudent = () => {
-    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1; // 새로운 ID 설정
-    setRows(prevRows => [...prevRows, { ...newStudent, id: newId }]);
-    handleClose();
+  const handleClose = () => {
+    setOpen(false);
+    setIsEditing(false);
     setNewStudent({
       id: '',
       name: '',
@@ -53,10 +43,35 @@ export default function StudentList() {
     });
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewStudent(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleAddStudent = () => {
+    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1; // 새로운 ID 설정
+    setRows(prevRows => [...prevRows, { ...newStudent, id: newId }]);
+    handleClose();
+  };
+
+  const handleEditStudent = () => {
+    setRows(prevRows => prevRows.map(row => (row.id === newStudent.id ? newStudent : row)));
+    handleClose();
+  };
+
   const handleDeleteSelected = () => {
     const selectedIds = selectedRows.map(Number); // 선택된 행 ID를 숫자로 변환
     setRows(prevRows => prevRows.filter(row => !selectedIds.includes(row.id)));
     setSelectedRows([]); // 삭제 후 선택 상태를 초기화
+  };
+
+  const handleRowDoubleClick = (params) => {
+    setNewStudent(params.row);
+    setIsEditing(true);
+    handleOpen();
   };
 
   const modalStyle = {
@@ -92,20 +107,19 @@ export default function StudentList() {
         ]}
         rows={rows}
         pageSize={5}
-        rowsPerPageOptions={5}
+        rowsPerPageOptions={[5]}
         checkboxSelection
         onRowSelectionModelChange={(newSelectionModel) => {
-          console.log(newSelectionModel); // 디버그용 콘솔 로그
           setSelectedRows(newSelectionModel);
         }}
-        
+        onRowDoubleClick={handleRowDoubleClick}
       />
       <Modal
         open={open}
         onClose={handleClose}
       >
         <Box sx={modalStyle}>
-          <Typography variant="h6" component="h2">학생 정보 입력</Typography>
+          <Typography variant="h6" component="h2">{isEditing ? '학생 정보 수정' : '학생 정보 입력'}</Typography>
           <Stack spacing={2} mt={2}>
             <TextField label="이름" name="name" value={newStudent.name} onChange={handleChange} />
             <TextField label="나이" name="age" value={newStudent.age} onChange={handleChange} />
@@ -116,11 +130,14 @@ export default function StudentList() {
             <TextField label="성별" name="gender" value={newStudent.gender} onChange={handleChange} />
             <TextField label="수준" name="level" value={newStudent.level} onChange={handleChange} />
             <TextField label="생일" name="birthday" value={newStudent.birthday} onChange={handleChange} />
-            <Button variant="contained" onClick={handleAddStudent}>추가</Button>
+            {isEditing ? (
+              <Button variant="contained" onClick={handleEditStudent}>수정</Button>
+            ) : (
+              <Button variant="contained" onClick={handleAddStudent}>추가</Button>
+            )}
           </Stack>
         </Box>
       </Modal>
-      
     </Box>
   );
 }

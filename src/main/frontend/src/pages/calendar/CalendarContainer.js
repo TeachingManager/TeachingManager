@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
+import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
 import { Button, Box, Stack, TextField, Modal, Typography, IconButton } from '@mui/material';
@@ -31,25 +31,28 @@ export default function CalendarContents() {
     id: '',
     title: '',
     teacherName: '',
-    studentNames: [''], // 여러 학생 이름을 저장하기 위한 배열
+    studentNames: [''],
     date: '',
     startTime: '',
     endTime: ''
   });
 
-  const [events, setEvents] = useState([
-
-  ]);
-
+  const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setIsEditing(false);
+    setEditingEvent(null);
+  };
 
   const handleDateClick = (arg) => {
     setNewInfo(prevState => ({
       ...prevState,
-      date: arg.dateStr // 클릭한 날짜 저장
+      date: arg.dateStr
     }));
     handleOpen();
   };
@@ -97,7 +100,7 @@ export default function CalendarContents() {
   };
 
   const handleAddTeacher = () => {
-    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1; // 새로운 ID 설정
+    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1;
     const newRow = {
       id: newId,
       title: newInfo.title,
@@ -127,10 +130,55 @@ export default function CalendarContents() {
       startTime: '',
       endTime: ''
     });
+  };
 
-    // setTimeout(() => {
-    //   alert(JSON.stringify([...rows, newRow]));
-    // }, 0);
+  const handleEditTeacher = () => {
+    const updatedEvents = events.map(event => {
+      if (event.id === editingEvent.id) {
+        return {
+          ...event,
+          title: newInfo.title,
+          description: `선생님: ${newInfo.teacherName}<br> <br>수강 학생: ${newInfo.studentNames.map(name => `<br>${name}`).join('')}<br> <br> 수업 시간: ${newInfo.startTime} - ${newInfo.endTime}`
+        };
+      }
+      return event;
+    });
+    setEvents(updatedEvents);
+
+    handleClose();
+    setNewInfo({
+      id: '',
+      title: '',
+      teacherName: '',
+      studentNames: [''],
+      date: '',
+      startTime: '',
+      endTime: ''
+    });
+  };
+
+  const handleDeleteTeacher = () => {
+    const updatedEvents = events.filter(event => event.id !== editingEvent.id);
+    setEvents(updatedEvents);
+    handleClose();
+  };
+
+  const handleEventClick = (arg) => {
+    const event = events.find(event => event.id === arg.event.id);
+    if (event) {
+      setNewInfo({
+        id: event.id,
+        title: event.title,
+        teacherName: event.description.match(/선생님: (.*?)<br>/)[1],
+        studentNames: event.description.match(/수강 학생: (.*?)<br>/)[1].split('<br>').map(name => name.trim()),
+        date: event.start,
+        startTime: event.startTime,
+        endTime: event.endTime
+      });
+      setIsEditing(true);
+      setEditingEvent(event);
+      handleOpen();
+    }
   };
 
   const addStudentField = () => {
@@ -159,6 +207,7 @@ export default function CalendarContents() {
         dateClick={handleDateClick}
         editable={true}
         eventDrop={handleEventDrop}
+        eventClick={handleEventClick}
         eventContent={renderEventContent}
         aspectRatio={1.5}
       />
@@ -168,7 +217,7 @@ export default function CalendarContents() {
         onClose={handleClose}
       >
         <Box sx={modalStyle}>
-          <Typography variant="h6" component="h2">강의 정보 입력</Typography>
+          <Typography variant="h6" component="h2">{isEditing ? '일정 수정' : '일정 입력'}</Typography>
           <Stack spacing={2} mt={2}>
             <TextField label="강의 제목" name="title" value={newInfo.title} onChange={handleChange} />
             <TextField label="선생님 이름" name="teacherName" value={newInfo.teacherName} onChange={handleChange} />
@@ -193,7 +242,7 @@ export default function CalendarContents() {
               value={newInfo.startTime}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
-              inputProps={{ step: 300 }} // 5분 간격
+              inputProps={{ step: 300 }}
             />
             <TextField
               label="종료 시간"
@@ -202,10 +251,17 @@ export default function CalendarContents() {
               value={newInfo.endTime}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
-              inputProps={{ step: 300 }} // 5분 간격
+              inputProps={{ step: 300 }}
             />
             <Button variant="outlined" onClick={addStudentField}>학생 추가</Button>
-            <Button variant="contained" onClick={handleAddTeacher}>추가</Button>
+            {isEditing ? (
+              <>
+                <Button variant="contained" onClick={handleEditTeacher}>수정</Button>
+                <Button variant="contained" color="error" onClick={handleDeleteTeacher}>삭제</Button>
+              </>
+            ) : (
+              <Button variant="contained" onClick={handleAddTeacher}>추가</Button>
+            )}
           </Stack>
         </Box>
       </Modal>
