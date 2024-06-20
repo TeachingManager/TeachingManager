@@ -1,6 +1,8 @@
 package com.TeachingManager.TeachingManager.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
@@ -11,10 +13,12 @@ import java.util.Collection;
 public class InstituteAdapter extends User {
     private Institute institute;
     private Long pk;
+    private String institute_name;
 
     public InstituteAdapter(Institute institute) {
         super(institute.getUsername(), institute.getPassword(),institute.getAuthorities());
         this.institute = institute;
         this.pk = institute.getInstitute_id();
+        this.institute_name = institute.getInstitute_name();
     }
 }

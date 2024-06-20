@@ -37,8 +37,8 @@ public class Institute implements UserDetails {
     private String password;
 
 
-    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
-    private Set<Teacher> teachers;
+//    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
+//    private Set<Teacher> teachers;
 
     @Builder
     public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){

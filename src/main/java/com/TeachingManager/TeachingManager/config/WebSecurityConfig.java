@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.config;//package com.TeachingManager
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.Service.Institute.InstituteDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.Teacher.TeacherDetailServiceImpl;
+import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ public class WebSecurityConfig {
 
     private final InstituteDetailServiceImpl instituteDetailService;
     private final TeacherDetailServiceImpl teacherDetailService;
+    private final OAuth2UserCustomService oAuth2Service;
 
     @Autowired
     private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
@@ -38,7 +40,7 @@ public class WebSecurityConfig {
         return http.
                 authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login", "/login/institute", "/signup/institute", "/institute",
-                                "/login/teacher", "/signup/teacher","/signup/social/teacher", "/teacher"
+                                "/login/teacher", "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
                         ).permitAll() // 로그인, 회원가입은 인증 x
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
                 )
@@ -49,11 +51,17 @@ public class WebSecurityConfig {
                         .usernameParameter("email")  // 이메일을 username으로 사용
                         .passwordParameter("password")
                 )
+                .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
+                        .defaultSuccessUrl("/home", true) // 로그인 성공시 이동할 URL
+                        .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
+                                .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
+                        )
+                )
 //                .formLogin(form-> form.loginPage("/login/teacher")
 //                        .loginProcessingUrl("/login/teacher")
 //                        .defaultSuccessUrl("/home", true)
 //                        .failureHandler(institutonAuthenticationFailureHandler)
-//                        .usernameParameter("email")  // 이메일을 username으로 사용
+//                        .usernameParameter("email")
 //                        .passwordParameter("password")
 //                )
                 .logout(logout -> logout
@@ -77,6 +85,4 @@ public class WebSecurityConfig {
 //        auth.userDetailsService(teacherDetailService).passwordEncoder(bCryptPasswordEncoder());
         return auth.build();
     }
-
-
 }
