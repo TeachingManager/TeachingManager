@@ -2,7 +2,7 @@ package com.TeachingManager.TeachingManager.controller;
 
 import com.TeachingManager.TeachingManager.domain.Lecture;
 import com.TeachingManager.TeachingManager.form.LectureForm;
-import com.TeachingManager.TeachingManager.service.LectureService;
+import com.TeachingManager.TeachingManager.Service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,7 @@ public class LectureController {
     @PostMapping("/Lecture/new")
     public String lectureCreate(LectureForm form) {
         Lecture lecture = new Lecture();
-        lecture.setName(form.getName());
+        lecture.setLectureName(form.getName());
         lecture.setStartTime(form.getStartTime());
         lecture.setEndTime(form.getEndTime());
         lecture.setCategory(form.getCategory());

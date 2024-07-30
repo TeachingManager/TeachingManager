@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,9 @@ public class Institute implements UserDetails {
 
 //    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
 //    private Set<Teacher> teachers;
+
+//    @OneToMany(mappedBy = "institute")
+//    private List<Lecture> lectures = new ArrayList<>();
 
     @Builder
     public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){

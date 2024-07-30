@@ -1,4 +1,4 @@
-package com.TeachingManager.TeachingManager.service;
+package com.TeachingManager.TeachingManager.Service;
 
 import com.TeachingManager.TeachingManager.domain.Lecture;
 
