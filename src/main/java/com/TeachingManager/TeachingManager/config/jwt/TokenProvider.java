@@ -18,16 +18,14 @@ public class TokenProvider {
 
     public String generatedToken(User user, Duration expiredAt){
         Date now = new Date();
-        return createToken(new Date(now.getTime() + expiredAt.toMillis(), user));
+        return createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
-    public String createToken(Date expiredDate, User user){
+    private String createToken(Date expiredDate, User user){
 
         Date now = new Date();
 
         return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuedAt(jwtinfo.getJwtUser())
                 .setIssuedAt(now)
                 .setExpiration(expiredDate)
                 .setSubject(user.getUsername())
