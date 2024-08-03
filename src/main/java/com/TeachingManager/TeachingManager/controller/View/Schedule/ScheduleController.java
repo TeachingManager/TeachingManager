@@ -35,7 +35,7 @@ public class ScheduleController {
     /*     일정 홈   */
     @GetMapping("/Schedule")
     public String Schedule(Model model, @AuthenticationPrincipal Institute institute){
-        model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getInstitute_id()));
+        model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getPk()));
         return "schedule/schedule_main";
     }
 

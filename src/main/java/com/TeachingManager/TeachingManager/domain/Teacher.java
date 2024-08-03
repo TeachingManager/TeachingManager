@@ -13,15 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Teacher implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "teacher_id", updatable = false)
-    private Long teacher_id;
-
-    @Column(name = "email", nullable = false, unique = true, updatable = false)
-    private String email;
+public class Teacher extends CustomUser {
 
     @Column(name = "teacher_name", nullable = false)
     private String teacher_name;
@@ -44,19 +36,15 @@ public class Teacher implements UserDetails {
     @Column(name = "salary", nullable = true)
     private Long salary;
 
-    @Column(name = "password", nullable = false)
-    private String password;
-
     @ManyToOne
     @JoinColumn(name = "institute_id")
     private Institute institute;
 
 
-
     @Builder
-    public Teacher(String email,String password, String auth, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
-        this.email = email;
-        this.password = password;
+    public Teacher(String email, String password, String auth, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+        this.setEmail(email);
+        this.setPassword(password);
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
@@ -75,40 +63,5 @@ public class Teacher implements UserDetails {
         this.gender = gender;
         this.bank_account = bank_account;
         this.salary = salary;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

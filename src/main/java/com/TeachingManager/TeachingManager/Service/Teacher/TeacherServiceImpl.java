@@ -27,7 +27,7 @@ public class TeacherServiceImpl {
                         .gender(dto.getGender())
                         .bank_account(dto.getBank_account())
                         .build()
-                ).getTeacher_id();
+                ).getPk();
     }
 
     public Long social_register(AddSocialTeacherRequest dto) {
@@ -40,7 +40,7 @@ public class TeacherServiceImpl {
                         .gender(dto.getGender())
                         .bank_account(dto.getBank_account())
                         .build()
-                ).getTeacher_id();
+                ).getPk();
     }
 
 }

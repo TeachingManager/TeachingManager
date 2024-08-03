@@ -18,7 +18,7 @@ public class InstituteAdapter extends User {
     public InstituteAdapter(Institute institute) {
         super(institute.getUsername(), institute.getPassword(),institute.getAuthorities());
         this.institute = institute;
-        this.pk = institute.getInstitute_id();
+        this.pk = institute.getPk();
         this.institute_name = institute.getInstitute_name();
     }
 }

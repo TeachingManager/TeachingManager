@@ -36,7 +36,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         System.out.println("name = " + name);
         System.out.println("email = " + email);
 
-        Optional<Teacher> teacher = teacherRepo.searchByEmail(email);
+        Optional<Teacher> teacher = teacherRepo.findByEmail(email);
 
         // 이미 있는 선생님일 경우 업데이트하지 않고 그대로 전달
         if (teacher.isPresent()) {

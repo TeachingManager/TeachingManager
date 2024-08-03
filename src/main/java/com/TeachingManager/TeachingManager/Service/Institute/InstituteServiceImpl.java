@@ -21,7 +21,7 @@ public class InstituteServiceImpl {
                 .institute_name(dto.getInsName())
                 .address(dto.getAddress())
                 .phoneNum(dto.getPhoneNum()).build()
-        ).getInstitute_id();
+        ).getPk();
     }
 
     //현재 접속중인
