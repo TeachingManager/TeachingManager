@@ -1,9 +1,8 @@
-package com.TeachingManager.TeachingManager.Service.Teacher;
+package com.TeachingManager.TeachingManager.Service.User.Teacher;
 
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddSocialTeacherRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddTeacherRequest;
-import com.TeachingManager.TeachingManager.Repository.Teacher.TeacherRepository;
-import com.TeachingManager.TeachingManager.domain.Institute;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

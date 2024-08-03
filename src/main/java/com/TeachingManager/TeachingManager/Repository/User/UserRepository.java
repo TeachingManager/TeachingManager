@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Optional;
 
-@NoRepositoryBean
 public interface UserRepository extends JpaRepository<CustomUser, Long> {
-    Optional<User> searchByEmail(String email);
+//    Optional<CustomUser> findByEmail(String email);
+//    Optional<CustomUser> findByPk(Long pk);
 }

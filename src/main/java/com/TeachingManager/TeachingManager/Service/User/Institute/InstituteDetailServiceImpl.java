@@ -1,8 +1,7 @@
-package com.TeachingManager.TeachingManager.Service.Institute;
+package com.TeachingManager.TeachingManager.Service.User.Institute;
 
-import com.TeachingManager.TeachingManager.Repository.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.domain.Institute;
-import com.TeachingManager.TeachingManager.domain.InstituteAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

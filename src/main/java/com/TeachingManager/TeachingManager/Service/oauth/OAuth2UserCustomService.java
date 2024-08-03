@@ -1,9 +1,8 @@
 package com.TeachingManager.TeachingManager.Service.oauth;
 
-import com.TeachingManager.TeachingManager.Repository.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

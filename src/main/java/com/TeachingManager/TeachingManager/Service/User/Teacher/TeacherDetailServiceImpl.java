@@ -1,6 +1,6 @@
-package com.TeachingManager.TeachingManager.Service.Teacher;
+package com.TeachingManager.TeachingManager.Service.User.Teacher;
 
-import com.TeachingManager.TeachingManager.Repository.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

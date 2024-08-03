@@ -1,7 +1,7 @@
-package com.TeachingManager.TeachingManager.Service.Institute;
+package com.TeachingManager.TeachingManager.Service.User.Institute;
 
 import com.TeachingManager.TeachingManager.DTO.Institute.AddInstituteRequest;
-import com.TeachingManager.TeachingManager.Repository.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

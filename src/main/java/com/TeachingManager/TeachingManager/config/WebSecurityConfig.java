@@ -1,8 +1,8 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
-import com.TeachingManager.TeachingManager.Service.Institute.InstituteDetailServiceImpl;
-import com.TeachingManager.TeachingManager.Service.Teacher.TeacherDetailServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteDetailServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

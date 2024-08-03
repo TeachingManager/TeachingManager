@@ -1,4 +1,4 @@
-package com.TeachingManager.TeachingManager.Repository.Teacher;
+package com.TeachingManager.TeachingManager.Repository.User.Teacher;
 
 import com.TeachingManager.TeachingManager.Repository.User.UserRepository;
 import com.TeachingManager.TeachingManager.domain.CustomUser;

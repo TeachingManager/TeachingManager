@@ -2,7 +2,7 @@ package com.TeachingManager.TeachingManager.controller.API.Teacher;
 
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddSocialTeacherRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddTeacherRequest;
-import com.TeachingManager.TeachingManager.Service.Teacher.TeacherServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
