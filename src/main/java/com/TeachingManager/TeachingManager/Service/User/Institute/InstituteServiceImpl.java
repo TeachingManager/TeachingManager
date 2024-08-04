@@ -14,13 +14,15 @@ public class InstituteServiceImpl {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Long register(AddInstituteRequest dto){
-        return instRepo
-        .save(Institute.builder()
+        Institute temp = Institute.builder()
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .institute_name(dto.getInsName())
                 .address(dto.getAddress())
-                .phoneNum(dto.getPhoneNum()).build()
+                .phoneNum(dto.getPhoneNum()).build();
+
+        return instRepo
+        .save(temp
         ).getPk();
     }
 

@@ -2,9 +2,11 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -22,7 +24,8 @@ public class Teacher extends CustomUser {
     private Byte age;
 
     @Column(name = "birth", nullable = false)
-    private Date birth;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birth;
 
     @Column(name = "phoneNum", nullable = false)
     private String phoneNum;
@@ -42,7 +45,7 @@ public class Teacher extends CustomUser {
 
 
     @Builder
-    public Teacher(String email, String password, String auth, String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+    public Teacher(String email, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
         this.setEmail(email);
         this.setPassword(password);
         this.teacher_name = teacher_name;
@@ -55,7 +58,7 @@ public class Teacher extends CustomUser {
         this.institute = institute;
     }
 
-    public void update(String teacher_name, Byte age, Date birth, String phoneNum, Character gender, String bank_account, Long salary) {
+    public void update(String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary) {
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;

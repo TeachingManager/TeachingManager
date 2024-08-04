@@ -20,7 +20,7 @@
                 <p class="text-white-50 mt-2 mb-5">강사 로그인</p>
 
                 <div class = "mb-2">
-                    <form action="/login/teacher" method="POST">
+                    <form action="/login/teacher/check" method="POST">
                         <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
                         <div class="mb-3">
                             <label class="form-label text-white">Email address</label>
