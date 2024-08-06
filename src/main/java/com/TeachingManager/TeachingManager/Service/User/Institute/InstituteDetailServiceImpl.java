@@ -27,9 +27,10 @@ public class InstituteDetailServiceImpl implements UserDetailsService {
 
     public UserDetails loadUserByPk(Long pk){
         Institute institute =  instRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(institute.getEmail()) // email 속성을 사용하여 사용자를 식별
-                .password(institute.getPassword()) // 비밀번호 사용
-                .build();
+        return institute;
+//        return org.springframework.security.core.userdetails.User.builder()
+//                .username(institute.getEmail()) // email 속성을 사용하여 사용자를 식별
+//                .password(institute.getPassword()) // 비밀번호 사용
+//                .build();
     }
 }

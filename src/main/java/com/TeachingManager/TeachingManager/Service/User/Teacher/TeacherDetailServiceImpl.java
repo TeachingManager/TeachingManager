@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.Service.User.Teacher;
 
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,12 +21,9 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
                 .password(teacher.getPassword()) // 비밀번호 사용
                 .build();
     }
-    public UserDetails loadUserByPk(Long pk){
+    public CustomUser loadUserByPk(Long pk){
         Teacher teacher =  teacherRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(teacher.getEmail()) // email 속성을 사용하여 사용자를 식별
-                .password(teacher.getPassword()) // 비밀번호 사용
-                .build();
+        return teacher;
     }
 }
 

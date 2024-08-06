@@ -64,7 +64,6 @@ public class TokenService {
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByPk(userPk));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByPk(userPk));
 
-        
         String Token  = tokenProvider.createAccessToken(user, Duration.ofHours(2));
         System.out.println("Token = " + Token);
         return Token;
