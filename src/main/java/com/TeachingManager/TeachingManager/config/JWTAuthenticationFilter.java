@@ -26,9 +26,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String url = request.getRequestURI();
+        if ("/api/login".equals(url) || "/api/accessToken".equals(url)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         /////////////////////////////////////////
         ////////////////////////////////////////
-
         // 헤더 출력
         System.out.println("//////////////////////////////////////");
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -100,7 +106,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             // 토큰을 사용하여 인증 처리
             System.out.println("Extracted Token: " + token);
-            System.out.println("11111111111111111");
         } else {
             // Authorization 헤더가 없거나 올바른 형식이 아닌 경우 처리
             System.out.println("Authorization header is missing or not valid");
@@ -111,6 +116,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             System.out.println("유효한 토크이었음, token = " + token);
+        }
+        else{
+            System.out.println("유효하지 않은 토큰이었음, token = " + token);
         }
 
         // Spring Security 에 있는 다양한 필터가 연쇄적으로 인증 검사를 하는데, 다음 필터 검사로 넘어가라는 뜻.

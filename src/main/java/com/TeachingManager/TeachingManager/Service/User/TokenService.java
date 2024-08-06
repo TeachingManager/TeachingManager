@@ -8,8 +8,8 @@ import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.RefreshToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +24,20 @@ public class TokenService {
     private final TokenProvider tokenProvider;
     private final TeacherDetailServiceImpl teacherService;
     private final InstituteDetailServiceImpl instituteService;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final AuthenticationManager authenticationManager;
 
     // 처음 로그인 시 access, refresh 토큰 발급하는 함수.
     // 반환값 :  클라이언트에 전달할 DTO
     public SetTokenResponse LoginTokenCreate(String email, String password) {
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        System.out.println("LoginTokenCreate 의 email = " + email);
+        System.out.println("LoginTokenCreate 의 password = " + password);
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        System.out.println("LoginTokenCreate 의 authenticationToken = " + authenticationToken);
+
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        System.out.println("LoginTokenCreate 의 authentication = " + authentication);
 
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByUsername(email));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByUsername(email));

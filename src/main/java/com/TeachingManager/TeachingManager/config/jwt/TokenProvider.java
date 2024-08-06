@@ -1,6 +1,8 @@
 package com.TeachingManager.TeachingManager.config.jwt;
 
+import com.TeachingManager.TeachingManager.Repository.User.RefreshTokenRepository;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
+import com.TeachingManager.TeachingManager.domain.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,6 +21,7 @@ import java.util.Set;
 @Service
 public class TokenProvider {
     private final JwtInfo jwtinfo;
+    private final RefreshTokenRepository refreshTokenRepo;
 
     // 외부에서 호출하기 위한 공용메서드
     public String createAccessToken(CustomUser user, Duration expiredAt){
@@ -29,13 +32,17 @@ public class TokenProvider {
     // 외부에서 refresh 토큰 호출 메서드
     public String createRefreshToken(CustomUser user, Duration expiredAt){
         Date now = new Date();
-        return createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        String token = createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        refreshTokenRepo.save(new RefreshToken(user.getPk(), token));
+        return token;
     }
 
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
 
         Date now = new Date();
+
+        System.out.println("TokenProivdedr 의 createToken 의 jwtinfo = " + jwtinfo.getSKey());
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
@@ -44,7 +51,7 @@ public class TokenProvider {
                 .setExpiration(expiredDate)
                 .setSubject(user.getEmail())
                 .claim("id", user.getEmail())
-                .signWith(SignatureAlgorithm.HS256, jwtinfo.getSKey())
+                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                 .compact();
     }
 

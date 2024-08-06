@@ -23,7 +23,13 @@ public class ApiTokenController {
     public ResponseEntity<SetTokenResponse> login(@RequestBody SetTokenRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        return ResponseEntity.status(HttpStatus.CREATED).body(tokenService.LoginTokenCreate(email, password));
+        System.out.println("api/login 의 email = " + email);
+        System.out.println("api/login 의 password = " + password);
+
+        ResponseEntity<SetTokenResponse> setTokenResponseResponseEntity = ResponseEntity.status(HttpStatus.CREATED).body(tokenService.LoginTokenCreate(email, password));
+        System.out.println("setTokenResponseResponseEntity = " + setTokenResponseResponseEntity);
+
+        return setTokenResponseResponseEntity;
     }
 
     // RefreshToken 을 가지고, 새 AccessToken 을 발급받는 API

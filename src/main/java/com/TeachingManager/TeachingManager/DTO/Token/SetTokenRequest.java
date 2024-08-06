@@ -1,13 +1,17 @@
 package com.TeachingManager.TeachingManager.DTO.Token;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Builder
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 // 로그인 정보 전달
 public class SetTokenRequest {
     private String email;
     private String password;
+
+
 }

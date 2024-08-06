@@ -42,7 +42,7 @@ public class WebSecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.
                 authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/api/login", "/signup/institute", "/institute",
+                                .requestMatchers("/api/login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
 //                        .requestMatchers("/api/login", "/login/institute", "/signup/institute", "/institute", "/login/institute/check",
 //                                "/login/teacher", "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"

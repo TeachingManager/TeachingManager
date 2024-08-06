@@ -45,5 +45,5 @@ logging:
         TeachingManager: DEBUG
 
 jwt:
-  issuer: yhe01152@naver.com
-  secret_key: teachingManager
+  jwtUser: yhe01152@naver.com
+  sKey: teachingManager
