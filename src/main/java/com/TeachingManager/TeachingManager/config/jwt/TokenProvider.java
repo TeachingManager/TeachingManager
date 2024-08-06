@@ -1,16 +1,13 @@
 package com.TeachingManager.TeachingManager.config.jwt;
 
 import com.TeachingManager.TeachingManager.domain.CustomUser;
-import com.TeachingManager.TeachingManager.domain.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -71,6 +68,7 @@ public class TokenProvider {
 
     public long getUserId(String token) {
         Claims claims = getClaims(token);
+        System.out.println("tokenProvider 의 getuserid 의 claims = " + claims);
         return claims.get("id", Long.class);
     }
 

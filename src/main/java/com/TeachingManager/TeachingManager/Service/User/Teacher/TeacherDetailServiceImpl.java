@@ -18,7 +18,14 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(teacher.getEmail()) // email 속성을 사용하여 사용자를 식별
                 .password(teacher.getPassword()) // 비밀번호 사용
-                .accountLocked(false) // 잠금 아닌 상태로
+                .build();
+    }
+    public UserDetails loadUserByPk(Long pk){
+        Teacher teacher =  teacherRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(teacher.getEmail()) // email 속성을 사용하여 사용자를 식별
+                .password(teacher.getPassword()) // 비밀번호 사용
                 .build();
     }
 }
+

@@ -26,6 +26,6 @@ public class InstitutonAuthenticationFailureHandler implements AuthenticationFai
 
         // 여기서 추가적인 로직을 수행하거나 다른 리다이렉트 또는 처리를 구현할 수 있음
         // 예를 들어, 다른 URL로 리다이렉트하거나 특정 작업을 수행할 수 있음
-        response.sendRedirect("/login");
+        response.sendRedirect("/login/institute");
     }
 }

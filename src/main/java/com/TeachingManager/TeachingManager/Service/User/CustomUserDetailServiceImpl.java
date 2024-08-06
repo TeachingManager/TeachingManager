@@ -2,12 +2,9 @@ package com.TeachingManager.TeachingManager.Service.User;
 
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
-import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
-import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
