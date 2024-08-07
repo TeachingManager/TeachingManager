@@ -39,15 +39,25 @@ public class Teacher extends CustomUser {
     @Column(name = "salary", nullable = true)
     private Long salary;
 
+    @Column(name = "nickname", nullable = false)
+    private String nickname = "닉네임";
+
+    // OAuth2.0 제공자 (구글, 네이버, 카카오)
+    @Column(name = "provider", nullable = true)
+    private String provider;
+
+
     @ManyToOne
     @JoinColumn(name = "institute_id")
     private Institute institute;
 
 
     @Builder
-    public Teacher(String email, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute) {
+    public Teacher(String email, String nickname, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute, String provider
+    ) {
         this.setEmail(email);
         this.setPassword(password);
+        this.nickname = nickname;
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
@@ -55,6 +65,7 @@ public class Teacher extends CustomUser {
         this.gender = gender;
         this.bank_account = bank_account;
         this.salary = salary;
+        this.provider = provider;
         this.institute = institute;
     }
 

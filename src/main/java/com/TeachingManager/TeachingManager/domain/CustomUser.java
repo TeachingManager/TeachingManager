@@ -27,6 +27,9 @@ public abstract class CustomUser implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "failedCount", nullable = false)
+    private Byte failedCount  = 0;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

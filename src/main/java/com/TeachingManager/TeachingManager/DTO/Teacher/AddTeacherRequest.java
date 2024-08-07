@@ -18,5 +18,7 @@ public class AddTeacherRequest {
     public Character gender;
     public String email;
     public String bank_account;
+    public String nickname;
     private String password;
+
 }

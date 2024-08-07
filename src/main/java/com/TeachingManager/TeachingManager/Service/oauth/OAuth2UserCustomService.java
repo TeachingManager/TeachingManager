@@ -27,7 +27,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
     private Teacher saveOrUpdate(OAuth2User oAuth2User) {
         System.out.println("saveOrUpdate 실행됨");
-        
+
+        // 아래는 구글 기준. Provider 을 구분하여 Naver, Google, Kakao 에 맞게 형식이 다름.
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");

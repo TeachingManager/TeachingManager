@@ -9,6 +9,8 @@ import java.util.Date;
 @Setter
 public class AddSocialTeacherRequest {
     public String teacherName;
+    public String nickname;
+    public String provider;
     public Byte age;
     public Date birth;
     public String phoneNum;

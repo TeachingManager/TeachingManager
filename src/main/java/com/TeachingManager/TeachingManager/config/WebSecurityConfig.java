@@ -2,8 +2,6 @@ package com.TeachingManager.TeachingManager.config;//package com.TeachingManager
 
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
-import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteDetailServiceImpl;
-import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -44,8 +41,6 @@ public class WebSecurityConfig{
                 authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/api/login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
-//                        .requestMatchers("/api/login", "/login/institute", "/signup/institute", "/institute", "/login/institute/check",
-//                                "/login/teacher", "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
                         ).permitAll() // 로그인, 회원가입은 인증 x
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
@@ -87,4 +82,9 @@ public class WebSecurityConfig{
         auth.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder());
         return auth.build();
     }
+
+//    @Bean
+//    public OAuth2SuccessHandler oAuth2SuccessHandler(){
+//
+//    }
 }

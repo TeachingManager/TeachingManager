@@ -19,6 +19,7 @@ public class TeacherServiceImpl {
         return teacherRepo
                 .save(Teacher.builder()
                         .email(dto.getEmail())
+                        .nickname(dto.getNickname())
                         .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                         .teacher_name(dto.getTeacherName())
                         .birth(dto.getBirth())
@@ -26,6 +27,7 @@ public class TeacherServiceImpl {
                         .age(dto.getAge())
                         .gender(dto.getGender())
                         .bank_account(dto.getBank_account())
+                        .provider("Local")
                         .build()
                 ).getPk();
     }
@@ -34,6 +36,8 @@ public class TeacherServiceImpl {
         return teacherRepo
                 .save(Teacher.builder()
                         .teacher_name(dto.getTeacherName())
+                        .nickname(dto.getNickname())
+                        .provider(dto.getProvider())
                         .age(dto.getAge())
                         .phoneNum(dto.getPhoneNum())
                         .age(dto.getAge())
