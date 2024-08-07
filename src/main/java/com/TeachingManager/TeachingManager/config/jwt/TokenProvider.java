@@ -33,13 +33,20 @@ public class TokenProvider {
     // 외부에서 refresh 토큰 호출 메서드
     public String createRefreshToken(CustomUser user, Duration expiredAt){
         Date now = new Date();
-        String token = createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+        Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
+        String token = createToken(expired_time, user);
 
-        // 이미 refreshToken 이 존재하는지 체크하고 있다면 제거.
+
+        RefreshToken newRefreshToken = new RefreshToken(user.getPk(), token, expired_time);
+        // 이미 refreshToken 이 존재하는지 체크하고 있다면 업데이트, 아니라면 저장
         Optional<RefreshToken> refreshToken = refreshTokenRepo.findByUserId(user.getPk());
-        refreshToken.ifPresent(refreshTokenRepo::delete);
+        if(refreshToken.isPresent()) {
+            refreshToken.get().update(String.valueOf(newRefreshToken));
+        }
+        else {
+            refreshTokenRepo.save(newRefreshToken);
+        }
 
-        refreshTokenRepo.save(new RefreshToken(user.getPk(), token));
         return token;
     }
 
@@ -47,9 +54,6 @@ public class TokenProvider {
     private String createToken(Date expiredDate, CustomUser user){
 
         Date now = new Date();
-
-        System.out.println("TokenProivdedr 의 createToken 의 jwtinfo = " + jwtinfo.getSKey());
-
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("alg", "HS512")
@@ -81,7 +85,6 @@ public class TokenProvider {
 
     public long getUserId(String token) {
         Claims claims = getClaims(token);
-        System.out.println("tokenProvider 의 getuserid 의 claims = " + claims);
         return claims.get("id", Long.class);
     }
 
