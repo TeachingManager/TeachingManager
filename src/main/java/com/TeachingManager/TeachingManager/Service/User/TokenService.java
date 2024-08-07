@@ -30,22 +30,15 @@ public class TokenService {
     // 반환값 :  클라이언트에 전달할 DTO
     public SetTokenResponse LoginTokenCreate(String email, String password) {
 
-        System.out.println("LoginTokenCreate 의 email = " + email);
-        System.out.println("LoginTokenCreate 의 password = " + password);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-        System.out.println("LoginTokenCreate 의 authenticationToken = " + authenticationToken);
-
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        System.out.println("LoginTokenCreate 의 authentication = " + authentication);
 
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByUsername(email));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByUsername(email));
 
         return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
     }
-
-
 
 
 

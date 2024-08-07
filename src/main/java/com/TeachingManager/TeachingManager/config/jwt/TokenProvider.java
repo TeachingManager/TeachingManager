@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -33,6 +34,11 @@ public class TokenProvider {
     public String createRefreshToken(CustomUser user, Duration expiredAt){
         Date now = new Date();
         String token = createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+
+        // 이미 refreshToken 이 존재하는지 체크하고 있다면 제거.
+        Optional<RefreshToken> refreshToken = refreshTokenRepo.findByUserId(user.getPk());
+        refreshToken.ifPresent(refreshTokenRepo::delete);
+
         refreshTokenRepo.save(new RefreshToken(user.getPk(), token));
         return token;
     }
