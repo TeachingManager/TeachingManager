@@ -16,7 +16,7 @@ public class ApiTeacherController {
     public String signup(AddTeacherRequest request) {
         // 여기에 일반적인 방법으롤 회원가입을 하는 경우
         teacherService.register(request);
-     return "redirect:/login/teacher";
+     return "redirect:/login";
     }
 
     @PostMapping("/social/teacher")

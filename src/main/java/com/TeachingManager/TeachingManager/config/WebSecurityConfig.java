@@ -39,7 +39,7 @@ public class WebSecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.
                 authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/api/login","/api/accessToken", "/signup/institute", "/institute",
+                                .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
                         ).permitAll() // 로그인, 회원가입은 인증 x
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.

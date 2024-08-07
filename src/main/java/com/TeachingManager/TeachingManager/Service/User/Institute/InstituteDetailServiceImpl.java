@@ -19,8 +19,6 @@ public class InstituteDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) {
         Institute institute = instRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-
-        System.out.println("찾은 institute의 비밀번호 = " + institute.getPassword());
         // 다른 민감한 정보들이 넘어가게 하지 않기 위해 User를 커스텀한 InstituteAdapter
         return institute;
     }

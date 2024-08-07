@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 @Entity
 @Getter
@@ -57,6 +59,7 @@ public class Teacher extends CustomUser {
     ) {
         this.setEmail(email);
         this.setPassword(password);
+        this.setAuthorities(Role.TEACHER);
         this.nickname = nickname;
         this.teacher_name = teacher_name;
         this.age = age;

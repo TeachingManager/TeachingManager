@@ -9,14 +9,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -61,6 +60,9 @@ public class TokenProvider {
                 .setExpiration(expiredDate)
                 .setSubject(user.getEmail())
                 .claim("id", user.getEmail())
+                .claim("roles", user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
                 .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                 .compact();
     }
@@ -78,13 +80,20 @@ public class TokenProvider {
     // 토큰을 이용하여 인증 정보 가져오기
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+
+        List<String> roles = (List<String>) claims.get("roles");
+        Collection<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        System.out.println("TokenProvider 의 getAuthentication 의 authorities = " + authorities);
 
         return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
     }
 
     public long getUserId(String token) {
         Claims claims = getClaims(token);
+
         return claims.get("id", Long.class);
     }
 

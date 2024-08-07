@@ -5,9 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,10 +34,20 @@ public abstract class CustomUser implements UserDetails {
     @Column(name = "failedCount", nullable = false)
     private Byte failedCount  = 0;
 
+    @Column(name = "authorities", nullable = false)
+    private String authorities;
+
+//Role.java 에서 가져오는 것.
+    public void setAuthorities(Role role) {
+        this.authorities = role.getRoles();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(authorities.split(","))
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override

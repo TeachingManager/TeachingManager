@@ -29,6 +29,7 @@ public class Institute extends CustomUser {
     public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){
         this.setEmail(email);
         this.setPassword(password);
+        this.setAuthorities(Role.PRESIDENT);
         this.institute_name = institute_name;
         this.address = address;
         this.phoneNum = phoneNum;
