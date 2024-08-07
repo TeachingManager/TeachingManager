@@ -41,7 +41,8 @@ public class WebSecurityConfig{
                 authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/teacher","/oauth2/authorization/google"
-                        ).permitAll() // 로그인, 회원가입은 인증 x
+                        ).permitAll()//로그인, 회원가입은 인증 x
+                        .requestMatchers("/api/attendance", "/api/fee").hasRole("PRESIDENT")// 수강료, 선생님 api 등은 학원장만
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
                 )
