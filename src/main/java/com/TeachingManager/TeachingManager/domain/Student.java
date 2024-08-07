@@ -40,6 +40,10 @@ public class Student {
     @Column(name = "level", nullable = false)
     private String level;
 
+//    @ManyToOne
+//    @JoinColumn(name = "institute_id")
+//    private Institute institute;
+
     @Builder
     public Student(String name, int age, int grade, String phoneNumber, String parentName, String parentNumber, String gender, String level) {
         this.name = name;

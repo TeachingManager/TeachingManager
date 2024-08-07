@@ -25,9 +25,6 @@ public class Institute extends CustomUser {
     @Column(name = "phone_num", nullable = false)
     private String phoneNum;
 
-//    @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL)
-//    private Set<Teacher> teachers;
-
     @Builder
     public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){
         this.setEmail(email);
