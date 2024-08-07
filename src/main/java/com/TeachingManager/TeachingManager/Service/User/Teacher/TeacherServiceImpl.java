@@ -15,7 +15,6 @@ public class TeacherServiceImpl {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Long register(AddTeacherRequest dto){
-        System.out.println("생일 = " + dto.getBirth());
         return teacherRepo
                 .save(Teacher.builder()
                         .email(dto.getEmail())

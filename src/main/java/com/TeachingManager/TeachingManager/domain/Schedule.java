@@ -37,7 +37,7 @@ public class Schedule {
     private Institute institute;
 
 
-    // 강의 외래키
+//  //   강의 일대 다 관계
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "lecture_id", nullable = true)
 //    private Long lid;

@@ -1,6 +1,8 @@
 package com.TeachingManager.TeachingManager.Service.Student;
 
 import com.TeachingManager.TeachingManager.Repository.Student.StudentRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Student;
 import com.TeachingManager.TeachingManager.DTO.Student.AddStudentRequest;
 import com.TeachingManager.TeachingManager.DTO.Student.UpdateStudentRequest;
@@ -9,16 +11,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final InstituteRepository instituteRepo;
 
     //학생 추가 메서드
-    public Student save(AddStudentRequest request){
-
-        return studentRepository.save(request.toEntity());
+    public Student save(AddStudentRequest request, String email){
+        Optional<Institute> institute = instituteRepo.findByEmail(email);
+        if (institute.isPresent()){
+            return studentRepository.save(request.toEntity(institute.get()));
+        }
+        else {
+            System.out.println("존재하지 않는 학원입니다.");
+            return null;
+        }
     }
 
     //모든 학생 조회 메서드

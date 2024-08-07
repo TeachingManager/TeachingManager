@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.controller.API.Student;
 
 import com.TeachingManager.TeachingManager.Service.Student.StudentService;
+import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.domain.Student;
 import com.TeachingManager.TeachingManager.DTO.Student.AddStudentRequest;
 import com.TeachingManager.TeachingManager.DTO.Student.StudentResponse;
@@ -16,13 +17,25 @@ import java.util.List;
 @RestController
 public class StudentController {
     private final StudentService studentService;
+    private final TokenService tokenService;
 
+    // 학생 추가 api
     @PostMapping("/api/students")
-    public ResponseEntity<Student> addStudent(@RequestBody AddStudentRequest request){
-        Student savedStudent = studentService.save(request);
+    public ResponseEntity<Student> addStudent(@RequestHeader("Authorization") String authorizationHeader,@RequestBody AddStudentRequest request){
+        // 이메일 체크
+        String token = tokenService.extractedToken(authorizationHeader);
+        String email = tokenService.findEmailInToken(token);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        Student savedStudent = studentService.save(request, email);
+
+        if (savedStudent != null){
+            return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedStudent);
+        }
+        else{
+            // 존재하지 않는 이메일로 들어왔을 경우.
+            return (ResponseEntity<Student>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/api/students")

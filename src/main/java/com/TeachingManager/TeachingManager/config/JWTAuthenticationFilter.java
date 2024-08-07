@@ -1,5 +1,6 @@
 package com.TeachingManager.TeachingManager.config;
 
+import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,11 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
 
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
@@ -33,75 +30,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-//        /////////////////////////////////////////
-//        ////////////////////////////////////////
-//        // 헤더 출력
-//        System.out.println("//////////////////////////////////////");
-//        Enumeration<String> headerNames = request.getHeaderNames();
-//        System.out.println("Headers:");
-//        while (headerNames.hasMoreElements()) {
-//            String headerName = headerNames.nextElement();
-//            String headerValue = request.getHeader(headerName);
-//
-//            System.out.println(headerName + ": " + headerValue);
-//        }
-//
-//        // 파라미터 출력
-//        Enumeration<String> parameterNames = request.getParameterNames();
-//        System.out.println("Parameters:");
-//        while (parameterNames.hasMoreElements()) {
-//            String paramName = parameterNames.nextElement();
-//            String paramValue = request.getParameter(paramName);
-//            System.out.println(paramName + ": " + paramValue);
-//        }
-//
-//        // 요청 메서드 및 URI 출력
-//        System.out.println("Method: " + request.getMethod());
-//        System.out.println("Request URI: " + request.getRequestURI());
-//
-//        // 요청 본문 출력 (선택 사항, 주의: 본문을 읽으면 이후 처리가 어려울 수 있음)
-//        if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
-//            StringBuilder stringBuilder = new StringBuilder();
-//            BufferedReader bufferedReader = null;
-//            try {
-//                InputStream inputStream = request.getInputStream();
-//                if (inputStream != null) {
-//                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-//                    char[] charBuffer = new char[128];
-//                    int bytesRead = -1;
-//                    while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-//                        stringBuilder.append(charBuffer, 0, bytesRead);
-//                    }
-//                }
-//            } catch (IOException ex) {
-//                throw new ServletException("Error reading the request payload", ex);
-//            } finally {
-//                if (bufferedReader != null) {
-//                    try {
-//                        bufferedReader.close();
-//                    } catch (IOException ex) {
-//                        throw new ServletException("Error closing bufferedReader", ex);
-//                    }
-//                }
-//            }
-//            String requestBody = stringBuilder.toString();
-//            System.out.println("Request Body: " + requestBody);}
-//            System.out.println("//////////////////////////////////////");
-//
-//
-//
-//        /////////////////////////////////////////
-//        ////////////////////////////////////////
+        String authorizationHeader  = request.getHeader("Authorization");
+        String token;
 
-
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
+            token =  authorizationHeader.substring(7);
         } else {
             // Authorization 헤더가 없거나 올바른 형식이 아닌 경우 처리
             System.out.println("Authorization header is missing or not valid");
+            token = null;
         }
 
         if (tokenProvider.validToken(token)){

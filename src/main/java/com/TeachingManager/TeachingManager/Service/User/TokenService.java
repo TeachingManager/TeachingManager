@@ -62,4 +62,19 @@ public class TokenService {
         return Token;
     }
 
+    // 헤더에서 토큰을 추출하는 함수.
+    public String extractedToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        } else {
+            // Authorization 헤더가 없거나 올바른 형식이 아닌 경우 처리
+            System.out.println("Authorization header is missing or not valid");
+            return null; // 유효하지 않은 경우 null 반환
+        }
+    }
+
+    // 토큰에서 email 정보를 추출하는 함수
+    public String findEmailInToken(String token) {
+        return tokenProvider.getUserId(token);
+    }
 }

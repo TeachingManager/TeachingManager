@@ -1,80 +1,44 @@
 package com.TeachingManager.TeachingManager.domain;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalTime;
+
+
+@Getter
+@Setter
 public class Lecture {
-    private long lectureId;
+    private Long lecture_id;
     private String name;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String category;
     private String grade;
     private int fee;
 
-    // teacher 외래키
-    private long teacherId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institute_id", nullable = false)
+    private Institute teacher;
 
-    public long getLectureId() {
-        return lectureId;
-    }
 
-    public void setLectureId(long lectureId) {
-        this.lectureId = lectureId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public int getFee() {
-        return fee;
-    }
-
-    public void setFee(int fee) {
-        this.fee = fee;
-    }
-
-    public long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
+//    @Builder
+//    public Lecture(Long lecture_id, String name, LocalTime){
+//        this.title = title;
+//        this.start_date = start_date;
+//        this.end_date = end_date;
+//        this.memo = memo;
+//        this.institute = institute;
+//    }
+//
+//    public void update(String title, LocalTime start_date, LocalTime end_date, String memo) {
+//        this.title = title;
+//        this.start_date = start_date;
+//        this.end_date = end_date;
+//        this.memo = memo;
+//    }
 }
