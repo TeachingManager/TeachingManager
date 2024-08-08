@@ -2,7 +2,7 @@ package com.TeachingManager.TeachingManager.controller.API.Teacher;
 
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddSocialTeacherRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.AddTeacherRequest;
-import com.TeachingManager.TeachingManager.Service.Teacher.TeacherServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ public class ApiTeacherController {
     public String signup(AddTeacherRequest request) {
         // 여기에 일반적인 방법으롤 회원가입을 하는 경우
         teacherService.register(request);
-     return "redirect:/login/teacher";
+     return "redirect:/login";
     }
 
     @PostMapping("/social/teacher")

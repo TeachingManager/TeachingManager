@@ -1,7 +1,7 @@
 package com.TeachingManager.TeachingManager.service;
 
 import com.TeachingManager.TeachingManager.domain.Lecture;
-import com.TeachingManager.TeachingManager.repository.LectureRepository;
+import com.TeachingManager.TeachingManager.Repository.Lecture.LectureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

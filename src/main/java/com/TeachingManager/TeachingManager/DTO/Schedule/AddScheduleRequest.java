@@ -24,23 +24,24 @@ public class AddScheduleRequest {
 
     public Schedule toEntity() {
         // 현재 로그인 중인 학원의 아이디 가져오기
-
         return Schedule.builder()
                 .title(title)
                 .start_date(start_date)
                 .end_date(end_date)
                 .memo(memo)
-                .institute_id(getCurrentInstituteId())
+                .institute(getCurrentInstitute())
                 .build();
     }
 
     // 현재 접속자의 pk 값 가져오는 함수
-    public Long getCurrentInstituteId() {
+    public Institute getCurrentInstitute() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof Institute) {
-                return ((Institute) principal).getInstitute_id();
+            System.out.println("principal = " + principal);
+            if (principal instanceof Institute current_institute) {
+                return current_institute;
             }
         }
         return null;

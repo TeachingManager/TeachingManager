@@ -1,7 +1,7 @@
 package com.TeachingManager.TeachingManager.controller.API.Institute;
 
 import com.TeachingManager.TeachingManager.DTO.Institute.AddInstituteRequest;
-import com.TeachingManager.TeachingManager.Service.Institute.InstituteServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,8 @@ public class ApiInstituteController {
     @PostMapping("/institute")
     public String signup(AddInstituteRequest request){
 
-
         instService.register(request);
-        return "redirect:/login/register";
+        return "redirect:/login";
     }
 
     @GetMapping("/logout/institute")

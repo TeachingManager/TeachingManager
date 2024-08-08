@@ -35,20 +35,7 @@ public class ScheduleController {
     /*     일정 홈   */
     @GetMapping("/Schedule")
     public String Schedule(Model model, @AuthenticationPrincipal Institute institute){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-
-        System.out.println("principal.getClass() = " + principal.getClass());
-
-        System.out.println("institute = " + institute);
-        if (institute != null) {
-//            model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getPk()));
-            model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getInstitute_id()));
-        }
-        else{
-            return "redirect:/login/institute";
-        }
+        model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getPk()));
         return "schedule/schedule_main";
     }
 
