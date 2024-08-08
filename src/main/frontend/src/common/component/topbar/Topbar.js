@@ -9,11 +9,13 @@ export default function Topbar() {
 
     let pageTitle = 'Home'; // default title
     if (path.includes('/calendar')) {
-        pageTitle = 'Calendar';
+        pageTitle = '달력';
     } else if (path.includes('/students')) {
-        pageTitle = 'Student';
+        pageTitle = '학생';
     } else if (path.includes('/teachers')) {
-        pageTitle = 'Teacher';
+        pageTitle = '선생님';
+    } else if (path.includes('/lecture')) {
+        pageTitle  = '강의';
     }
 
     return (

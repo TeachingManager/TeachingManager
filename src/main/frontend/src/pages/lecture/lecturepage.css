@@ -1,0 +1,34 @@
+.lecturepage-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    
+
+    
+}
+
+.lecture-content {
+    margin-left: 64px;
+    padding: 16px;
+    height: 100%;
+
+    
+}
+
+.lecture-title {
+    width: 100%;
+    height : 48px;
+
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid rgba(0, 0, 0, 0.5);
+}
+
+.lecture-title .lecture-title-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-shadow: 1px 1px 2px rgba(185, 42, 42, 0.2);
+}
