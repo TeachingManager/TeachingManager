@@ -57,7 +57,24 @@ public class Teacher extends CustomUser {
     public Long getInstitutePk() {
         return institute != null ? institute.getPk() : null; 
     }
-
+    
+    public Teacher(String email, String password, Long pk, Long inst_id){
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setAuthorities(Role.PRESIDENT);
+        this.setPk(pk);
+        this.nickname = "";
+        this.teacher_name = "";
+        this.age = 0;
+        this.birth = LocalDate.parse("2024-08-09");
+        this.phoneNum = "";
+        this.gender = '?';
+        this.bank_account = bank_account;
+        this.salary = 0L;
+        this.provider = "";
+        this.institute = new Institute(inst_id);
+    }
+    
     @Builder
     public Teacher(String email, String nickname, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute, String provider
     ) {

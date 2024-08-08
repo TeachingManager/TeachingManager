@@ -2,7 +2,9 @@ package com.TeachingManager.TeachingManager.config.jwt;
 
 import com.TeachingManager.TeachingManager.Repository.User.RefreshTokenRepository;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
+import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.RefreshToken;
+import com.TeachingManager.TeachingManager.domain.Teacher;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,19 +56,39 @@ public class TokenProvider {
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
         Date now = new Date();
-        String token = Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setHeaderParam("alg", "HS512")
-                .setIssuedAt(now)
-                .setExpiration(expiredDate)
-                .setSubject(user.getEmail())
-                .claim("id", user.getPk())
-                .claim("roles", user.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()))
-                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
-                .compact();
-        System.out.println("TokenProvider 의 createToken 의 token = " + token);
+        String token = null;
+        if (user instanceof Institute){
+            token = Jwts.builder()
+                    .setHeaderParam("typ", "JWT")
+                    .setHeaderParam("alg", "HS512")
+                    .setIssuedAt(now)
+                    .setExpiration(expiredDate)
+                    .setSubject(user.getEmail())
+                    .claim("id", user.getPk())
+                    .claim("roles", user.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList()))
+                    .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                    .compact();
+            System.out.println("TokenProvider 의 createToken 의 Institute일 경우의 token = " + token);
+        }
+        else if(user instanceof Teacher){
+            token = Jwts.builder()
+                    .setHeaderParam("typ", "JWT")
+                    .setHeaderParam("alg", "HS512")
+                    .setIssuedAt(now)
+                    .setExpiration(expiredDate)
+                    .setSubject(user.getEmail())
+                    .claim("id", user.getPk())
+                    .claim("inst_id", ((Teacher) user).getInstitutePk())
+                    .claim("roles", user.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList()))
+                    .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                    .compact();
+            System.out.println("TokenProvider 의 createToken 의 Teacher 일 경우의 token = " + token);
+        }
+
         return token;
     }
 
@@ -91,9 +113,19 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         System.out.println("TokenProvider 의 getAuthentication 의 authorities = " + authorities);
-        CustomUser customUser = new CustomUser((claims.get("id", Long.class)), claims.getSubject(), "", roles);
 
-        return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
+
+        /////////////////// 여기에서 Teacher 이랑 Institue  나누어서 구분하기.
+        //////////////////////////////////
+        if(roles.contains("ROLE_TEACHER")){
+            Teacher teacher = new Teacher(claims.getSubject(), "", (claims.get("id", Long.class)),claims.get("inst_id",Long.class));
+            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
+        }
+        else if (roles.contains("ROLE_PRESIDENT")){
+            CustomUser customUser = new CustomUser((claims.get("id", Long.class)), claims.getSubject(), "", roles);
+            return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
+        }
+        return null;
     }
 
     public Long getUserId(String token) {

@@ -32,7 +32,6 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     private final InstituteRepository instituteRepo;
     private final TeacherRepository teacherRepo;
 
-
     //    새 스케쥴 생성
     @Override
     @Transactional
@@ -46,8 +45,6 @@ public class ScheduleServiceImpl  implements  ScheduleService{
             return null;
         }
     }
-
-
 
 //    강의를 스케쥴에 추가
     @Override
@@ -123,15 +120,11 @@ public class ScheduleServiceImpl  implements  ScheduleService{
         // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
         Long institute_id;
 
-        System.out.println("user.getAuthorities() = " + user.getAuthorities());
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))){
-            institute_id = user.getPk();
-        }
-        else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))){
-            Teacher teacher = teacherRepo.findByPk(user.getPk()).get();
-            institute_id = teacher.getInstitute() != null ? teacher.getInstitutePk() : null; // Institute의 ID 가져오기
+        if (user instanceof Teacher){
+            institute_id = ((Teacher) user).getInstitutePk();
+            System.out.println("institute_id = " + institute_id);
         } else {
-            institute_id = null;
+            institute_id = user.getPk();
         }
 
         return new MonthScheduleResponse(scheduleRepo.filter_by_date(institute_id, date_info));

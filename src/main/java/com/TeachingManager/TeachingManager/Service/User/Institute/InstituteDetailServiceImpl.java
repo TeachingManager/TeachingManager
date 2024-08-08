@@ -23,6 +23,10 @@ public class InstituteDetailServiceImpl implements UserDetailsService {
         return institute;
     }
 
+    public Institute loadInstituteByUsername(String email) {
+        return instRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+    }
+
     public UserDetails loadUserByPk(Long pk){
         Institute institute =  instRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
         return institute;

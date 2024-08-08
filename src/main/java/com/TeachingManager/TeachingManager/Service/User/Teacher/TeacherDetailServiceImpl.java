@@ -18,6 +18,10 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
         Teacher teacher =  teacherRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException((email)));
         return teacher;
     }
+
+    public Teacher loadTeacherByUsername(String email) throws UsernameNotFoundException {
+        return teacherRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException((email)));
+    }
     public CustomUser loadUserByPk(Long pk){
         Teacher teacher =  teacherRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
         return teacher;

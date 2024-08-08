@@ -6,7 +6,9 @@ import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteDetai
 import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherDetailServiceImpl;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
+import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.RefreshToken;
+import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,22 +36,17 @@ public class TokenService {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        CustomUser user;
 
         try {
-            user = (CustomUser) instituteService.loadUserByUsername(email);
-            System.out.println("여기까지222");
+            Institute user =  instituteService.loadInstituteByUsername(email);
+            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
+
         } catch (UsernameNotFoundException e) {
             // Institute 유저가 없을 경우 Teacher 유저 조회
-            user = (CustomUser) teacherService.loadUserByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
-            System.out.println("Teacher 타입 임을 확인하여 반환함.");
-        }
-        // 어느 곳에도 유저가 존재하지 않는 경우
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
+            Teacher user = teacherService.loadTeacherByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
+            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
 
-        return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
+        }
     }
 
 

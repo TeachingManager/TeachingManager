@@ -12,6 +12,4 @@ import lombok.*;
 public class SetTokenRequest {
     private String email;
     private String password;
-
-
 }

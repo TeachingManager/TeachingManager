@@ -25,6 +25,24 @@ public class Institute extends CustomUser {
     @Column(name = "phone_num", nullable = false)
     private String phoneNum;
 
+    public Institute(String email, String password, Long pk){
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setAuthorities(Role.PRESIDENT);
+        this.setPk(pk);
+        this.institute_name = "학원";
+        this.phoneNum = "";
+    }
+
+    public Institute(Long pk){
+        this.setEmail("");
+        this.setPassword("");
+        this.setAuthorities(Role.PRESIDENT);
+        this.setPk(pk);
+        this.institute_name = "학원";
+        this.phoneNum = "";
+    }
+
     @Builder
     public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){
         this.setEmail(email);
