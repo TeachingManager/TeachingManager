@@ -7,20 +7,16 @@ import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherDetailSer
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.RefreshToken;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +32,22 @@ public class TokenService {
     // 반환값 :  클라이언트에 전달할 DTO
     public SetTokenResponse LoginTokenCreate(String email, String password) {
 
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        CustomUser user;
 
-        Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByUsername(email));
-        CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByUsername(email));
+        try {
+            user = (CustomUser) instituteService.loadUserByUsername(email);
+            System.out.println("여기까지222");
+        } catch (UsernameNotFoundException e) {
+            // Institute 유저가 없을 경우 Teacher 유저 조회
+            user = (CustomUser) teacherService.loadUserByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
+            System.out.println("Teacher 타입 임을 확인하여 반환함.");
+        }
+        // 어느 곳에도 유저가 존재하지 않는 경우
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
 
         return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
     }

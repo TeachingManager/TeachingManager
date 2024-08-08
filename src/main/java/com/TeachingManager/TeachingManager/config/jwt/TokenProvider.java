@@ -25,12 +25,14 @@ public class TokenProvider {
 
     // 외부에서 호출하기 위한 공용메서드
     public String createAccessToken(CustomUser user, Duration expiredAt){
+        System.out.println("createAccessToken 의 user = " + user);
         Date now = new Date();
         return createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
     // 외부에서 refresh 토큰 호출 메서드
     public String createRefreshToken(CustomUser user, Duration expiredAt){
+        System.out.println("createRefreshToken 의 user = " + user);
         Date now = new Date();
         Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
         String token = createToken(expired_time, user);
@@ -84,8 +86,6 @@ public class TokenProvider {
 
         List<String> roles = (List<String>) claims.get("roles");
 
-        System.out.println("TokenProvider 의 getAuthentication 의 roles = " + roles);
-
         Collection<GrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -98,7 +98,6 @@ public class TokenProvider {
 
     public Long getUserId(String token) {
         Claims claims = getClaims(token);
-
         return claims.get("id", Long.class);
     }
 

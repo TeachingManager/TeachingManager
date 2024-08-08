@@ -15,11 +15,9 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
     public final TeacherRepository teacherRepo;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.println("teahcerDetailService 의 load 까지");
         Teacher teacher =  teacherRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException((email)));
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(teacher.getEmail()) // email 속성을 사용하여 사용자를 식별
-                .password(teacher.getPassword()) // 비밀번호 사용
-                .build();
+        return teacher;
     }
     public CustomUser loadUserByPk(Long pk){
         Teacher teacher =  teacherRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
