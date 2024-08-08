@@ -62,6 +62,8 @@ public class TokenService {
         return Token;
     }
 
+
+
     // 헤더에서 토큰을 추출하는 함수.
     public String extractedToken(String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -73,8 +75,9 @@ public class TokenService {
         }
     }
 
-    // 토큰에서 email 정보를 추출하는 함수
-    public String findEmailInToken(String token) {
-        return tokenProvider.getUserId(token);
+    // 헤더를 받으면 이메일을 반환하는 함수.
+    public String findEmailInHeaderToken(String authorizationHeader) {
+        return tokenProvider.getUserId(extractedToken(authorizationHeader));
     }
+
 }

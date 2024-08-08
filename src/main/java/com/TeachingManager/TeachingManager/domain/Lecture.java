@@ -1,22 +1,25 @@
 package com.TeachingManager.TeachingManager.domain;
 
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalTime;
 
 
 @Getter
-@Setter
+@Entity
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@Table(name = "lecture")
 public class Lecture {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lecture_id", updatable = false)
     private Long lecture_id;
+
+    @Column(name = "name", nullable = false)
     private String name;
-    private LocalTime startTime;
-    private LocalTime endTime;
+//    private LocalTime startTime;
+//    private LocalTime endTime;
     private String category;
     private String grade;
     private int fee;

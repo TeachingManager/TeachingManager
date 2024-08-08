@@ -20,13 +20,13 @@ public class StudentService {
     private final InstituteRepository instituteRepo;
 
     //학생 추가 메서드
-    public Student save(AddStudentRequest request, String email){
+    public Student create_student(AddStudentRequest request, String email){
         Optional<Institute> institute = instituteRepo.findByEmail(email);
         if (institute.isPresent()){
             return studentRepository.save(request.toEntity(institute.get()));
         }
         else {
-            System.out.println("존재하지 않는 학원입니다.");
+            System.out.println("존재하지 않는 학원에서의 요청입니다.");
             return null;
         }
     }

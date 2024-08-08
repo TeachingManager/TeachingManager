@@ -15,19 +15,15 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-public class StudentController {
+public class ApiStudentController {
     private final StudentService studentService;
     private final TokenService tokenService;
 
     // 학생 추가 api
     @PostMapping("/api/students")
     public ResponseEntity<Student> addStudent(@RequestHeader("Authorization") String authorizationHeader,@RequestBody AddStudentRequest request){
-        // 이메일 체크
-        String token = tokenService.extractedToken(authorizationHeader);
-        String email = tokenService.findEmailInToken(token);
-
-        Student savedStudent = studentService.save(request, email);
-
+        // 헤더에서 추출한 이메일 값으로 생성하기
+        Student savedStudent = studentService.create_student(request, tokenService.findEmailInHeaderToken(authorizationHeader));
         if (savedStudent != null){
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedStudent);
@@ -39,7 +35,7 @@ public class StudentController {
     }
 
     @GetMapping("/api/students")
-    public ResponseEntity<List<StudentResponse>> findAllArticles() {
+    public ResponseEntity<List<StudentResponse>> findAllStudents(@RequestHeader("Authorization") String authorizationHeader) {
         List<StudentResponse> students = studentService.findAll()
                 .stream()
                 .map(StudentResponse::new)
