@@ -51,9 +51,8 @@ public class TokenProvider {
 
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
-
         Date now = new Date();
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("alg", "HS512")
                 .setIssuedAt(now)
@@ -65,6 +64,8 @@ public class TokenProvider {
                         .collect(Collectors.toList()))
                 .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                 .compact();
+        System.out.println("TokenProvider 의 createToken 의 token = " + token);
+        return token;
     }
 
     // 토큰 유효성 검사
@@ -82,13 +83,17 @@ public class TokenProvider {
         Claims claims = getClaims(token);
 
         List<String> roles = (List<String>) claims.get("roles");
+
+        System.out.println("TokenProvider 의 getAuthentication 의 roles = " + roles);
+
         Collection<GrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
         System.out.println("TokenProvider 의 getAuthentication 의 authorities = " + authorities);
+        CustomUser customUser = new CustomUser((claims.get("id", Long.class)), claims.getSubject(), "", roles);
 
-        return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
+        return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
     }
 
     public Long getUserId(String token) {

@@ -1,17 +1,25 @@
 package com.TeachingManager.TeachingManager.Service.Schedule;
 
 import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.MonthScheduleResponse;
+import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleInfo;
 import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Schedule;
+import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -76,7 +84,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     public List<Map<String, String>> search_all_marker(Long institute_id) {
 
-        Collection<Schedule> scList = scheduleRepo.search_all(institute_id);
+        Collection<ScheduleInfo> scList = scheduleRepo.search_all(institute_id);
         List<Map<String, String>> schedules = new ArrayList<>();
         Map<String, String> temp_sc = new HashMap<>();
 
@@ -91,13 +99,40 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
     //    스케쥴 전체 검색
     @Override
-    public Collection<Schedule> searchAll_schedule(Long institute_id) {
-        return scheduleRepo.search_all(institute_id);
+    public MonthScheduleResponse searchAll_schedule(CustomUser user) {
+        // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
+        Long institute_id;
+
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("PRESIDENT"))){
+            institute_id = user.getPk();
+        }
+        else if (user.getAuthorities().contains(new SimpleGrantedAuthority("TEACHER"))){
+            Teacher teacher = (Teacher) user;
+            institute_id = teacher.getInstitute() != null ? teacher.getInstitutePk() : null; // Institute의 ID 가져오기
+        } else {
+            institute_id = null;
+        }
+        return new MonthScheduleResponse(scheduleRepo.search_all(institute_id));
     }
 
-//    스케쥴 날짜로 검색
+//    스케쥴 월별로 검색
     @Override
-    public Optional<Schedule> findByDate(Long institute_id, Date date_info) {
-        return scheduleRepo.filter_by_date(institute_id, date_info);
+    public MonthScheduleResponse searchAll_scheduleByDate(CustomUser user, LocalDate date_info) {
+        // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
+        Long institute_id;
+
+        System.out.println("user.getAuthorities() = " + user.getAuthorities());
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))){
+            institute_id = user.getPk();
+        }
+        else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))){
+            Teacher teacher = (Teacher) user;
+            institute_id = teacher.getInstitute() != null ? teacher.getInstitutePk() : null; // Institute의 ID 가져오기
+        } else {
+            institute_id = null;
+        }
+
+        return new MonthScheduleResponse(scheduleRepo.filter_by_date(institute_id, date_info));
+
     }
 }

@@ -25,8 +25,13 @@ dependencies {
 //	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// MySQL JDBC 드라이버 의존성 추가
-	implementation 'mysql:mysql-connector-java'// 사용하려는 MySQL 버전에 맞는 버전으로 변경
+//	// MySQL JDBC 드라이버 의존성 추가
+//	implementation 'mysql:mysql-connector-j:8.0.32'// 사용하려는 MySQL 버전에 맞는 버전으로 변경
+//	implementation 'mysql:mysql-connector-java'
+
+	implementation 'org.springframework.boot:spring-boot-starter'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -52,6 +57,9 @@ dependencies {
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 	implementation 'javax.activation:activation:1.1.1'
 
+
+	//Hibernate 직렬화에 도움을 준다. => 무한루프 영향 think
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
 }
 
 tasks.named('test') {

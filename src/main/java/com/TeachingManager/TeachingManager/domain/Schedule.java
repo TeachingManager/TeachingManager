@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.sql.Time;
 import java.text.DateFormat;

@@ -53,6 +53,10 @@ public class Teacher extends CustomUser {
     @JoinColumn(name = "institute_id")
     private Institute institute;
 
+    // 외래키 가져오는 함수
+    public Long getInstitutePk() {
+        return institute != null ? institute.getPk() : null; 
+    }
 
     @Builder
     public Teacher(String email, String nickname, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute, String provider

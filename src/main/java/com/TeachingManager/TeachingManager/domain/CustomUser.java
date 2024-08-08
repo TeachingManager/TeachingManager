@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class CustomUser implements UserDetails {
+public class CustomUser implements UserDetails {
 
     // 학원과 강사 모두가 사용할 속성들
     @Id
@@ -37,7 +38,15 @@ public abstract class CustomUser implements UserDetails {
     @Column(name = "authorities", nullable = false)
     private String authorities;
 
-//Role.java 에서 가져오는 것.
+    public CustomUser(Long pk, String email, String password, List<String> roles) {
+        this.pk = pk;
+        this.email = email;
+        this.password = password;
+        this.failedCount = 0;
+        this.authorities = String.join(", ", roles);
+    }
+
+    //Role.java 에서 가져오는 것.
     public void setAuthorities(Role role) {
         this.authorities = role.getRoles();
     }
