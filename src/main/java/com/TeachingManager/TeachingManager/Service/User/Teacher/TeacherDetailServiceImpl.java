@@ -15,7 +15,6 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
     public final TeacherRepository teacherRepo;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("teahcerDetailService 의 load 까지");
         Teacher teacher =  teacherRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException((email)));
         return teacher;
     }

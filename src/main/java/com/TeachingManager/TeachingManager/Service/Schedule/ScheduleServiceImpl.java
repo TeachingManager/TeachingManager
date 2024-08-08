@@ -6,6 +6,7 @@ import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleInfo;
 import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Schedule;
@@ -29,6 +30,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
     private final ScheduleRepository scheduleRepo;
     private final InstituteRepository instituteRepo;
+    private final TeacherRepository teacherRepo;
 
 
     //    새 스케쥴 생성
@@ -126,7 +128,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
             institute_id = user.getPk();
         }
         else if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))){
-            Teacher teacher = (Teacher) user;
+            Teacher teacher = teacherRepo.findByPk(user.getPk()).get();
             institute_id = teacher.getInstitute() != null ? teacher.getInstitutePk() : null; // Institute의 ID 가져오기
         } else {
             institute_id = null;
