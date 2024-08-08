@@ -38,7 +38,7 @@ public class ApiScheduleController {
     /*  일정 추가 api  */
     @PostMapping("/api/Schedule")
     public ResponseEntity<Schedule> Create_Schedule(@RequestHeader("Authorization") String authorizationHeader,@RequestBody AddScheduleRequest request) {
-        Schedule sc = scheduleService.create_schedule(request, tokenService.findEmailInHeaderToken(authorizationHeader));
+        Schedule sc = scheduleService.create_schedule(request, tokenService.findPKInHeaderToken(authorizationHeader));
 
         if (sc != null){
             return ResponseEntity.status(HttpStatus.CREATED).body(sc);

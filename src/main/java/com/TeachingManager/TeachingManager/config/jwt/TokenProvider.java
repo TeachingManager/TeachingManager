@@ -59,7 +59,7 @@ public class TokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiredDate)
                 .setSubject(user.getEmail())
-                .claim("id", user.getEmail())
+                .claim("id", user.getPk())
                 .claim("roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
@@ -91,10 +91,10 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
     }
 
-    public String getUserId(String token) {
+    public Long getUserId(String token) {
         Claims claims = getClaims(token);
 
-        return claims.get("id", String.class);
+        return claims.get("id", Long.class);
     }
 
     private Claims getClaims(String token) {

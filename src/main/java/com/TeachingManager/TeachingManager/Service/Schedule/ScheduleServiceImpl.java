@@ -26,9 +26,8 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     //    새 스케쥴 생성
     @Override
     @Transactional
-    public Schedule create_schedule(AddScheduleRequest request, String email) {
-        Optional<Institute> institute = instituteRepo.findByEmail(email);
-        System.out.println("create_schedule의 institute = " + institute);
+    public Schedule create_schedule(AddScheduleRequest request, Long pk) {
+        Optional<Institute> institute = instituteRepo.findByPk(pk);
         if (institute.isPresent()){
             return scheduleRepo.save(request.toEntity(institute.get()));
         }

@@ -75,8 +75,8 @@ public class TokenService {
         }
     }
 
-    // 헤더를 받으면 이메일을 반환하는 함수.
-    public String findEmailInHeaderToken(String authorizationHeader) {
+    // 헤더를 받으면 Pk 값을 반환하는 함수
+    public Long findPKInHeaderToken(String authorizationHeader) {
         return tokenProvider.getUserId(extractedToken(authorizationHeader));
     }
 

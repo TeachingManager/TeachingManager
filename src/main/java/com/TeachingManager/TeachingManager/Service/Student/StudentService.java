@@ -20,8 +20,8 @@ public class StudentService {
     private final InstituteRepository instituteRepo;
 
     //학생 추가 메서드
-    public Student create_student(AddStudentRequest request, String email){
-        Optional<Institute> institute = instituteRepo.findByEmail(email);
+    public Student create_student(AddStudentRequest request, Long pk){
+        Optional<Institute> institute = instituteRepo.findByPk(pk);
         if (institute.isPresent()){
             return studentRepository.save(request.toEntity(institute.get()));
         }

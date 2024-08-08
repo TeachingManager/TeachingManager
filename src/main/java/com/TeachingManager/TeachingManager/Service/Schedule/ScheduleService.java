@@ -12,7 +12,7 @@ public interface ScheduleService {
 
 
     // 내부에서 scid 를 만든다.
-    Schedule create_schedule(AddScheduleRequest request, String email);
+    Schedule create_schedule(AddScheduleRequest request, Long pk);
 
     //    강의 불러오기
     void import_schedule(List<Schedule> scList);

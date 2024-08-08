@@ -13,7 +13,6 @@ public class MemoryLectureRepository implements LectureRepository {
 
     @Override
     public void save(Lecture lecture) {
-        lecture.setLecture_id(++sequence);
         store.put(lecture.getLecture_id(), lecture);
     }
 

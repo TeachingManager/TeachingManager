@@ -23,7 +23,7 @@ public class ApiStudentController {
     @PostMapping("/api/students")
     public ResponseEntity<Student> addStudent(@RequestHeader("Authorization") String authorizationHeader,@RequestBody AddStudentRequest request){
         // 헤더에서 추출한 이메일 값으로 생성하기
-        Student savedStudent = studentService.create_student(request, tokenService.findEmailInHeaderToken(authorizationHeader));
+        Student savedStudent = studentService.create_student(request, tokenService.findPKInHeaderToken(authorizationHeader));
         if (savedStudent != null){
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedStudent);
