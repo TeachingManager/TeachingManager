@@ -56,6 +56,7 @@ public class TeacherServiceImpl {
                 ).getPk();
     }
 
+    // 선생님 한명 조회
     public TeacherInfo search_teacher(Long teacher_id, Long institute_id) {
         Optional<Teacher> teacher = teacherRepo.findByPk(teacher_id);
         // 해당 티처가 존재하고, 요청 받은 학원 소속일 경우 정보 전달.
@@ -79,10 +80,16 @@ public class TeacherServiceImpl {
     // 선생님 업데이트
     @Transactional
     public Teacher update_Teacher(CustomUser user, UpdateTeacherRequest request) {
-        Teacher sc = teacherRepo.findByPk(user.getPk()).orElseThrow(() -> new IllegalArgumentException("not found : " + user.getPk()));
-        sc.update(request.getTeacher_name(), request.getAge(), request.getBirth(), request.getPhoneNum(), request.getGender(), request.getBank_account(), request.getSalary(),request.getNickname());
-        teacherRepo.save(sc);
-        return sc;
+        if(user instanceof  Teacher){
+            Teacher sc = teacherRepo.findByPk(user.getPk()).orElseThrow(() -> new IllegalArgumentException("not found : " + user.getPk()));
+            sc.update(request.getTeacher_name(), request.getAge(), request.getBirth(), request.getPhoneNum(), request.getGender(), request.getBank_account(), request.getSalary(),request.getNickname());
+            teacherRepo.save(sc);
+            return sc;
+        }
+        else{
+            throw new RuntimeException("강사가 아닌 유저가 접근");
+        }
+
     }
 
     // 선생님 학원 변경

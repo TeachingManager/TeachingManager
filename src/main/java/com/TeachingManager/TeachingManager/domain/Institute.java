@@ -56,6 +56,7 @@ public class Institute extends CustomUser {
     public void update( String institute_name, String address, String phoneNum){
         this.institute_name = institute_name;
         this.phoneNum = phoneNum;
+        this.address = address;
     }
 
 }

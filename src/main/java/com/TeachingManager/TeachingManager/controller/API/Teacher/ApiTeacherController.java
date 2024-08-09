@@ -1,11 +1,8 @@
 package com.TeachingManager.TeachingManager.controller.API.Teacher;
 
-import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse;
-import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.*;
 import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherServiceImpl;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
-import com.TeachingManager.TeachingManager.domain.Schedule;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
