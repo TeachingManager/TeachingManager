@@ -48,10 +48,16 @@ public class StudentService {
     public Student findById(CustomUser user, long id){
         Student student = studentRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
-        if(student.getInstitute().getPk().equals(user.getPk())){
-            return student;
+        if(user instanceof Teacher) {
+            if (student.getInstitute().getPk().equals(((Teacher) user).getInstitutePk())) {
+                return student;
+            } else {
+                throw new RuntimeException("올바르지 않은 접근입니다.");
+            }
         }
-        else{
+        if (student.getInstitute().getPk().equals(user.getPk())) {
+            return student;
+        } else {
             throw new RuntimeException("올바르지 않은 접근입니다.");
         }
     }

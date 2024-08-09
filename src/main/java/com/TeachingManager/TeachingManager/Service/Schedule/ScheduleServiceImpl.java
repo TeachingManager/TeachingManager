@@ -88,11 +88,21 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     public Schedule search_schedule(CustomUser user, Long schedule_id) {
         Schedule schedule = scheduleRepo.searchById(schedule_id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + schedule_id));
-        if(schedule.getInstitute().getPk().equals(user.getPk())){
-            return schedule;
+        // 선생님이 접근시
+        if(user instanceof Teacher) {
+            if (schedule.getInstitute().getPk().equals(((Teacher) user).getInstitutePk())) {
+                return schedule;
+            } else {
+                throw new RuntimeException("올바르지 않은 접근입니다.");
+            }
         }
+        // 학원이 접근시
         else{
-            throw new RuntimeException("올바르지 않은 접근입니다.");
+            if (schedule.getInstitute().getPk().equals(user.getPk())) {
+                return schedule;
+            } else {
+                throw new RuntimeException("올바르지 않은 접근입니다.");
+            }
         }
     }
 

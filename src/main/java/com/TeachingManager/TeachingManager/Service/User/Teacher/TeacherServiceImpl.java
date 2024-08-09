@@ -1,13 +1,16 @@
 package com.TeachingManager.TeachingManager.Service.User.Teacher;
 
 import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleInfo;
+import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.*;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Schedule;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 public class TeacherServiceImpl {
     private final TeacherRepository teacherRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    @Transactional
     public Long register(AddTeacherRequest dto){
         return teacherRepo
                 .save(Teacher.builder()
@@ -37,7 +40,7 @@ public class TeacherServiceImpl {
                         .build()
                 ).getPk();
     }
-
+    @Transactional
     public Long social_register(AddSocialTeacherRequest dto) {
         return teacherRepo
                 .save(Teacher.builder()
@@ -72,6 +75,39 @@ public class TeacherServiceImpl {
         Set<TeacherInfo> teacherInfoList = teacherList.stream().map(this::convertToDTO).collect(Collectors.toSet());
         return new FindAllTeacherResponse(teacherInfoList);
     }
+
+    // 선생님 업데이트
+    @Transactional
+    public Teacher update_Teacher(CustomUser user, UpdateTeacherRequest request) {
+        Teacher sc = teacherRepo.findByPk(user.getPk()).orElseThrow(() -> new IllegalArgumentException("not found : " + user.getPk()));
+        sc.update(request.getTeacher_name(), request.getAge(), request.getBirth(), request.getPhoneNum(), request.getGender(), request.getBank_account(), request.getSalary(),request.getNickname());
+        teacherRepo.save(sc);
+        return sc;
+    }
+
+    // 선생님 학원 변경
+//    @Transactional
+//    public Teacher updateInstitue_InTeacher(CustomUser user)
+
+    // 선생님 삭제
+    @Transactional
+    public String delete_Teacher(CustomUser user){
+        if(user instanceof Teacher){
+            Optional<Teacher> teacher = teacherRepo.findByEmail(user.getEmail());
+            if(teacher.isPresent()){
+                teacherRepo.delete(teacher.get());
+                return "삭제 완료!";
+            }
+            else{
+                return "존재하지 않는 강사회원입니다.";
+            }
+        }
+        else {
+            return "잘못된 선생님 삭제 기능 접근";
+        }
+    }
+
+
 
     public TeacherInfo convertToDTO(Teacher teacherInstance) {
         return new TeacherInfo(teacherInstance.getPk(), teacherInstance.getTeacher_name(),

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,7 +43,8 @@ public class WebSecurityConfig{
                 authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google"
-                        ).permitAll()//로그인, 회원가입은 인증 xq
+                        ).permitAll()//로그인, 회원가입은 인증
+                        .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
                         .requestMatchers("/api/fee", "/api/teacher", "/teacher").hasRole("PRESIDENT")// 수강료, 선생님 api 등은 학원장만
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 

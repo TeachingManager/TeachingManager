@@ -93,7 +93,7 @@ public class Teacher extends CustomUser {
         this.institute = institute;
     }
 
-    public void update(String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary) {
+    public void update(String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, String nickname) {
         this.teacher_name = teacher_name;
         this.age = age;
         this.birth = birth;
@@ -101,5 +101,6 @@ public class Teacher extends CustomUser {
         this.gender = gender;
         this.bank_account = bank_account;
         this.salary = salary;
+        this.nickname = nickname;
     }
 }
