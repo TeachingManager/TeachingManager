@@ -37,22 +37,7 @@ public class ScheduleController {
 //   강의 목록(일정홈)  강의 가져오기
 
     /*     일정 홈   */
-    // 자기 자신학원, 또는 소속되어있는 학원의 특정 달 정보를 가져온다. (이번달)
-    @GetMapping("/Schedule")
-    public ResponseEntity<MonthScheduleResponse> Schedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDate(user, request.getDate_info()));
-    }
 
-    /*     일정 디테일    */
-    @GetMapping("/Schedule/Detail")
-    public String Detail_Schedule(@RequestParam("pk") Long pk, Model model) {
-
-        ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
-
-        model.addAttribute("schedule", response);
-
-        return "schedule/schedule_detail";
-    }
 
 
 //    /*  일정  작성 폼  */
@@ -62,20 +47,20 @@ public class ScheduleController {
 //    }
 
 
-    /*     일정  폼   */
-    @GetMapping("/Schedule/form")
-    public String Update_Schedule(@RequestParam(required = false, name = "pk") Long pk, Model model) {
-
-        if (pk == null){
-            model.addAttribute("schedule", new ScheduleResponse());
-        }
-        else {
-            ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
-            model.addAttribute("schedule", response);
-        }
-
-        return "schedule/schedule_form";
-    }
+//    /*     일정  폼   */
+//    @GetMapping("/Schedule/form")
+//    public String Update_Schedule(@RequestParam(required = false, name = "pk") Long pk, Model model) {
+//
+//        if (pk == null){
+//            model.addAttribute("schedule", new ScheduleResponse());
+//        }
+//        else {
+//            ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
+//            model.addAttribute("schedule", response);
+//        }
+//
+//        return "schedule/schedule_form";
+//    }
 
 
 //   /* 강의 가져오기 */

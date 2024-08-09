@@ -18,7 +18,6 @@ public class ApiInstituteController {
 
     @PostMapping("/institute")
     public String signup(AddInstituteRequest request){
-
         instService.register(request);
         return "redirect:/login";
     }

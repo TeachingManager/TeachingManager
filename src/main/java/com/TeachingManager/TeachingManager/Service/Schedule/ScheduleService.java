@@ -22,14 +22,14 @@ public interface ScheduleService {
     //    강의 불러오기
     void import_schedule(List<Schedule> scList);
 
-    Schedule update_schedule(Long scid, UpdateScheduleRequest request);
+    Schedule update_schedule(CustomUser user,Long scid, UpdateScheduleRequest request);
 
-    void delete_schedule(Long scid);
+    void delete_schedule(CustomUser user, Long scid);
 
 
     /* 검색 관련 */
 //    디테일 검색
-    Optional<Schedule> search_schedule(Long schedule_id);
+    Schedule search_schedule(CustomUser user, Long schedule_id);
 
     // 목록 검색
 

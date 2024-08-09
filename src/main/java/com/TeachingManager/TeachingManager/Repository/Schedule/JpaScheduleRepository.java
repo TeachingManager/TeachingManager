@@ -65,10 +65,8 @@ public class JpaScheduleRepository  implements ScheduleRepository{
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
-        System.out.println("institute_id = " + institute_id);
-
         Set<Schedule> scheduleSet = em.createQuery(
-                        "select sc from Schedule sc where sc.institute.id = :institute_id AND (sc.start_date <= :endOfMonth OR sc.end_date >= :startOfMonth)", Schedule.class)
+                        "SELECT sc FROM Schedule sc WHERE sc.institute.id = :institute_id AND sc.start_date <= :endOfMonth AND sc.end_date >= :startOfMonth", Schedule.class)
                 .setParameter("institute_id", institute_id)
                 .setParameter("startOfMonth", startOfMonth)
                 .setParameter("endOfMonth", endOfMonth)

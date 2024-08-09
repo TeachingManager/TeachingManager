@@ -7,10 +7,7 @@ import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
-import com.TeachingManager.TeachingManager.domain.CustomUser;
-import com.TeachingManager.TeachingManager.domain.Institute;
-import com.TeachingManager.TeachingManager.domain.Schedule;
-import com.TeachingManager.TeachingManager.domain.Teacher;
+import com.TeachingManager.TeachingManager.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,26 +53,47 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 //   스케쥴 수정
     @Override
     @Transactional
-    public Schedule update_schedule(Long scid, UpdateScheduleRequest request) {
+    public Schedule update_schedule(CustomUser user,Long scid, UpdateScheduleRequest request) {
         Schedule sc = scheduleRepo.searchById(scid).orElseThrow(() -> new IllegalArgumentException("not found : " + scid));
-        sc.update(request.getTitle(), request.getStart_date(), request.getEnd_date(), request.getMemo());
-        return sc;
+        if(sc.getInstitute().getPk().equals(user.getPk())){
+            sc.update(request.getTitle(), request.getStart_date(), request.getEnd_date(), request.getMemo());
+            return sc;
+        } // 학생의 소속
+        else{
+            throw new RuntimeException("올바르지 않은 접근입니다.");
+        }
     }
 
 
 //    스케쥴 삭제
     @Override
     @Transactional
-    public void delete_schedule(Long scid) {
-        scheduleRepo.delete(scid);
+    public void delete_schedule(CustomUser user, Long scid) {
+        Optional<Schedule> schedule = scheduleRepo.searchById(scid);
+        if(schedule.isEmpty()){
+            throw new RuntimeException("존재하지 않는 일정입니다.");
+        }
+        else if(schedule.get().getInstitute().getPk().equals(user.getPk())){
+            scheduleRepo.delete(scid);
+        }
+        else{
+            throw new RuntimeException("올바르지 않은 접근입니다.");
+        }
     }
 
 
 //    단일 스케쥴 검색
     @Override
     @Transactional
-    public Optional<Schedule> search_schedule(Long schedule_id) {
-        return scheduleRepo.searchById(schedule_id);
+    public Schedule search_schedule(CustomUser user, Long schedule_id) {
+        Schedule schedule = scheduleRepo.searchById(schedule_id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + schedule_id));
+        if(schedule.getInstitute().getPk().equals(user.getPk())){
+            return schedule;
+        }
+        else{
+            throw new RuntimeException("올바르지 않은 접근입니다.");
+        }
     }
 
     

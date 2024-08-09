@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 public class ApiStudentController {
     private final StudentService studentService;
-    private final TokenService tokenService;
 
     // 학생 추가 api
     @PostMapping("/api/students")
