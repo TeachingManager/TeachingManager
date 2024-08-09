@@ -122,7 +122,6 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
         if (user instanceof Teacher){
             institute_id = ((Teacher) user).getInstitutePk();
-            System.out.println("institute_id = " + institute_id);
         } else {
             institute_id = user.getPk();
         }
