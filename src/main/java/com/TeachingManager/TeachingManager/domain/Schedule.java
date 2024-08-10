@@ -41,7 +41,7 @@ public class Schedule {
 //  //   강의 일대 다 관계
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "lecture_id", nullable = true)
-//    private Long lid;
+//    private Long lecture_id;
 
 
     @Builder

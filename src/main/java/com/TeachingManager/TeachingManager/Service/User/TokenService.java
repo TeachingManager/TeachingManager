@@ -45,7 +45,6 @@ public class TokenService {
             // Institute 유저가 없을 경우 Teacher 유저 조회
             Teacher user = teacherService.loadTeacherByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
             return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-
         }
     }
 
@@ -70,7 +69,6 @@ public class TokenService {
         System.out.println("Token = " + Token);
         return Token;
     }
-
 
 
     // 헤더에서 토큰을 추출하는 함수.

@@ -17,10 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomUserDetailServiceImpl implements UserDetailsService{
 
-    @Autowired
     private final InstituteRepository instRepo;
-
-    @Autowired
     private final TeacherRepository teacherRepo;
 
     @Override
