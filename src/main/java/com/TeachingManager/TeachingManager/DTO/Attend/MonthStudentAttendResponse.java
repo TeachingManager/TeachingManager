@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 public class MonthStudentAttendResponse {
+    private Long attend_id;
     private Long student_id;
     private String student_name;
     private Set<Byte> attendaneSet;

@@ -1,7 +1,7 @@
 package com.TeachingManager.TeachingManager.Repository.Attend;
 
 
-import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.MonthLectureAttendanceRecord;
+import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.LectureMonthAttendanceRecord;
 import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentMonthLectureAttendRecord;
 import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord;
 import com.TeachingManager.TeachingManager.domain.Attend;
@@ -28,7 +28,7 @@ public interface AttendRepository {
     List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(Long student_id, LocalDate yearMonthDay);
 
     // 특정 강의의 특정 달의 출결 불러오기
-    List<MonthLectureAttendanceRecord> searchMonthlyAttendanceByLectureId(Long lecture_id, LocalDate yearMonthDay);
+    List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(Long lecture_id, LocalDate yearMonthDay);
 
     // 특정 학생의 특정 강의의 특정 달 출결 불러오기
     List<StudentMonthLectureAttendRecord> searchMonthlyAttendanceByLectureAndStudentId(Long lecture_id, Long student_id, LocalDate yearMonthDay);

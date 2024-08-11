@@ -1,6 +1,6 @@
 package com.TeachingManager.TeachingManager.Repository.Attend;
 
-import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.MonthLectureAttendanceRecord;
+import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.LectureMonthAttendanceRecord;
 import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentMonthLectureAttendRecord;
 import com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord;
 import com.TeachingManager.TeachingManager.domain.Attend;
@@ -60,7 +60,7 @@ public class AttendRepositoryImpl implements AttendRepository{
         return Optional.ofNullable(attend);
     }
 
-    // 학생의 특정 달의 출석
+    // 학생의 특정 달의 모든 강의에 대한  출석
     @Override
     public List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(Long student_id, LocalDate date_info) {
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
@@ -68,7 +68,7 @@ public class AttendRepositoryImpl implements AttendRepository{
 
         return em.createQuery(
 //                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord(at.student_id, lec.name, at.attendance, sc.start_date)" +
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord(at.student_id, at.attendance, sc.start_date)" +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord(at.attend_id,at.student_id, at.attendance, sc.start_date)" +
                             "FROM Attend at " +
                             "INNER JOIN at.schedule sc " +
 //                            "INNER JOIN sc.lecture lec " +
@@ -86,12 +86,12 @@ public class AttendRepositoryImpl implements AttendRepository{
 
     // 특정 강의의 모든 학생들의 특정달의 출석
     @Override
-    public List<MonthLectureAttendanceRecord> searchMonthlyAttendanceByLectureId(Long lecture_id, LocalDate date_info) {
+    public List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(Long lecture_id, LocalDate date_info) {
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.MonthLectureAttendanceRecord(st.id, st.name, at.attendance, sc.start_date) " +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.LectureMonthAttendanceRecord(at.attend_id, st.id, st.name, at.attendance, sc.start_date) " +
                                 "FROM Attend at " +
                                 "INNER JOIN at.schedule sc " +
                                 "INNER JOIN at.student st " +
@@ -99,7 +99,7 @@ public class AttendRepositoryImpl implements AttendRepository{
                                     "AND sc.start_date <= :endOfMonth " +
                                     "AND sc.end_date >= :startOfMonth " +
                                 "ORDER BY at.student_id ASC, sc.start_date ASC", // 학생 순서대로, 동일학생이면 시작날짜 순서대로.
-                        MonthLectureAttendanceRecord.class
+                        LectureMonthAttendanceRecord.class
                 ).setParameter("lecture_id", lecture_id)
                 .setParameter("startOfMonth", startOfMonth)
                 .setParameter("endOfMonth", endOfMonth)
