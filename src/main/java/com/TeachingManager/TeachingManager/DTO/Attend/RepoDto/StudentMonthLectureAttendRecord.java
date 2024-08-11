@@ -1,8 +1,6 @@
 package com.TeachingManager.TeachingManager.DTO.Attend.RepoDto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
