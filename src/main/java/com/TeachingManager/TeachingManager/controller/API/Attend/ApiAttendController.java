@@ -30,7 +30,10 @@ public class ApiAttendController {
     // 단일 출석에 관한 정보를 가져오는 api. 대게 각 출석의 메모를 가져오는데 사용될 것 같긴하다.
     @PostMapping("/api/attend/{pk}")
     public ResponseEntity<AttendInfo> Detail_Attend(@PathVariable("pk") Long pk, @AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok().body(attendService.searchById(user, pk));
+        if(user != null) {
+            return ResponseEntity.ok().body(attendService.searchById(user, pk));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     // 특정 달의 특정 강의의 출석 리스트
@@ -40,7 +43,10 @@ public class ApiAttendController {
             @RequestParam(value = "lecture_id") Long lecture_id,
             @RequestParam(value = "date_info") LocalDate date_info
     ) {
-        return ResponseEntity.ok().body(attendService.findMonthlyLectureAttendance(user, lecture_id, date_info));
+        if(user != null){
+            return ResponseEntity.ok().body(attendService.findMonthlyLectureAttendance(user, lecture_id, date_info));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     // 특정 달의 특정 학생의 출석 리스트
@@ -50,7 +56,10 @@ public class ApiAttendController {
             @RequestParam(value = "student_id") Long student_id,
             @RequestParam(value = "date_info") LocalDate date_info
     ) {
-        return ResponseEntity.ok().body(attendService.findMonthlyStudentAttendance(user, student_id, date_info));
+        if(user != null ) {
+            return ResponseEntity.ok().body(attendService.findMonthlyStudentAttendance(user, student_id, date_info));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 
@@ -64,7 +73,7 @@ public class ApiAttendController {
             @RequestParam(value = "schedule_id") Long schedule_id,
             @RequestParam(value = "student_id") Long student_id
     ){
-        if(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) { // 학원만 생성 가능
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT")))  { // 학원만 생성 가능
             return ResponseEntity.ok().body(attendService.createSingleAttend(user, schedule_id, student_id));
         } else return ResponseEntity.ok().build();
     }
@@ -77,7 +86,10 @@ public class ApiAttendController {
     public ResponseEntity<String> updateAttend(
             @AuthenticationPrincipal CustomUser user,
             @RequestBody UpdateAttendListRequest request){
-        return ResponseEntity.ok().body(attendService.updateAttends(user, request));
+        if(user != null ) {
+            return ResponseEntity.ok().body(attendService.updateAttends(user, request));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 
@@ -89,7 +101,7 @@ public class ApiAttendController {
             @AuthenticationPrincipal CustomUser user,
             @RequestParam(value = "attend_id") Long attend_id
     ) {
-        if(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) { // 학원만 삭제 가능
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) { // 학원만 삭제 가능
             return ResponseEntity.ok().body(attendService.deleteSingleAttend(user, attend_id));
         } else return ResponseEntity.ok().body("학원 계정만 접근이 가능합니다.");
     }

@@ -27,13 +27,12 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
     private final ScheduleRepository scheduleRepo;
     private final InstituteRepository instituteRepo;
-    private final TeacherRepository teacherRepo;
 
     //    새 스케쥴 생성
     @Override
     @Transactional
-    public Schedule create_schedule(AddScheduleRequest request, Long pk) {
-        Optional<Institute> institute = instituteRepo.findByPk(pk);
+    public Schedule create_schedule(AddScheduleRequest request, CustomUser user) {
+        Optional<Institute> institute = instituteRepo.findByPk(user.getPk());
         if (institute.isPresent()){
             return scheduleRepo.save(request.toEntity(institute.get()));
         }
@@ -43,22 +42,16 @@ public class ScheduleServiceImpl  implements  ScheduleService{
         }
     }
 
-//    강의를 스케쥴에 추가
-    @Override
-    public void import_schedule(List<Schedule> scList) {
-        scList.forEach(scheduleRepo::save);
-    }
-
 
 //   스케쥴 수정
     @Override
     @Transactional
-    public Schedule update_schedule(CustomUser user,Long scid, UpdateScheduleRequest request) {
-        Schedule sc = scheduleRepo.searchById(scid).orElseThrow(() -> new IllegalArgumentException("not found : " + scid));
-        if(sc.getInstitute().getPk().equals(user.getPk())){
-            sc.update(request.getTitle(), request.getStart_date(), request.getEnd_date(), request.getMemo());
-            scheduleRepo.save(sc);
-            return sc;
+    public Schedule update_schedule(CustomUser user, Long scid, UpdateScheduleRequest request) {
+        Optional<Schedule> sc = scheduleRepo.searchById(user.getPk(), scid);
+        if(sc.isPresent()){
+            sc.get().update(request.getTitle(), request.getStart_date(), request.getEnd_date(), request.getMemo());
+            scheduleRepo.save(sc.get());
+            return sc.get();
         } // 학생의 소속
         else{
             throw new RuntimeException("올바르지 않은 접근입니다.");
@@ -70,16 +63,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     @Transactional
     public void delete_schedule(CustomUser user, Long scid) {
-        Optional<Schedule> schedule = scheduleRepo.searchById(scid);
-        if(schedule.isEmpty()){
-            throw new RuntimeException("존재하지 않는 일정입니다.");
-        }
-        else if(schedule.get().getInstitute().getPk().equals(user.getPk())){
-            scheduleRepo.delete(scid);
-        }
-        else{
-            throw new RuntimeException("올바르지 않은 접근입니다.");
-        }
+        scheduleRepo.delete(user.getPk(),scid);
     }
 
 
@@ -87,26 +71,46 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     @Transactional
     public Schedule search_schedule(CustomUser user, Long schedule_id) {
-        Schedule schedule = scheduleRepo.searchById(schedule_id)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + schedule_id));
+
         // 선생님이 접근시
         if(user instanceof Teacher) {
-            if (schedule.getInstitute().getPk().equals(((Teacher) user).getInstitutePk())) {
-                return schedule;
+            Optional<Schedule> schedule = scheduleRepo.searchById(((Teacher) user).getInstitutePk(),schedule_id);
+            if (schedule.isPresent()) {
+                return schedule.get();
             } else {
-                throw new RuntimeException("올바르지 않은 접근입니다.");
+                throw new RuntimeException("강사->스케줄의 올바르지 않은 접근입니다.");
             }
         }
         // 학원이 접근시
         else{
-            if (schedule.getInstitute().getPk().equals(user.getPk())) {
-                return schedule;
+            Optional<Schedule> schedule = scheduleRepo.searchById(user.getPk(),schedule_id);
+            if (schedule.isPresent()) {
+                return schedule.get();
             } else {
-                throw new RuntimeException("올바르지 않은 접근입니다.");
+                throw new RuntimeException("학원->스케쥴의 올바르지 않은 접근입니다.");
             }
         }
     }
 
+
+    //    스케쥴 월별로 검색
+    @Override
+    public MonthScheduleResponse searchAll_scheduleByDate(CustomUser user, LocalDate date_info) {
+        // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
+        Long institute_id;
+
+        if (user instanceof Teacher){
+            institute_id = ((Teacher) user).getInstitutePk();
+        } else {
+            institute_id = user.getPk();
+        }
+
+        return new MonthScheduleResponse(scheduleRepo.filter_by_date(institute_id, date_info));
+
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     
 //    스케줄 제목, (날짜 등 추후 추가 예정) 만 뽑아오기
     @Override
@@ -143,19 +147,4 @@ public class ScheduleServiceImpl  implements  ScheduleService{
         return new MonthScheduleResponse(scheduleRepo.search_all(institute_id));
     }
 
-//    스케쥴 월별로 검색
-    @Override
-    public MonthScheduleResponse searchAll_scheduleByDate(CustomUser user, LocalDate date_info) {
-        // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
-        Long institute_id;
-
-        if (user instanceof Teacher){
-            institute_id = ((Teacher) user).getInstitutePk();
-        } else {
-            institute_id = user.getPk();
-        }
-
-        return new MonthScheduleResponse(scheduleRepo.filter_by_date(institute_id, date_info));
-
-    }
 }

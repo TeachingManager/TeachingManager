@@ -17,10 +17,8 @@ public interface ScheduleService {
 
 
     // 내부에서 scid 를 만든다.
-    Schedule create_schedule(AddScheduleRequest request, Long pk);
+    Schedule create_schedule(AddScheduleRequest request, CustomUser user);
 
-    //    강의 불러오기
-    void import_schedule(List<Schedule> scList);
 
     Schedule update_schedule(CustomUser user,Long scid, UpdateScheduleRequest request);
 

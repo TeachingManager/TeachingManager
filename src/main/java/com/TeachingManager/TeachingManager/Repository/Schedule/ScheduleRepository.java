@@ -15,9 +15,9 @@ import java.util.Set;
 public interface ScheduleRepository {
     Schedule save(Schedule sc);
 
-    void delete(Long scid);
+    String delete(Long institute_id, Long scid);
 
-    Optional<Schedule> searchById(Long scid);
+    Optional<Schedule> searchById(Long institute_id, Long scid);
     Set<ScheduleInfo> search_all(Long institute_id);
 
     Set<ScheduleInfo> filter_by_date (Long institute_id, LocalDate date_info);

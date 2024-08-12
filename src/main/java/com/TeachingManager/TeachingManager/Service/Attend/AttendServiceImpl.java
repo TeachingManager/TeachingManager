@@ -35,22 +35,16 @@ public class AttendServiceImpl implements AttendService{
     //////////////////////////////////////////////////////////
     @Override
     public AttendInfo createSingleAttend(CustomUser user, Long schedule_id, Long student_id) {
-        Schedule schedule = scheduleRepo.searchById(schedule_id).orElseThrow(() -> new RuntimeException("출석 튜플 생성시 잘못된 일정 참조시도"));
-        Long scheduleInstituteId = schedule.getInstitute().getPk();
+        Schedule schedule = scheduleRepo.searchById(user.getPk(), schedule_id).orElseThrow(() -> new RuntimeException("출석 튜플 생성시 잘못된 일정 참조시도"));
         Student student = studentRepo.findById(student_id).orElseThrow(()->new RuntimeException("출석 튜플 생성시 잘못된 학생 참조시도"));
         Long studentInstituteId = student.getInstitute().getPk();
 
-        if(Objects.equals(scheduleInstituteId, studentInstituteId) && Objects.equals(scheduleInstituteId, user.getPk())){
-            return new AttendInfo(attendRepo.save(Attend.builder()
-                            .schedule(schedule)
-                            .student(student)
-                            .memo("없음")
-                            .attendance((byte)0)
-                    .build()));
-        }
-        else{
-            throw new RuntimeException("자신의 학원이 아닌 학원정보에 접근하려했습니다.");
-        }
+        return new AttendInfo(attendRepo.save(Attend.builder()
+                        .schedule(schedule)
+                        .student(student)
+                        .memo("없음")
+                        .attendance((byte)0)
+                .build()));
 
     }
 
