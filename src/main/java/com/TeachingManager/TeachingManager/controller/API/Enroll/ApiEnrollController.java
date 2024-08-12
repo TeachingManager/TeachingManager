@@ -32,9 +32,10 @@ public class ApiEnrollController {
     public ResponseEntity<List<EnrolledStudentsResponse>> findEnrolledStudents(
             @AuthenticationPrincipal CustomUser user
             , @RequestParam(value = "lecture_id") Long lecture_id
-            , @RequestParam(value = "date_info") LocalDate date_info) {
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))){
-            return ResponseEntity.ok().body(enrollService.findMonthlyEnrolledStudents(user, lecture_id, date_info));
+            return ResponseEntity.ok().body(enrollService.findMonthlyEnrolledStudents(user, lecture_id, year, month));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -43,9 +44,10 @@ public class ApiEnrollController {
     @GetMapping("/api/enroll/lectures")
     public ResponseEntity<List<EnrolledLecturesResponse>> findEnrolledLectures(
             @AuthenticationPrincipal CustomUser user
-            , @RequestParam(value = "date_info") LocalDate date_info) {
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month) {
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.findMonthlyEnrolledLectures(user,date_info));
+            return ResponseEntity.ok().body(enrollService.findMonthlyEnrolledLectures(user, year, month));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -54,9 +56,10 @@ public class ApiEnrollController {
     @GetMapping("/api/notEnroll/lectures")
     public ResponseEntity<List<NotEnrolledLecturesResponse>> findNotEnrolledLectures(
             @AuthenticationPrincipal CustomUser user
-            , @RequestParam(value = "date_info") LocalDate date_info) {
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month) {
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.findMonthlyNotEnrolledLectures(user, date_info));
+            return ResponseEntity.ok().body(enrollService.findMonthlyNotEnrolledLectures(user, year, month));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -92,12 +95,13 @@ public class ApiEnrollController {
             @AuthenticationPrincipal CustomUser user
             , @RequestParam(value = "lecture_id") Long lecture_id
             , @RequestParam(value = "student_id") Long student_id
-            , @RequestParam(value = "date_info") LocalDate date_info)
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month)
     {
         // 이미 이번 달에 수강신청 & 등록이 되어있는 강의에 추가하여야함.
         // 아직 수강등록이 안되어있는 강의에는 학생이 따로 수강신청을 할 수 없음.  그럴 경우에는 수강신청 & 등록  api 를 짜야함.
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.addOneStudentToEnroll(user, lecture_id,student_id,date_info));
+            return ResponseEntity.ok().body(enrollService.addOneStudentToEnroll(user, lecture_id,student_id, year, month));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -110,12 +114,10 @@ public class ApiEnrollController {
     @PutMapping("/api/delete/enroll/student")
     public ResponseEntity<String> cancelStudentEnroll(
             @AuthenticationPrincipal CustomUser user
-            , @RequestParam(value = "lecture_id") Long lecture_id
-            , @RequestParam(value = "student_id") Long student_id
-            , @RequestParam(value = "date_info") LocalDate date_info) {
+            , @RequestParam(value = "enroll_id") Long enroll_id) {
         // 특정달의 특정강의의 특정학생의 수강신청 여부 삭제
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, lecture_id, student_id, date_info));
+            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id));
         }
         return ResponseEntity.badRequest().build();
     }

@@ -15,8 +15,11 @@ public class Enroll {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enroll_id;
 
-    @Column(name = "enrolled_date", nullable = false)
-    private LocalDate enrolled_date;
+    @Column(name = "year", nullable = false)
+    private Short year;
+
+    @Column(name = "month", nullable = false)
+    private Short month;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = false)
@@ -27,8 +30,9 @@ public class Enroll {
     private Student student;
 
     @Builder
-    public Enroll(Lecture lecture, Student student) {
-        this.enrolled_date = LocalDate.now();
+    public Enroll(Lecture lecture, Student student, Short year, Short month) {
+        this.year = year;
+        this.month = month;
         this.lecture = lecture;
         this.student = student;
     }

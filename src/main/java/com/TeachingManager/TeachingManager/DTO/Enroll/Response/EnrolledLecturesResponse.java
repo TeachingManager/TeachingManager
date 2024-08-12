@@ -10,5 +10,13 @@ import java.time.LocalDate;
 public class EnrolledLecturesResponse {
     private Long lecture_id;
     private String lecture_name;
-    private LocalDate date_info;
+    private Short year;
+    private Short month;
+
+    public EnrolledLecturesResponse(Long lecture_id, String lecture_name, Short year, Short month) {
+        this.lecture_id = lecture_id;
+        this.lecture_name = lecture_name;
+        this.year = year;
+        this.month = month;
+    }
 }
