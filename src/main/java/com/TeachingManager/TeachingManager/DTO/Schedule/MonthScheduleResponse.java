@@ -13,5 +13,5 @@ import java.util.Set;
 @Getter
 @Setter
 public class MonthScheduleResponse {
-    private Set<ScheduleInfo> scheduleList;
+    private Set<ScheduleResponse> scheduleList;
 }

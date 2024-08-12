@@ -29,6 +29,7 @@ public class  AddScheduleRequest {
                 .end_date(end_date)
                 .memo(memo)
                 .institute(institute)
+                .lecture(null)
                 .build();
     }
 

@@ -10,11 +10,13 @@ import com.TeachingManager.TeachingManager.Repository.Enroll.EnrollRepository;
 import com.TeachingManager.TeachingManager.Repository.Lecture.LectureRepository;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.Student.StudentRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ public class EnrollServiceImpl implements EnrollService{
     private final StudentRepository studentRepo;
     private final ScheduleRepository scheduleRepo;
     private final AttendRepository attendRepo;
+    private final InstituteRepository instituteRepo;
 
     //////////////////////////////////////////////////////////
     ///                       조회                           //
@@ -59,14 +62,71 @@ public class EnrollServiceImpl implements EnrollService{
     // 중요한 것은 이미 해당 강의가 수강 테이블에 존재하는지 체크하고 없을 때에만 작동해야함.
     @Override
     public EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request) {
-        // 1. 수강 테이블 생성
-        // 2. 일정 테이블 생성
-        // 3. 출석 테이블 생성
-        return null;
+        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의 개설 오류! 없는 강의임 : " + lecture_id ));
+        Institute institute = instituteRepo.findByPk(user.getPk()).orElseThrow(()->new RuntimeException("강의 개설 오류! 없는 학원에서의 요청 :" + user.getPk()));
+
+        LocalDate date_info = LocalDate.now(); // 이번달 강의는 이번달에만 추가할 수 있다.
+        int year = date_info.getYear();
+        Short monthShort = (short) date_info.getMonthValue();
+
+
+        ///////////////////////////////////// 1. 일정 테이블 생성 (각 달의 일정에 맞추어서)
+        // 강의의 시간표 가져오기
+        // ("MONDAY:12:30~13:20,
+        // TUESDAY:12:30~13:20,
+        // WEDNESDAY:12:30~13:20")
+        List<String> scheduleTimeList = List.of(lecture.getTime().split(","));
+        String[] dayInfo = null; // 단위 한개의 일정을 입력받을 곳 "MONDAY:12:30~13:20" 이 분리됨 -> "MONDAY","12:30~13:20"
+        String[] timeInfo = null; // 각 시작 or 종료 시점의 정보 저장되는곳 "12:30~13:20" 이 분리됨. -> "12:30","13:20"
+        DayOfWeek dayOfWeek  = null; // 요일 정보를 얻기 위한. DayOfWeek.valueOf(string) 으로 변환 가능
+
+        // 강의의 큰 일정마다
+        for(String schedule_time : scheduleTimeList){
+            dayInfo = schedule_time.split(":"); // dayInfo[0] = 요일, dayInfo[1] = 시간
+
+            // 요일과 시간을 저장.
+            dayOfWeek = DayOfWeek.valueOf(dayInfo[0]);
+            timeInfo = dayInfo[1].split("~"); //timeInfo[0]  = 시작시간, timeInfo[1] = 종료시간
+
+            // String 으로 저장된 정보를 형변환
+            LocalDate first_day = date_info.with(TemporalAdjusters.firstInMonth(dayOfWeek)); // 첫 해당 요일 ( ex 첫번재 월요일)
+            LocalDate last_day = date_info.with(TemporalAdjusters.lastInMonth(dayOfWeek));  // 마지막 해당 요일  ( ex 마지막 월요일)
+            LocalTime start_time = LocalTime.parse(timeInfo[0] + ":00");
+            LocalTime end_time = LocalTime.parse(timeInfo[1] + ":00");
+
+            // 해당 달의 각주의 해당 요일 마다.
+            LocalDate current_day = first_day;
+            while (!current_day.isAfter(last_day)) {
+                // 시작, 종료 시간 설정
+                LocalDateTime start_date = LocalDateTime.of(current_day, start_time);
+                LocalDateTime end_date = LocalDateTime.of(current_day, end_time);
+
+                // 스케쥴 생성
+                Schedule sc = Schedule.builder()
+                        .title(lecture.getName())
+                        .start_date(start_date)
+                        .end_date((end_date))
+                        .memo("-")
+                        .institute(institute)
+                        .lecture(lecture)
+                        .build();
+
+                scheduleRepo.save(sc);
+
+                current_day = current_day.with(TemporalAdjusters.next(dayOfWeek));
+            }
+        }
+
+        ///////////////////////////////////// 2. 수강 & 출석 테이블 생성
+        // 각 학생별로 강의에 대한 수강 요소, 출석 요소를 넣는다.
+        for (Long student_id : request.getStudentIdList()) {
+            addOneStudentToEnroll(user, lecture_id, student_id, (short) year, monthShort);
+        }
+        return new EnrolledLecturesResponse(lecture_id, lecture.getName(), (short)year, monthShort);
     }
 
     // 학생 한명이 강의를 수강하는 요청
-    // 출석을 만들어야함.
+    // 수강 테이블과 출석 테이블을 생성한다.
     @Override
     public EnrollResponse addOneStudentToEnroll(CustomUser user, Long lecture_id, Long student_id, Short year, Short month) {
         // 1. 수강 테이블 생성
@@ -98,4 +158,5 @@ public class EnrollServiceImpl implements EnrollService{
     public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id) {
         return enrollRepo.delete(user.getPk(), enroll_id);
     }
+
 }

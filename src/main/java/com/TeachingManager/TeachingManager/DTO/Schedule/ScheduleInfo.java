@@ -21,4 +21,6 @@ public class ScheduleInfo {
     private LocalDateTime end_date;
     private String memo;
     private Long institute_id;
+    private Long lecture_id;
+    private String lecture_name;
 }

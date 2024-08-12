@@ -1,24 +1,17 @@
 package com.TeachingManager.TeachingManager.Service.Schedule;
 
-import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
-import com.TeachingManager.TeachingManager.DTO.Schedule.MonthScheduleResponse;
-import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleInfo;
-import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.*;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
-import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
+
 import com.TeachingManager.TeachingManager.domain.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -54,7 +47,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
             return sc.get();
         } // 학생의 소속
         else{
-            throw new RuntimeException("올바르지 않은 접근입니다.");
+            throw new RuntimeException("존재하지 않은 일정을 수정하려했습니다.");
         }
     }
 
@@ -116,7 +109,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     public List<Map<String, String>> search_all_marker(Long institute_id) {
 
-        Collection<ScheduleInfo> scList = scheduleRepo.search_all(institute_id);
+        Collection<ScheduleResponse> scList = scheduleRepo.search_all(institute_id);
         List<Map<String, String>> schedules = new ArrayList<>();
         Map<String, String> temp_sc = new HashMap<>();
 
