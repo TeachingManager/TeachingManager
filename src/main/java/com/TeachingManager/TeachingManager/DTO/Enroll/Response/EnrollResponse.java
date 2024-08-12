@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class EnrollResponse {
+public class  EnrollResponse {
 
     private Long enroll_id;
     private LocalDate enrolled_date;

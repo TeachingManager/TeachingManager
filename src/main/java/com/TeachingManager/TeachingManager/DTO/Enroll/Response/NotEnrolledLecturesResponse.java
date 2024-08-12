@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class EnrolledLecturesResponse {
+public class NotEnrolledLecturesResponse {
     private Long lecture_id;
     private String lecture_name;
-    private LocalDate date_info;
 }
