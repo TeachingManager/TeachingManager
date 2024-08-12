@@ -35,7 +35,7 @@ public class ApiAttendController {
 
     // 특정 달의 특정 강의의 출석 리스트
     @GetMapping("/api/attend/lecture")
-    public ResponseEntity<MonthLectureAttendResponse> findMonthlyLectureAttendance(
+    public ResponseEntity<List<MonthLectureAttendResponse>>findMonthlyLectureAttendance(
             @AuthenticationPrincipal CustomUser user,
             @RequestParam(value = "lecture_id") Long lecture_id,
             @RequestParam(value = "date_info") LocalDate date_info
@@ -45,7 +45,7 @@ public class ApiAttendController {
 
     // 특정 달의 특정 학생의 출석 리스트
     @GetMapping("/api/attend/student")
-    public ResponseEntity<MonthStudentAttendResponse> findMonthlyStudentAttendance(
+    public ResponseEntity<List<MonthStudentAttendResponse>> findMonthlyStudentAttendance(
             @AuthenticationPrincipal CustomUser user,
             @RequestParam(value = "student_id") Long student_id,
             @RequestParam(value = "date_info") LocalDate date_info

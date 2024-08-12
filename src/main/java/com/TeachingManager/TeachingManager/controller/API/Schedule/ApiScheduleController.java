@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class ApiScheduleController {
 
     private final ScheduleService scheduleService;
-    private final TokenService tokenService;
 
     /*  일정 추가 api  */
     @PostMapping("/api/Schedule")

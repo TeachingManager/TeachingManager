@@ -57,6 +57,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
         Schedule sc = scheduleRepo.searchById(scid).orElseThrow(() -> new IllegalArgumentException("not found : " + scid));
         if(sc.getInstitute().getPk().equals(user.getPk())){
             sc.update(request.getTitle(), request.getStart_date(), request.getEnd_date(), request.getMemo());
+            scheduleRepo.save(sc);
             return sc;
         } // 학생의 소속
         else{

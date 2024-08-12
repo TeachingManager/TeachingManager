@@ -14,23 +14,23 @@ public interface AttendRepository {
 
     Attend save(Attend attend);
 
-    void delete(Long attend_id);
+    String delete(Long institute_id, Long attend_id);
 
-    Optional<Attend> searchById (Long attend_id);
+    Optional<Attend> searchById (Long institute_id, Long attend_id);
 
     // 특정 스케줄의 모든 학생 출석 정보 가져오기
-    List<Attend> searchAttendanceByScheduleId(Long schedule_id);
+    List<Attend> searchAttendanceByScheduleId(Long institute_id, Long schedule_id);
 
     // 특정 스케줄의 특정 학생 출결 불러오기.
-    Optional<Attend> searchOneByStudentId(Long schedule_id, Long student_id);
+    Optional<Attend> searchOneByStudentId(Long institute_id, Long schedule_id, Long student_id);
 
     // 특정 학생의 특정 달의 출결 모두 불러오기
-    List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(Long student_id, LocalDate yearMonthDay);
+    List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(Long institute_id, Long student_id, LocalDate yearMonthDay);
 
     // 특정 강의의 특정 달의 출결 불러오기
-    List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(Long lecture_id, LocalDate yearMonthDay);
+    List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(Long institute_id, Long lecture_id, LocalDate yearMonthDay);
 
     // 특정 학생의 특정 강의의 특정 달 출결 불러오기
-    List<StudentMonthLectureAttendRecord> searchMonthlyAttendanceByLectureAndStudentId(Long lecture_id, Long student_id, LocalDate yearMonthDay);
+    List<StudentMonthLectureAttendRecord> searchMonthlyAttendanceByLectureAndStudentId(Long institute_id, Long lecture_id, Long student_id, LocalDate yearMonthDay);
 
 }

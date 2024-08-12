@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 // 특정 달의 특정 강의를 수강하는 모든 학생의 출결 정보를 담는 DTO
 public class LectureMonthAttendanceRecord {
     private Long attend_id;
+    private Byte attendance;
     private Long student_id;
     private String student_name;
-    private Byte attendance;
     private LocalDateTime start_date;
 
     public LectureMonthAttendanceRecord(  Long attend_id,Long student_id, String student_name, Byte attendance, LocalDateTime start_date ) {

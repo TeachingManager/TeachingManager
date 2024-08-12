@@ -2,17 +2,17 @@ package com.TeachingManager.TeachingManager.DTO.Attend;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
+
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class MonthLectureAttendResponse {
-    private Long attend_id;
     private Long lecture_id;
-    private String lecture_title;
-    private Set<Byte> attendaneSet;
+    private Long student_id;
+    private String student_name;
+    private List<SimpleAttendInfo> attendInfoList;
 }

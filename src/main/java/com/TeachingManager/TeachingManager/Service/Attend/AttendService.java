@@ -7,6 +7,7 @@ import com.TeachingManager.TeachingManager.DTO.Attend.Request.UpdateAttendListRe
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface AttendService {
     //////////////////////////////////////////////////////////
@@ -26,10 +27,10 @@ public interface AttendService {
 
    
     // 특정 달의 특정 강의의 출석  리스트
-    MonthLectureAttendResponse findMonthlyLectureAttendance(CustomUser user, Long lecture_id, LocalDate date_info);
+    List<MonthLectureAttendResponse> findMonthlyLectureAttendance(CustomUser user, Long lecture_id, LocalDate date_info);
 
     // 특정 달의 특정 학생의 출석  리스트
-    MonthStudentAttendResponse  findMonthlyStudentAttendance(CustomUser user, Long student_id, LocalDate date_info);
+    List<MonthStudentAttendResponse>  findMonthlyStudentAttendance(CustomUser user, Long student_id, LocalDate date_info);
 
     
     //////////////////////////////////////////////////////////
@@ -44,6 +45,6 @@ public interface AttendService {
     ///                       삭제                           //
     //////////////////////////////////////////////////////////
 
-    // 단 하나의 출석 삭제 서비스
+    // 단 한 개의 출석 삭제 서비스
     String deleteSingleAttend(CustomUser user, Long attend_id);
 }

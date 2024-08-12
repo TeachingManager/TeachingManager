@@ -83,6 +83,7 @@ public class StudentService {
 
         if(student.getInstitute().getPk().equals(user.getPk())){
             student.update(request.getName(), request.getAge(), request.getGrade(), request.getPhoneNumber(), request.getParentName(), request.getParentNumber(), request.getGender(), request.getLevel());
+            studentRepository.save(student);
             return student;
         } // 학생의 소속
        else{
