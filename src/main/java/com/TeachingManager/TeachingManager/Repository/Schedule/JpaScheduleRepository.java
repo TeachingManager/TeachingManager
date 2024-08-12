@@ -23,12 +23,14 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     }
 
     @Override
+    @Transactional
     public Schedule save(Schedule sc) {
         em.persist(sc);
         return sc;
     }
 
     @Override
+    @Transactional
     public String delete(Long institute_id, Long scid) {
         int deleteCount = em.createQuery("DELETE FROM Schedule sc " +
                         "WHERE sc.institute.pk = :instituteId  " +

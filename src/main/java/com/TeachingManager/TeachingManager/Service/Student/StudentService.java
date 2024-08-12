@@ -1,5 +1,6 @@
 package com.TeachingManager.TeachingManager.Service.Student;
 
+import com.TeachingManager.TeachingManager.DTO.Student.StudentResponse;
 import com.TeachingManager.TeachingManager.Repository.Student.StudentRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
@@ -22,8 +23,8 @@ public class StudentService {
     private final InstituteRepository instituteRepo;
 
     //학생 추가 메서드
-    public Student create_student(AddStudentRequest request, Long pk){
-        Optional<Institute> institute = instituteRepo.findByPk(pk);
+    public Student create_student(AddStudentRequest request, CustomUser user){
+        Optional<Institute> institute = instituteRepo.findByPk(user.getPk());
         if (institute.isPresent()){
             return studentRepository.save(request.toEntity(institute.get()));
         }
@@ -34,19 +35,21 @@ public class StudentService {
     }
 
     //모든 학생 조회 메서드
-    public List<Student> findAll(CustomUser user){
+    public List<StudentResponse>findAll(CustomUser user){
         if(user instanceof Teacher) {
             throw new RuntimeException("선생님은 권한이 없습니다.");
         }
         else{
-            return studentRepository.findByInstitute_Pk(user.getPk());
+            return studentRepository.findByInstitute_Pk(user.getPk()) .stream()
+                    .map(StudentResponse::new)
+                    .toList();
         }
     }
 
     
     // 단일학생 조회 메서드
     public Student findById(CustomUser user, long id){
-        Student student = studentRepository.findById(id)
+        Student student = studentRepository.findById(user.getPk(), id)
                 .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
         if(user instanceof Teacher) {
             if (student.getInstitute().getPk().equals(((Teacher) user).getInstitutePk())) {
@@ -65,10 +68,10 @@ public class StudentService {
     // 학생 삭제 메서드
     @Transactional
     public String delete(CustomUser user, long id){
-        Student student = studentRepository.findById(id)
+        Student student = studentRepository.findById(user.getPk(), id)
                 .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
         if(student.getInstitute().getPk().equals(user.getPk())){
-            studentRepository.deleteById(id);
+            studentRepository.deleteById(user.getPk(), id);
             return student.getName();
         } // 학생의 소속학원에서 온 요청이 아닐 경우
         else{
@@ -78,7 +81,7 @@ public class StudentService {
 
     @Transactional
     public Student update(CustomUser user, long id, UpdateStudentRequest request) {
-        Student student = studentRepository.findById(id)
+        Student student = studentRepository.findById(user.getPk(), id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
 
         if(student.getInstitute().getPk().equals(user.getPk())){

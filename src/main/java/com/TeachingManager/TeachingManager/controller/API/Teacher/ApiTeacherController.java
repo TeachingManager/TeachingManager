@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,28 +35,40 @@ public class ApiTeacherController {
     // 요청한 선생님의 정보를 전달하는 api
     @GetMapping("/api/teacher/{pk}")
     public ResponseEntity<TeacherInfo> search_oneTeacher(@AuthenticationPrincipal CustomUser user, @RequestBody FindOneTeacherRequest request) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_teacher(request.getTeacher_id(), user.getPk()));
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_teacher(request.getTeacher_id(), user.getPk()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 
     // 요청한 기관의 모든 선생님 정보 정달하는 api
     @GetMapping("/api/teacher")
-    public ResponseEntity<FindAllTeacherResponse> search_allTeacher(@AuthenticationPrincipal CustomUser user, @RequestBody FindOneTeacherRequest request){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_allTeacher(user.getPk()));
+    public ResponseEntity<FindAllTeacherResponse> search_allTeacher(@AuthenticationPrincipal CustomUser user, @RequestBody FindOneTeacherRequest request) {
+        if (user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_allTeacher(user.getPk()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     // 선생님 정보 수정 api
     @PutMapping("/api/teacher") ResponseEntity<TeacherInfo> update_Teacher(@RequestBody UpdateTeacherRequest request, @AuthenticationPrincipal CustomUser user){
-        Teacher sc = teacherService.update_Teacher(user, request);
-        return ResponseEntity.ok()
-                .body(new TeacherInfo(sc));
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
+            Teacher sc = teacherService.update_Teacher(user, request);
+            return ResponseEntity.ok()
+                    .body(new TeacherInfo(sc));
+        }
+        return ResponseEntity.badRequest().build();
 
     }
 
     // 회원탈퇴 api
     @PutMapping("/api/delete/teacher") ResponseEntity<String> delete_Teacher(@AuthenticationPrincipal CustomUser user){
-        return ResponseEntity.ok()
-                .body(teacherService.delete_Teacher(user));
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
+            return ResponseEntity.ok()
+                    .body(teacherService.delete_Teacher(user));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 }

@@ -17,6 +17,7 @@ import com.TeachingManager.TeachingManager.domain.Schedule;
 import com.TeachingManager.TeachingManager.domain.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -27,17 +28,16 @@ public class AttendServiceImpl implements AttendService{
 
     private final AttendRepository attendRepo;
     private final StudentRepository studentRepo;
-    private final LectureRepository lectureRepo;
     private final ScheduleRepository scheduleRepo;
 
     //////////////////////////////////////////////////////////
     ///                       추가                           //
     //////////////////////////////////////////////////////////
     @Override
+    @Transactional
     public AttendInfo createSingleAttend(CustomUser user, Long schedule_id, Long student_id) {
         Schedule schedule = scheduleRepo.searchById(user.getPk(), schedule_id).orElseThrow(() -> new RuntimeException("출석 튜플 생성시 잘못된 일정 참조시도"));
-        Student student = studentRepo.findById(student_id).orElseThrow(()->new RuntimeException("출석 튜플 생성시 잘못된 학생 참조시도"));
-        Long studentInstituteId = student.getInstitute().getPk();
+        Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(()->new RuntimeException("출석 튜플 생성시 잘못된 학생 참조시도"));
 
         return new AttendInfo(attendRepo.save(Attend.builder()
                         .schedule(schedule)
@@ -154,6 +154,7 @@ public class AttendServiceImpl implements AttendService{
 
     // 전달된 값들 반영
     @Override
+    @Transactional
     public String updateAttends(CustomUser user, UpdateAttendListRequest request) {
         Long institute_id = user.getPk();
         Optional<Attend> attend = Optional.empty();
@@ -175,6 +176,7 @@ public class AttendServiceImpl implements AttendService{
     //////////////////////////////////////////////////////////
     // 단 한개의 출석 삭제 서비스
     @Override
+    @Transactional
     public String deleteSingleAttend(CustomUser user, Long attend_id) {
         return attendRepo.delete(user.getPk(), attend_id);
     }

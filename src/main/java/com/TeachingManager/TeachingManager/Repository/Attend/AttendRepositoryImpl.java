@@ -24,12 +24,14 @@ public class AttendRepositoryImpl implements AttendRepository{
     private final EntityManager em;
 
     @Override
+    @Transactional
     public Attend save(Attend attend) {
         em.persist(attend);
         return attend;
     }
 
     @Override
+    @Transactional
     public String delete(Long institute_pk, Long attend_id) {
         Attend attend = em.find(Attend.class, attend_id);
         // 조인을 하는 것보다 차라리 select 연산 을 두 번 하는게 더 저렴해보인다.
@@ -73,7 +75,7 @@ public class AttendRepositoryImpl implements AttendRepository{
                         "from Attend at " +
                         "where at.schedule.schedule_id = :schedule_id " +
                             "AND at.student.institute.pk = :instituteId" +
-                            "AND student_id = :student_id", Attend.class
+                            "AND at.student.id = :student_id", Attend.class
         )
                 .setParameter("schedule_id", schedule_id)
                 .setParameter("institute_id", institute_id)
@@ -92,7 +94,7 @@ public class AttendRepositoryImpl implements AttendRepository{
                             "FROM Attend at " +
                             "INNER JOIN at.schedule sc " +
                             "INNER JOIN sc.lecture lec " +
-                            "WHERE at.student_id = :student_id " +
+                            "WHERE at.student.id = :student_id " +
                                 "AND sc.institute.pk = :institute_id " +
                                 "AND sc.start_date <= :endOfMonth " +
                                 "AND sc.end_date >= :startOfMonth " +
