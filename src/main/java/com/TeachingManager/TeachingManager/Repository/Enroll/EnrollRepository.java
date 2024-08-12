@@ -5,7 +5,6 @@ import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsR
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
 import com.TeachingManager.TeachingManager.domain.Enroll;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 

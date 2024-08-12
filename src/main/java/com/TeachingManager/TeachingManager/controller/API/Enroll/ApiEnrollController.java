@@ -77,11 +77,6 @@ public class ApiEnrollController {
             , @RequestParam(value = "lecture_id") Long lecture_id
             , @RequestBody EnrollLectureRequest request
             ) {
-         // 3가지 로직이 필요하다.
-        // 우선 request 안의 학생들 정보리스트와 lecture_id 를 이용하여 수강 저장 (이번달이어야함. 갑자기 지난달 으로는 추가 불가..)
-        // 강의를 이번달 일정에 추가 (역시 이번달이여야함)
-        // 일정들을 생성하는 과정 중간에 해당 일정들과 해당 학생들의 출석 튜플 생성해야함.
-        // 중요한 것은 이미 해당 강의가 수강 테이블에 존재하는지 체크하고 없을 때에만 작동해야함.
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             return ResponseEntity.ok().body(enrollService.registerEnroll(user, lecture_id, request));
         }

@@ -1,5 +1,6 @@
 package com.TeachingManager.TeachingManager.DTO.Enroll.Response;
 
+import com.TeachingManager.TeachingManager.domain.Enroll;
 import com.TeachingManager.TeachingManager.domain.Lecture;
 import com.TeachingManager.TeachingManager.domain.Student;
 import jakarta.persistence.*;
@@ -28,5 +29,15 @@ public class  EnrollResponse {
         this.lecture_id = lecture_id;
         this.student_id = student_id;
         this.student_name = student_name;
+    }
+
+    public EnrollResponse(Enroll enroll) {
+        this.enroll_id = getEnroll_id();
+        this.year = getYear();
+        this.month = getMonth();
+        this.lecture_name = getLecture_name();
+        this.lecture_id = getLecture_id();
+        this.student_id = getStudent_id();
+        this.student_name = getStudent_name();
     }
 }

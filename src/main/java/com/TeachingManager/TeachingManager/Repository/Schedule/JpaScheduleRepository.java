@@ -99,6 +99,28 @@ public class JpaScheduleRepository  implements ScheduleRepository{
                 .collect(Collectors.toSet());
     }
 
+    // 특정강의의 이번달 일정 가져오는 함수.
+    @Override
+    public Set<Schedule> filter_by_lecture(Long institute_id, Long lecture_id, LocalDate date_info) {
+        // 시작일과 끝날짜
+        LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        return em.createQuery(
+                        "SELECT sc" +
+                                "FROM Schedule sc " +
+                                "WHERE sc.institute.pk = :institute_id " +
+                                "AND sc.lecture.lecture_id = :lectureId " +
+                                "AND sc.start_date <= :endOfMonth " +
+                                "AND sc.end_date >= :startOfMonth", Schedule.class)
+                .setParameter("institute_id", institute_id)
+                .setParameter("lectureId", lecture_id)
+                .setParameter("startOfMonth", startOfMonth)
+                .setParameter("endOfMonth", endOfMonth)
+                .getResultStream() // Stream<Schedule> 반환
+                .collect(Collectors.toSet()); // Stream을 Set으로 변환
+    }
+
     // DTO 변환
     public ScheduleInfo convertToDTO(Schedule schedule) {
         return new ScheduleInfo(schedule.getSchedule_id(), schedule.getTitle(), schedule.getStart_date(), schedule.getEnd_date(), schedule.getMemo(),schedule.getInstitute().getPk());
