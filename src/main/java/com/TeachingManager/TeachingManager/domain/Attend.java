@@ -47,7 +47,6 @@ public class Attend {
         this.schedule = schedule;
     }
 
-
     // 출석 정보를 저장하는 메소드.
     public Byte setAttendance(Byte attendance){
         this.attendance = attendance;

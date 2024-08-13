@@ -47,7 +47,6 @@ public class ApiScheduleController {
                     .body(new ScheduleResponse(scheduleService.search_schedule(user, pk)));
         }
         return ResponseEntity.badRequest().build();
-
     }
 
     /*  일정 삭제 api  */

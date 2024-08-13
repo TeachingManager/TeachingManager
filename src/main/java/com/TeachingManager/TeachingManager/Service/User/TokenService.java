@@ -11,6 +11,7 @@ import com.TeachingManager.TeachingManager.domain.RefreshToken;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,9 +36,8 @@ public class TokenService {
     public SetTokenResponse LoginTokenCreate(String email, String password) {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
         try {
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
             Institute user =  instituteService.loadInstituteByUsername(email);
             return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
 
@@ -45,6 +45,9 @@ public class TokenService {
             // Institute 유저가 없을 경우 Teacher 유저 조회
             Teacher user = teacherService.loadTeacherByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
             return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
+        } catch (BadCredentialsException bad){
+            System.out.println("비밀번호 오류!!");
+            return null;
         }
     }
 

@@ -49,34 +49,20 @@ public class StudentService {
     
     // 단일학생 조회 메서드
     public Student findById(CustomUser user, long id){
-        Student student = studentRepository.findById(user.getPk(), id)
-                .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
         if(user instanceof Teacher) {
-            if (student.getInstitute().getPk().equals(((Teacher) user).getInstitutePk())) {
-                return student;
-            } else {
-                throw new RuntimeException("올바르지 않은 접근입니다.");
-            }
+            return studentRepository.findById(((Teacher) user).getInstitutePk(), id).orElseThrow(()-> new IllegalArgumentException("not found: " + id));
         }
-        if (student.getInstitute().getPk().equals(user.getPk())) {
-            return student;
-        } else {
-            throw new RuntimeException("올바르지 않은 접근입니다.");
+        else {
+            return studentRepository.findById(user.getPk(), id).orElseThrow(()-> new IllegalArgumentException("not found: " + id));
         }
     }
 
     // 학생 삭제 메서드
     @Transactional
     public String delete(CustomUser user, long id){
-        Student student = studentRepository.findById(user.getPk(), id)
-                .orElseThrow(()-> new IllegalArgumentException("not found: " + id));
-        if(student.getInstitute().getPk().equals(user.getPk())){
-            studentRepository.deleteById(user.getPk(), id);
-            return student.getName();
-        } // 학생의 소속학원에서 온 요청이 아닐 경우
-        else{
-            throw new RuntimeException("올바르지 않은 접근입니다.");
-        }
+        Student student = studentRepository.findById(user.getPk(), id).orElseThrow(()-> new IllegalArgumentException("not found: " + id));
+        studentRepository.deleteById(user.getPk(), id);
+        return student.getName();
     }
 
     @Transactional
@@ -84,13 +70,8 @@ public class StudentService {
         Student student = studentRepository.findById(user.getPk(), id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
 
-        if(student.getInstitute().getPk().equals(user.getPk())){
-            student.update(request.getName(), request.getAge(), request.getGrade(), request.getPhoneNumber(), request.getParentName(), request.getParentNumber(), request.getGender(), request.getLevel());
-            studentRepository.save(student);
-            return student;
-        } // 학생의 소속
-       else{
-            throw new RuntimeException("올바르지 않은 접근입니다.");
-        }
+        student.update(request.getName(), request.getAge(), request.getGrade(), request.getPhoneNumber(), request.getParentName(), request.getParentNumber(), request.getGender(), request.getLevel());
+        studentRepository.save(student);
+        return student;
     }
 }

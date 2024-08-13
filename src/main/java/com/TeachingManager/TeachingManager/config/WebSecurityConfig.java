@@ -49,14 +49,6 @@ public class WebSecurityConfig{
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
                 )
-                // 세션 로그인 방식을 해제
-//                .formLogin(form -> form.loginPage("/login/institute")
-//                        .loginProcessingUrl("/login/institute/check")
-//                        .defaultSuccessUrl("/home", true)
-//                        .failureHandler(institutonAuthenticationFailureHandler)
-//                        .usernameParameter("email")  // 이메일을 username으로 사용
-//                        .passwordParameter("password")
-//                )
                 // oAUTH 2.0 로그인
 //                .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
 //                        .defaultSuccessUrl("/home", true) // 로그인 성공시 이동할 URL
@@ -91,4 +83,6 @@ public class WebSecurityConfig{
 //    public OAuth2SuccessHandler oAuth2SuccessHandler(){
 //
 //    }
+
+
 }

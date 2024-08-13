@@ -47,4 +47,11 @@ public class ApiTokenController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new AccessTokenResponse(newAccessToken));
 
     }
+
+
+    // 비밀번호 변경
+
+    // 비밀번호 찾기
+
+    // 잠금해제
 }

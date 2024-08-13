@@ -20,7 +20,6 @@ public class ScheduleResponse {
     private String memo;
     private Long lecture_id;
     private String lecture_name;
-
     public ScheduleResponse( Schedule sc) {
         this.schedule_id = sc.getSchedule_id();
         this.title = sc.getTitle();

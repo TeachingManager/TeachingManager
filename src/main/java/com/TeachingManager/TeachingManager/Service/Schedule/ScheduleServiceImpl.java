@@ -64,7 +64,6 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     @Transactional
     public Schedule search_schedule(CustomUser user, Long schedule_id) {
-
         // 선생님이 접근시
         if(user instanceof Teacher) {
             Optional<Schedule> schedule = scheduleRepo.searchById(((Teacher) user).getInstitutePk(),schedule_id);
