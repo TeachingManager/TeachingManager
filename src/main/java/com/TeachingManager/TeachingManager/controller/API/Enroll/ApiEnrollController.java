@@ -1,10 +1,7 @@
 package com.TeachingManager.TeachingManager.controller.API.Enroll;
 
 import com.TeachingManager.TeachingManager.DTO.Enroll.Request.EnrollLectureRequest;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrollResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
+import com.TeachingManager.TeachingManager.DTO.Enroll.Response.*;
 import com.TeachingManager.TeachingManager.Service.Enroll.EnrollService;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +57,20 @@ public class ApiEnrollController {
             , @RequestParam(value = "month") Short month) {
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             return ResponseEntity.ok().body(enrollService.findMonthlyNotEnrolledLectures(user, year, month));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+    // 이번 번 달의 전체 수강료 가져오기
+    @GetMapping("/api/fee")
+    public ResponseEntity<EnrollFeeResponse> findFeeList(
+            @AuthenticationPrincipal CustomUser user
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month
+    ) {
+        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
+            return ResponseEntity.ok().body(enrollService.findMonthlyLectureFee(user, year, month));
         }
         return ResponseEntity.badRequest().build();
     }

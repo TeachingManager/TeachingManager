@@ -12,11 +12,13 @@ public class EnrolledLecturesResponse {
     private String lecture_name;
     private Short year;
     private Short month;
+    private int fee;
 
-    public EnrolledLecturesResponse(Long lecture_id, String lecture_name, Short year, Short month) {
+    public EnrolledLecturesResponse(Long lecture_id, String lecture_name, Short year, Short month, int fee) {
         this.lecture_id = lecture_id;
         this.lecture_name = lecture_name;
         this.year = year;
         this.month = month;
+        this.fee = fee;
     }
 }

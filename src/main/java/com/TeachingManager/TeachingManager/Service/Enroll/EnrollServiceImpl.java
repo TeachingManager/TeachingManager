@@ -1,10 +1,7 @@
 package com.TeachingManager.TeachingManager.Service.Enroll;
 
 import com.TeachingManager.TeachingManager.DTO.Enroll.Request.EnrollLectureRequest;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrollResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
+import com.TeachingManager.TeachingManager.DTO.Enroll.Response.*;
 import com.TeachingManager.TeachingManager.Repository.Attend.AttendRepository;
 import com.TeachingManager.TeachingManager.Repository.Enroll.EnrollRepository;
 import com.TeachingManager.TeachingManager.Repository.Lecture.LectureRepository;
@@ -17,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -47,6 +46,18 @@ public class EnrollServiceImpl implements EnrollService{
     @Override
     public List<NotEnrolledLecturesResponse> findMonthlyNotEnrolledLectures(CustomUser user, Short year, Short month) {
         return enrollRepo.findNotEnrolledLecturesByDate(user.getPk(), year, month);
+    }
+
+    @Override
+    public EnrollFeeResponse findMonthlyLectureFee(CustomUser user, Short year, Short month) {
+        List<EnrolledLecturesResponse> enrolledLecturesResponseList = enrollRepo.findEnrolledLecturesByDate(user.getPk(), year, month);
+        long totalFee = 0;
+        Map<String, Long> lectureFeeList = new HashMap<>();
+        for(EnrolledLecturesResponse info : enrolledLecturesResponseList){
+            totalFee += (long) info.getFee();
+            lectureFeeList.put(info.getLecture_name(), (long) info.getFee());
+        }
+        return new EnrollFeeResponse(totalFee, lectureFeeList);
     }
 
 

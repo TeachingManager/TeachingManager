@@ -22,12 +22,11 @@ public class CustomUserDetailServiceImpl implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        Optional<Institute> institute = instRepo.findByEmail(email);
-        if (institute.isPresent()) {
-            return institute.get();
-        }
-        return teacherRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-        // 다른 민감한 정보들이 넘어가게 하지 않기 위해 User를 커스텀한 InstituteAdapter 사용하는게 나을지도?
-        // 또는 이러한 두번의 서치 과정을 하지 않기 위해 Custom 적용 방법을 추후에 고려
+        System.out.println("loadUserByUsername");
+        return instRepo.findByEmail(email)
+                .map(institute -> (UserDetails) institute)
+                .orElseGet(() -> teacherRepo.findByEmail(email)
+                        .map(teacher -> (UserDetails) teacher)
+                        .orElseThrow(() -> new UsernameNotFoundException(email)));
     }
 }

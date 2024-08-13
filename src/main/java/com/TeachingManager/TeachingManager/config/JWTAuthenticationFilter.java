@@ -43,8 +43,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (tokenProvider.validToken(token)){
             Authentication authentication = tokenProvider.getAuthentication(token);
-            System.out.println("JWTFilter 의 authentication = " + authentication);
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }

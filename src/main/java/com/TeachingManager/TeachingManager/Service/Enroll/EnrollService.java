@@ -1,10 +1,7 @@
 package com.TeachingManager.TeachingManager.Service.Enroll;
 
 import com.TeachingManager.TeachingManager.DTO.Enroll.Request.EnrollLectureRequest;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrollResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse;
-import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
+import com.TeachingManager.TeachingManager.DTO.Enroll.Response.*;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 
 import java.util.List;
@@ -25,6 +22,9 @@ public interface EnrollService {
 
     // 특정 달에 개설되지 않은 강의 리스트
     List<NotEnrolledLecturesResponse> findMonthlyNotEnrolledLectures(CustomUser user, Short year, Short month);
+
+    // 특정 달의 요금 정보를 가져오는 API
+    EnrollFeeResponse findMonthlyLectureFee(CustomUser user, Short year, Short month);
 
 
     //////////////////////////////////////////////////////////

@@ -43,7 +43,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     @Override
     public List<EnrolledLecturesResponse> findEnrolledLecturesByDate(Long institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(en.lecture.lecture_id, en.lecture.name, en.year, en.month) " +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(en.lecture.lecture_id, en.lecture.name, en.year, en.month, en.lecture.fee) " +
                                 "FROM Enroll en " +
                                 "WHERE en.lecture.institute.pk = :instituteId " +
                                 "AND en.year = :year " +
