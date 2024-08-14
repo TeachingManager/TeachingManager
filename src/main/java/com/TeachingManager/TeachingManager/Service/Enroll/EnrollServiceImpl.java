@@ -66,7 +66,7 @@ public class EnrollServiceImpl implements EnrollService{
     @Override
     @Transactional
     public EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request, Short year, Short monthShort) {
-        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의 개설 오류! 없는 강의임 : " + lecture_id ));
+        Lecture lecture = lectureRepo.findOneById(user.getPk(),lecture_id).orElseThrow(() -> new RuntimeException("강의 개설 오류! 없는 강의임 : " + lecture_id ));
         Institute institute = instituteRepo.findByPk(user.getPk()).orElseThrow(()->new RuntimeException("강의 개설 오류! 없는 학원에서의 요청 :" + user.getPk()));
 
         LocalDate date_info = LocalDate.of((int) year, (int) monthShort, 1);
@@ -133,7 +133,7 @@ public class EnrollServiceImpl implements EnrollService{
     public EnrollResponse addOneStudentToEnroll(CustomUser user, Long lecture_id, Long student_id, Short year, Short month) {
         // 1. 수강 테이블 생성
         Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(() -> new RuntimeException("학생->수강 오류! 없거나 접근 불가능한 학생임 : " + student_id ));
-        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의->수강 오류! 없거나 접근 불가능한 강의임 : " + lecture_id ));
+        Lecture lecture = lectureRepo.findOneById(user.getPk(), lecture_id).orElseThrow(() -> new RuntimeException("강의->수강 오류! 없거나 접근 불가능한 강의임 : " + lecture_id ));
         Enroll newEnroll = new Enroll(lecture, student, year, month);
         enrollRepo.save(newEnroll);
 
@@ -163,7 +163,7 @@ public class EnrollServiceImpl implements EnrollService{
     @Transactional
     public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id,Long lecture_id, Short year, Short month) {
 //        Lecture lecture = lectureRepo.findById(user.getPk(), enroll_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 수강 정보 삭제위해 접근하려함"));
-        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 강의 정보에 접근하려함"));
+        Lecture lecture = lectureRepo.findOneById(user.getPk(), lecture_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 강의 정보에 접근하려함"));
         feeRepo.declineMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee());
         return enrollRepo.delete(user.getPk(), enroll_id);
     }
