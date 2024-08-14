@@ -53,12 +53,13 @@ public class Lecture {
         this.teacher = teacher;
     }
 
-    public void update(String name, String category, String grade, int fee, String time) {
+    public void update(String name, String category, String grade, int fee, String time, Teacher teacher) {
         this.name = name;
         this.category = category;
         this.grade = grade;
         this.fee = fee;
         this.time= time;
+        this.teacher = teacher;
     }
 
 }

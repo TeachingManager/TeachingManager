@@ -1,14 +1,14 @@
 package com.TeachingManager.TeachingManager.controller;
 
+import com.TeachingManager.TeachingManager.Service.Lecture.LectureService;
 import com.TeachingManager.TeachingManager.domain.Lecture;
 import com.TeachingManager.TeachingManager.form.LectureForm;
-import com.TeachingManager.TeachingManager.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@Controller
+
 public class LectureController {
 
     private final LectureService lectureService;

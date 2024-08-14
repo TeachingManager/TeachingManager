@@ -1,18 +1,20 @@
 package com.TeachingManager.TeachingManager.Repository.Lecture;
 
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Lecture;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LectureRepository {
-    void save(Lecture lecture);
 
-    Optional<Lecture> findById(Long id);
+    Lecture save(Lecture lecture);
 
-    void update(Lecture lecture);
+    Optional<Lecture> findOneById(Long instituteId, Long lectureId);
 
-    void delete(Lecture lecture);
+    void delete(Long instituteId, Long lectureId);
 
-    List<Lecture> findAll();
+    List<Lecture> findAll(Long instituteId);
 }
