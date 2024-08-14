@@ -73,10 +73,12 @@ public class ApiEnrollController {
     public ResponseEntity<EnrolledLecturesResponse> enrollLectures(
             @AuthenticationPrincipal CustomUser user
             , @RequestParam(value = "lecture_id") Long lecture_id
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month
             , @RequestBody EnrollLectureRequest request
             ) {
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.registerEnroll(user, lecture_id, request));
+            return ResponseEntity.ok().body(enrollService.registerEnroll(user, lecture_id, request, year, month));
         }
         return ResponseEntity.badRequest().build();
     }

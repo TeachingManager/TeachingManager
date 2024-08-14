@@ -14,6 +14,7 @@ import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRe
 import com.TeachingManager.TeachingManager.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
@@ -63,14 +64,12 @@ public class EnrollServiceImpl implements EnrollService{
     // 일정들을 생성하는 과정 중간에 해당 일정들과 해당 학생들의 출석 튜플 생성해야함.
     // 중요한 것은 이미 해당 강의가 수강 테이블에 존재하는지 체크하고 없을 때에만 작동해야함.
     @Override
-    public EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request) {
+    @Transactional
+    public EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request, Short year, Short monthShort) {
         Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의 개설 오류! 없는 강의임 : " + lecture_id ));
         Institute institute = instituteRepo.findByPk(user.getPk()).orElseThrow(()->new RuntimeException("강의 개설 오류! 없는 학원에서의 요청 :" + user.getPk()));
 
-        LocalDate date_info = LocalDate.now(); // 이번달 강의는 이번달에만 추가할 수 있다.
-        int year = date_info.getYear();
-        Short monthShort = (short) date_info.getMonthValue();
-
+        LocalDate date_info = LocalDate.of((int) year, (int) monthShort, 1);
 
         ///////////////////////////////////// 1. 일정 테이블 생성 (각 달의 일정에 맞추어서)
         // 강의의 시간표 가져오기
@@ -130,6 +129,7 @@ public class EnrollServiceImpl implements EnrollService{
     // 학생 한명이 강의를 수강하는 요청
     // 수강 테이블과 출석 테이블을 생성한다.
     @Override
+    @Transactional
     public EnrollResponse addOneStudentToEnroll(CustomUser user, Long lecture_id, Long student_id, Short year, Short month) {
         // 1. 수강 테이블 생성
         Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(() -> new RuntimeException("학생->수강 오류! 없거나 접근 불가능한 학생임 : " + student_id ));
@@ -160,6 +160,7 @@ public class EnrollServiceImpl implements EnrollService{
     //////////////////////////////////////////////////////////
     
     @Override
+    @Transactional
     public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id,Long lecture_id, Short year, Short month) {
 //        Lecture lecture = lectureRepo.findById(user.getPk(), enroll_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 수강 정보 삭제위해 접근하려함"));
         Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 강의 정보에 접근하려함"));

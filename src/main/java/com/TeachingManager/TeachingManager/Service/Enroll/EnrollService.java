@@ -32,7 +32,7 @@ public interface EnrollService {
     //////////////////////////////////////////////////////////
 
     // 수강신청
-    EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request);
+    EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request, Short year, Short month);
     
     
     // 한명이 이미 Enroll 에 들어있는 강의에 추가되기
