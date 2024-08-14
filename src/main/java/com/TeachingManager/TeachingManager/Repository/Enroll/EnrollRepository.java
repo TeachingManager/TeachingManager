@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.Repository.Enroll;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
+import com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse;
 import com.TeachingManager.TeachingManager.domain.Enroll;
 
 import java.util.List;
@@ -25,6 +26,9 @@ public interface EnrollRepository {
 
     // 단일 검색
     Optional<Enroll> findById(Long institute_id, Long enroll_id);
+
+    // 수강에서 학원비 정보 가져오기
+    List<EnrollFeeResponse> findEnrolledFeeByDate(Long institute_id, Short year, Short month);
 
     //////////////////////////////////////////////////////////
     ///                       추가                           //

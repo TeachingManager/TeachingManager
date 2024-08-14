@@ -4,16 +4,18 @@ package com.TeachingManager.TeachingManager.Repository.Enroll;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse;
+import com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse;
 import com.TeachingManager.TeachingManager.domain.Enroll;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Transactional
+@Component
 @RequiredArgsConstructor
 public class EnrollRepositoryImpl implements EnrollRepository{
     private final EntityManager em;
@@ -26,7 +28,9 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     @Override
     public List<EnrolledStudentsResponse> findEnrolledStudentsByDate(Long institute_id, Long lecture_id, Short year, Short month) {
         return em.createQuery(
-                "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse(en.lecture.lecture_id, en.student.id, en.student.name, en.year, en.month) " +
+                "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse(en.lecture.lecture_id, en.student.id, " +
+                        "en.student.name, en.year, en.month, en.payed_fee," +
+                        " en.fullPayment, en.lecture.fee) " +
                         "FROM Enroll en " +
                         "WHERE en.lecture.institute.pk = : instituteId " +
                         "AND en.lecture.lecture_id = :lectureId " +
@@ -83,6 +87,24 @@ public class EnrollRepositoryImpl implements EnrollRepository{
                 .setParameter("enrollId", enroll_id)
                 .getResultStream().findFirst();
     }
+
+    // 해당 달의 수강료/ 수강료 납부 일정 가져오기
+    @Override
+    public List<EnrollFeeResponse> findEnrolledFeeByDate(Long institute_id, Short year, Short month) {
+        return em.createQuery(
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse(en.student.name, en.lecture.name, en.lecture.fee, en.lecture.teacher.name, en.payed_fee, en.fullPayment, en.enroll_id)" +
+                                "FROM Enroll en " +
+                                "WHERE en.lecture.institute.pk  = :instituteId " +
+                                "AND en.year = : year " +
+                                "AND en.month = :month"
+                        , EnrollFeeResponse.class
+                ).setParameter("instituteId", institute_id)
+                .setParameter("year", year)
+                .setParameter("month", month)
+                .getResultList();
+    }
+    
+    
 
     //////////////////////////////////////////////////////////
     ///                       저장                           //

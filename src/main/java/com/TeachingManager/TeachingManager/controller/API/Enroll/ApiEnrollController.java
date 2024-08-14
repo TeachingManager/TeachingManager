@@ -62,19 +62,6 @@ public class ApiEnrollController {
     }
 
 
-    // 이번 번 달의 전체 수강료 가져오기
-    @GetMapping("/api/fee")
-    public ResponseEntity<EnrollFeeResponse> findFeeList(
-            @AuthenticationPrincipal CustomUser user
-            , @RequestParam(value = "year") Short year
-            , @RequestParam(value = "month") Short month
-    ) {
-        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.findMonthlyLectureFee(user, year, month));
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
     //////////////////////////////////////////////////////////
     ///                       추가                           //
     //////////////////////////////////////////////////////////
@@ -120,10 +107,14 @@ public class ApiEnrollController {
     @PutMapping("/api/delete/enroll/student")
     public ResponseEntity<String> cancelStudentEnroll(
             @AuthenticationPrincipal CustomUser user
-            , @RequestParam(value = "enroll_id") Long enroll_id) {
+            , @RequestParam(value = "enroll_id") Long enroll_id
+            , @RequestParam(value = "lecture_id") Long lecture_id
+            , @RequestParam(value = "year") Short year
+            , @RequestParam(value = "month") Short month)
+    {
         // 특정달의 특정강의의 특정학생의 수강신청 여부 삭제
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id));
+            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id,lecture_id, year, month));
         }
         return ResponseEntity.badRequest().build();
     }

@@ -13,12 +13,18 @@ public class EnrolledStudentsResponse {
     private String student_name;
     private Short year;
     private Short month;
+    private int lecture_fee;
+    private int payed_fee;
+    private Boolean fullPaid;
 
-    public EnrolledStudentsResponse(Long lecture_id, Long student_id, String student_name, Short year, Short month) {
+    public EnrolledStudentsResponse(Long lecture_id, Long student_id, String student_name, Short year, Short month,  int payed_fee, Boolean fullPaid, int lecture_fee) {
         this.lecture_id = lecture_id;
         this.student_id = student_id;
         this.student_name = student_name;
         this.year = year;
         this.month = month;
+        this.payed_fee = payed_fee;
+        this.fullPaid = fullPaid;
+        this.lecture_fee = lecture_fee;
     }
 }

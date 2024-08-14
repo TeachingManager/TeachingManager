@@ -63,7 +63,6 @@ public class TokenService {
         if (!tokenProvider.validToken(refreshToken)) {
             throw new IllegalArgumentException("Unexpected token");
         }
-
         Long userPk = findByRefreshToken(refreshToken).getUserId();
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByPk(userPk));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByPk(userPk));

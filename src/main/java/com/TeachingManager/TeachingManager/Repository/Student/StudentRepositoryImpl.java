@@ -3,13 +3,15 @@ package com.TeachingManager.TeachingManager.Repository.Student;
 import com.TeachingManager.TeachingManager.domain.Student;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Transactional
+@Component
 @RequiredArgsConstructor
 public class StudentRepositoryImpl implements StudentRepository{
 

@@ -1,4 +1,4 @@
-package com.TeachingManager.TeachingManager.DTO.Enroll.Response;
+package com.TeachingManager.TeachingManager.DTO.Fee;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,11 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnrollFeeResponse {
-    private long totalFee = 0;
-    private Map<String, Long> lectureFeeList = new HashMap<>();
+    private String student_name;
+    private String lecture_name;
+    private long fee;
+    private String teacher_name;
+    private int payed_fee;
+    private Boolean fullPaid;
+    private Long enroll_id;
 }

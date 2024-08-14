@@ -2,8 +2,11 @@ package com.TeachingManager.TeachingManager.Service.Enroll;
 
 import com.TeachingManager.TeachingManager.DTO.Enroll.Request.EnrollLectureRequest;
 import com.TeachingManager.TeachingManager.DTO.Enroll.Response.*;
+import com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse;
+import com.TeachingManager.TeachingManager.DTO.Fee.EnrollYearFeeResponse;
 import com.TeachingManager.TeachingManager.Repository.Attend.AttendRepository;
 import com.TeachingManager.TeachingManager.Repository.Enroll.EnrollRepository;
+import com.TeachingManager.TeachingManager.Repository.Fee.FeeRepository;
 import com.TeachingManager.TeachingManager.Repository.Lecture.LectureRepository;
 import com.TeachingManager.TeachingManager.Repository.Schedule.ScheduleRepository;
 import com.TeachingManager.TeachingManager.Repository.Student.StudentRepository;
@@ -14,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -29,6 +30,7 @@ public class EnrollServiceImpl implements EnrollService{
     private final ScheduleRepository scheduleRepo;
     private final AttendRepository attendRepo;
     private final InstituteRepository instituteRepo;
+    private final FeeRepository feeRepo;
 
     //////////////////////////////////////////////////////////
     ///                       조회                           //
@@ -48,17 +50,6 @@ public class EnrollServiceImpl implements EnrollService{
         return enrollRepo.findNotEnrolledLecturesByDate(user.getPk(), year, month);
     }
 
-    @Override
-    public EnrollFeeResponse findMonthlyLectureFee(CustomUser user, Short year, Short month) {
-        List<EnrolledLecturesResponse> enrolledLecturesResponseList = enrollRepo.findEnrolledLecturesByDate(user.getPk(), year, month);
-        long totalFee = 0;
-        Map<String, Long> lectureFeeList = new HashMap<>();
-        for(EnrolledLecturesResponse info : enrolledLecturesResponseList){
-            totalFee += (long) info.getFee();
-            lectureFeeList.put(info.getLecture_name(), (long) info.getFee());
-        }
-        return new EnrollFeeResponse(totalFee, lectureFeeList);
-    }
 
 
     //////////////////////////////////////////////////////////
@@ -133,7 +124,7 @@ public class EnrollServiceImpl implements EnrollService{
         for (Long student_id : request.getStudentIdList()) {
             addOneStudentToEnroll(user, lecture_id, student_id, (short) year, monthShort);
         }
-        return new EnrolledLecturesResponse(lecture_id, lecture.getName(), (short)year, monthShort);
+        return new EnrolledLecturesResponse(lecture_id, lecture.getName(), (short)year, monthShort, lecture.getFee());
     }
 
     // 학생 한명이 강의를 수강하는 요청
@@ -141,10 +132,13 @@ public class EnrollServiceImpl implements EnrollService{
     @Override
     public EnrollResponse addOneStudentToEnroll(CustomUser user, Long lecture_id, Long student_id, Short year, Short month) {
         // 1. 수강 테이블 생성
-        Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(() -> new RuntimeException("학생->수강 오류! 없는 학생임 : " + student_id ));
-        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의->수강 오류! 없는 강의임 : " + lecture_id ));
+        Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(() -> new RuntimeException("학생->수강 오류! 없거나 접근 불가능한 학생임 : " + student_id ));
+        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(() -> new RuntimeException("강의->수강 오류! 없거나 접근 불가능한 강의임 : " + lecture_id ));
         Enroll newEnroll = new Enroll(lecture, student, year, month);
         enrollRepo.save(newEnroll);
+
+        //// 수강료에 추가.
+        feeRepo.addMonthTotalFee(user.getPk(), year, month, lecture.getFee());
         
         // 2. 출석 테이블 생성
 
@@ -166,7 +160,10 @@ public class EnrollServiceImpl implements EnrollService{
     //////////////////////////////////////////////////////////
     
     @Override
-    public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id) {
+    public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id,Long lecture_id, Short year, Short month) {
+//        Lecture lecture = lectureRepo.findById(user.getPk(), enroll_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 수강 정보 삭제위해 접근하려함"));
+        Lecture lecture = lectureRepo.findById(lecture_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 강의 정보에 접근하려함"));
+        feeRepo.declineMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee());
         return enrollRepo.delete(user.getPk(), enroll_id);
     }
 

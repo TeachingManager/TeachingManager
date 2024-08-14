@@ -21,6 +21,12 @@ public class Enroll {
     @Column(name = "month", nullable = false)
     private Short month;
 
+    @Column(name="payed_fee", nullable = false)
+    private int payed_fee = 0;
+
+    @Column(name="fullPayment", nullable = false)
+    private Boolean fullPayment = false; // 0 이면 미납, 1이면 완납
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = false)
     private Lecture lecture;
@@ -36,4 +42,12 @@ public class Enroll {
         this.lecture = lecture;
         this.student = student;
     }
+
+    public void updatePaidFee(int payed_amount){
+        this.payed_fee = payed_amount;
+        if(this.payed_fee >= lecture.getFee()){
+            this.fullPayment = true;
+        }
+    }
+
 }
