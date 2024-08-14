@@ -11,3 +11,6 @@
 
 깃허브 페이지 - develop 브랜치
 https://github.com/TeachingManager/TeachingManager
+
+
+MYSQL 에서 ON DELETE 설정해주어야함.

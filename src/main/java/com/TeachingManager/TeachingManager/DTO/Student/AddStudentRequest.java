@@ -1,5 +1,6 @@
 package com.TeachingManager.TeachingManager.DTO.Student;
 
+import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Student;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class AddStudentRequest {
     private String gender;
     private String level;
 
-    public Student toEntity(){
+    public Student toEntity(Institute institute){
         return Student.builder()
                 .name(name)
                 .age(age)
@@ -30,6 +31,7 @@ public class AddStudentRequest {
                 .parentNumber(parentNumber)
                 .gender(gender)
                 .level(level)
+                .institute(institute)
                 .build();
     }
 }

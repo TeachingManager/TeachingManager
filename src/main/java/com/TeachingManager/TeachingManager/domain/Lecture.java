@@ -1,80 +1,64 @@
 package com.TeachingManager.TeachingManager.domain;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.time.LocalTime;
+
+
+@Getter
+@Entity
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@Table(name = "lecture")
 public class Lecture {
-    private long lectureId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lecture_id", updatable = false)
+    private Long lecture_id;
+
+    @Column(name = "name", nullable = false)
     private String name;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+
+    @Column(name = "category", nullable = false)
     private String category;
+
+    @Column(name = "grade", nullable = false)
     private String grade;
+
+    @Column(name = "fee", nullable = false)
     private int fee;
 
-    // teacher 외래키
-    private long teacherId;
+    @Column(name = "time", nullable = false)
+    private String time;
 
-    public long getLectureId() {
-        return lectureId;
-    }
+    // 학원과의 일대다 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institute_id", nullable = false)
+    private Institute institute;
 
-    public void setLectureId(long lectureId) {
-        this.lectureId = lectureId;
-    }
+    // 강의와의 일대다 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private Teacher teacher;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
+    @Builder
+    public Lecture(String name, String category, String grade, int fee, String time, Institute institute, Teacher teacher){
         this.name = name;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
         this.grade = grade;
-    }
-
-    public int getFee() {
-        return fee;
-    }
-
-    public void setFee(int fee) {
         this.fee = fee;
+        this.time= time;
+        this.institute = institute;
+        this.teacher = teacher;
     }
 
-    public long getTeacherId() {
-        return teacherId;
+    public void update(String name, String category, String grade, int fee, String time) {
+        this.name = name;
+        this.category = category;
+        this.grade = grade;
+        this.fee = fee;
+        this.time= time;
     }
 
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
 }

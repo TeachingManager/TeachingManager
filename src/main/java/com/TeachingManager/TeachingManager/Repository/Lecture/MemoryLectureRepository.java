@@ -13,8 +13,7 @@ public class MemoryLectureRepository implements LectureRepository {
 
     @Override
     public void save(Lecture lecture) {
-        lecture.setLectureId(++sequence);
-        store.put(lecture.getLectureId(), lecture);
+        store.put(lecture.getLecture_id(), lecture);
     }
 
     @Override
@@ -24,12 +23,12 @@ public class MemoryLectureRepository implements LectureRepository {
 
     @Override
     public void update(Lecture lecture) {
-        store.replace(lecture.getLectureId(), lecture);
+        store.replace(lecture.getLecture_id(), lecture);
     }
 
     @Override
     public void delete(Lecture lecture) {
-        store.remove(lecture.getLectureId());
+        store.remove(lecture.getLecture_id());
     }
 
     @Override

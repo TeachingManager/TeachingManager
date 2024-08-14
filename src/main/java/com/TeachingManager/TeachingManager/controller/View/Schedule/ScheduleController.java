@@ -1,8 +1,11 @@
 package com.TeachingManager.TeachingManager.controller.View.Schedule;
 
 import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.MonthScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.MonthScheduleResponse;
 import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse;
 import com.TeachingManager.TeachingManager.Service.Schedule.ScheduleService;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.InstituteAdapter;
 import com.TeachingManager.TeachingManager.domain.Schedule;
@@ -18,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.attribute.standard.PresentationDirection;
+import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -33,22 +37,7 @@ public class ScheduleController {
 //   강의 목록(일정홈)  강의 가져오기
 
     /*     일정 홈   */
-    @GetMapping("/Schedule")
-    public String Schedule(Model model, @AuthenticationPrincipal Institute institute){
-        model.addAttribute("schedules", scheduleService.searchAll_schedule(institute.getInstitute_id()));
-        return "schedule/schedule_main";
-    }
 
-    /*     일정 디테일    */
-    @GetMapping("/Schedule/Detail")
-    public String Detail_Schedule(@RequestParam("pk") Long pk, Model model) {
-
-        ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
-
-        model.addAttribute("schedule", response);
-
-        return "schedule/schedule_detail";
-    }
 
 
 //    /*  일정  작성 폼  */
@@ -58,20 +47,20 @@ public class ScheduleController {
 //    }
 
 
-    /*     일정  폼   */
-    @GetMapping("/Schedule/form")
-    public String Update_Schedule(@RequestParam(required = false, name = "pk") Long pk, Model model) {
-
-        if (pk == null){
-            model.addAttribute("schedule", new ScheduleResponse());
-        }
-        else {
-            ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
-            model.addAttribute("schedule", response);
-        }
-
-        return "schedule/schedule_form";
-    }
+//    /*     일정  폼   */
+//    @GetMapping("/Schedule/form")
+//    public String Update_Schedule(@RequestParam(required = false, name = "pk") Long pk, Model model) {
+//
+//        if (pk == null){
+//            model.addAttribute("schedule", new ScheduleResponse());
+//        }
+//        else {
+//            ScheduleResponse response = new ScheduleResponse(scheduleService.search_schedule(pk).orElseThrow());
+//            model.addAttribute("schedule", response);
+//        }
+//
+//        return "schedule/schedule_form";
+//    }
 
 
 //   /* 강의 가져오기 */

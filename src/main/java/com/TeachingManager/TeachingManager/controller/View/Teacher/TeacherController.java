@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class TeacherController {
+public class   TeacherController {
 
     @GetMapping("/login/teacher")
     public String login() {

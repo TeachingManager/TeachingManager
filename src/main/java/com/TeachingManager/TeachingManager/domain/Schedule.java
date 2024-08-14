@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.sql.Time;
 import java.text.DateFormat;
@@ -37,19 +38,20 @@ public class Schedule {
     private Institute institute;
 
 
-    // 강의 외래키
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "lecture_id", nullable = true)
-//    private Long lid;
+  //   강의 일대 다 관계
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lecture_id", nullable = true)
+    private Lecture lecture;
 
 
     @Builder
-    public Schedule(String title, LocalDateTime start_date, LocalDateTime end_date, String memo, Institute institute){
+    public Schedule(String title, LocalDateTime start_date, LocalDateTime end_date, String memo, Institute institute, Lecture lecture){
         this.title = title;
         this.start_date = start_date;
         this.end_date = end_date;
         this.memo = memo;
         this.institute = institute;
+        this.lecture  = lecture;
     }
 
     public void update(String title, LocalDateTime start_date, LocalDateTime end_date, String memo) {

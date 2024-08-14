@@ -30,15 +30,15 @@ public class LectureController {
 
     @PostMapping("/Lecture/new")
     public String lectureCreate(LectureForm form) {
-        Lecture lecture = new Lecture();
-        lecture.setName(form.getName());
-        lecture.setStartTime(form.getStartTime());
-        lecture.setEndTime(form.getEndTime());
-        lecture.setCategory(form.getCategory());
-        lecture.setGrade(form.getGrade());
-        lecture.setFee(form.getFee());
+//        Lecture lecture = new Lecture();
+//        lecture.setName(form.getName());
+//        lecture.setStartTime(form.getStartTime());
+//        lecture.setEndTime(form.getEndTime());
+//        lecture.setCategory(form.getCategory());
+//        lecture.setGrade(form.getGrade());
+//        lecture.setFee(form.getFee());
 
-        lectureService.registerLecture(lecture);
+//        lectureService.registerLecture(lecture);
 
         return "redirect:/Lecture";
     }

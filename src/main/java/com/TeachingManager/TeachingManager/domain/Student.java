@@ -40,8 +40,12 @@ public class Student {
     @Column(name = "level", nullable = false)
     private String level;
 
+    @ManyToOne
+    @JoinColumn(name = "institute_id", nullable = false)
+    private Institute institute;
+
     @Builder
-    public Student(String name, int age, int grade, String phoneNumber, String parentName, String parentNumber, String gender, String level) {
+    public Student(String name, int age, int grade, String phoneNumber, String parentName, String parentNumber, String gender, String level, Institute institute) {
         this.name = name;
         this.age = age;
         this.grade = grade;
@@ -50,7 +54,9 @@ public class Student {
         this.parentNumber = parentNumber;
         this.gender = gender;
         this.level = level;
+        this.institute = institute;
     }
+
     //업데이트 함수
     public void update(String name, int age, int grade, String phoneNumber, String parentName, String parentNumber, String gender, String level){
         this.name = name;
