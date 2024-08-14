@@ -17,28 +17,30 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public void save(Lecture lecture) {
+    public Lecture save(Lecture lecture) {
         em.persist(lecture);
+        return lecture;
     }
 
     @Override
-    public Optional<Lecture> findById(Long id) {
-        Lecture lecture = em.find(Lecture.class, id);
-        return Optional.ofNullable(lecture);
+    public Optional<Lecture> findOneById(Long instituteId, Long lectureId) {
+        return em.createQuery("select l from Lecture where l.institute.pk = :instituteId and l.lecture_id = :lectureId", Lecture.class)
+                .setParameter("instituteId", instituteId).setParameter("lectureId", lectureId)
+                .getResultStream().findFirst();
     }
 
     @Override
-    public void update(Lecture lecture) {
-
+    public void delete(Long instituteId, Long lectureId) {
+        em.createQuery("delete from Lecture l where l.institute.pk = :instituteId and l.lecture_id = :lectureId")
+                .setParameter("instituteId", instituteId)
+                .setParameter("lectureId", lectureId)
+                .executeUpdate();
     }
 
     @Override
-    public void delete(Lecture lecture) {
-
-    }
-
-    @Override
-    public List<Lecture> findAll() {
-        return em.createQuery("select l from Lecture l", Lecture.class).getResultList();
+    public List<Lecture> findAll(Long instituteId) {
+        return em.createQuery("select l from Lecture l where l.institute.pk = :instituteId", Lecture.class)
+                .setParameter("instituteId", instituteId)
+                .getResultList();
     }
 }
