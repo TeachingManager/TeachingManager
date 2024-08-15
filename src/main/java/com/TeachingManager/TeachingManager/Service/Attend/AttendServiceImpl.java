@@ -82,7 +82,7 @@ public class AttendServiceImpl implements AttendService{
                 CurrentStudentId = nextStudent_id;
 
                 if(tempResult != null){
-                    tempResult.setAttendInfoList(tempAttendInfoList);
+                    tempResult.setAttendInfoList(new ArrayList<>(tempAttendInfoList));
                     resultList.add(tempResult);
 
                     tempAttendInfoList.clear();
@@ -98,6 +98,7 @@ public class AttendServiceImpl implements AttendService{
         }
 
         if (tempResult != null) {
+            tempResult.setAttendInfoList(tempAttendInfoList);
             resultList.add(tempResult);
         }
 
@@ -113,8 +114,7 @@ public class AttendServiceImpl implements AttendService{
 
         MonthStudentAttendResponse tempResult = null;
         List<SimpleAttendInfo> tempAttendInfoList = new ArrayList<SimpleAttendInfo>();
-
-
+        
         Iterator<StudentsMonthAttendRecord> iterator = attendanceList.iterator();
         Long CurrentLectureId = 0L;
 
@@ -126,7 +126,7 @@ public class AttendServiceImpl implements AttendService{
                 CurrentLectureId = nextStudent_id;
 
                 if(tempResult != null){
-                    tempResult.setAttendInfoList(tempAttendInfoList);
+                    tempResult.setAttendInfoList(new ArrayList<>(tempAttendInfoList));
                     resultList.add(tempResult);
 
                     tempAttendInfoList.clear();
@@ -142,6 +142,7 @@ public class AttendServiceImpl implements AttendService{
         }
 
         if (tempResult != null) {
+            tempResult.setAttendInfoList(tempAttendInfoList);
             resultList.add(tempResult);
         }
 

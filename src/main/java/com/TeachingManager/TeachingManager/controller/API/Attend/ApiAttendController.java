@@ -28,7 +28,7 @@ public class ApiAttendController {
     //////////////////////////////////////////////////////////
 
     // 단일 출석에 관한 정보를 가져오는 api. 대게 각 출석의 메모를 가져오는데 사용될 것 같긴하다.
-    @PostMapping("/api/attend/{pk}")
+    @GetMapping("/api/attend/{pk}")
     public ResponseEntity<AttendInfo> Detail_Attend(@PathVariable("pk") Long pk, @AuthenticationPrincipal CustomUser user) {
         if(user != null) {
             return ResponseEntity.ok().body(attendService.searchById(user, pk));
