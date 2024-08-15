@@ -47,11 +47,15 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     @Override
     public List<EnrolledLecturesResponse> findEnrolledLecturesByDate(Long institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(en.lecture.lecture_id, en.lecture.name, en.year, en.month, en.lecture.fee) " +
-                                "FROM Enroll en " +
-                                "WHERE en.lecture.institute.pk = :instituteId " +
-                                "AND en.year = :year " +
-                                "AND en.month = :month", EnrolledLecturesResponse.class
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee) " +
+                                "FROM Lecture lec " +
+                                "WHERE lec.institute.pk = :instituteId " +
+                                "AND lec.lecture_id IN ( SELECT en.lecture.lecture_id " +
+                                                            "FROM Enroll en " +
+                                                            "WHERE en.lecture.institute.pk = :instituteId " +
+                                                            "AND en.year = :year " +
+                                                            "AND en.month = :month)"
+                        , EnrolledLecturesResponse.class
                 ).setParameter("instituteId", institute_id)
                 .setParameter("year", year)
                 .setParameter("month", month)
@@ -62,10 +66,10 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     @Override
     public List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(Long institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse(lec.lecture_id, lec.name)" +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse(lec.lecture_id, lec.name) " +
                                 "FROM Lecture lec " +
                                 "WHERE lec.institute.pk = :instituteId " +
-                                "AND lec.lecture_id NOT IN ( SELECT en.lecture.lecture_id" +
+                                "AND lec.lecture_id NOT IN ( SELECT en.lecture.lecture_id " +
                                                                     "FROM Enroll en " +
                                                                     "WHERE en.lecture.institute.pk = :instituteId " +
                                                                     "AND en.year = :year " +
@@ -92,7 +96,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     @Override
     public List<EnrollFeeResponse> findEnrolledFeeByDate(Long institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse(en.student.name, en.lecture.name, en.lecture.fee, en.lecture.teacher.name, en.payed_fee, en.fullPayment, en.enroll_id)" +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse(en.student.name, en.student.id, en.lecture.lecture_id, en.lecture.name, en.lecture.fee, en.lecture.teacher.name, en.payed_fee, en.fullPayment, en.enroll_id)" +
                                 "FROM Enroll en " +
                                 "WHERE en.lecture.institute.pk  = :instituteId " +
                                 "AND en.year = : year " +

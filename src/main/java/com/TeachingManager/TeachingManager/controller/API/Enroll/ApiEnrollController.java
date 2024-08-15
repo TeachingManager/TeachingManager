@@ -111,12 +111,13 @@ public class ApiEnrollController {
             @AuthenticationPrincipal CustomUser user
             , @RequestParam(value = "enroll_id") Long enroll_id
             , @RequestParam(value = "lecture_id") Long lecture_id
+            , @RequestParam(value = "student_id") Long student_id
             , @RequestParam(value = "year") Short year
             , @RequestParam(value = "month") Short month)
     {
         // 특정달의 특정강의의 특정학생의 수강신청 여부 삭제
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id,lecture_id, year, month));
+            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id,lecture_id, student_id, year, month));
         }
         return ResponseEntity.badRequest().build();
     }

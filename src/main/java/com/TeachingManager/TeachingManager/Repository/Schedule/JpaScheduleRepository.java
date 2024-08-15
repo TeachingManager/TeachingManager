@@ -46,6 +46,30 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     }
 
     @Override
+    public String deleteByLectureDate(Long institute_id, Long lecture_id, LocalDate date_info) {
+        // 시작일과 끝날짜
+        LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        int deleteCount = em.createQuery(
+                "DELETE FROM Schedule sc " +
+                        "WHERE sc.institute.pk = :instituteId  " +
+                        "AND sc.lecture.lecture_id = :lectureId " +
+                        "AND sc.start_date <= :endOfMonth " +
+                        "AND sc.end_date >= :startOfMonth")
+                .setParameter("instituteId", institute_id)
+                .setParameter("lectureId", lecture_id)
+                .setParameter("startOfMonth", startOfMonth)
+                .setParameter("endOfMonth", endOfMonth)
+                .executeUpdate();;
+
+        if(deleteCount == 0) {
+            return "알맞는 대상이 없었음";
+        }
+        return "삭제완료";
+    }
+
+    @Override
     public Optional<Schedule> searchById(Long institute_id, Long scid) {
         System.out.println("institute_id = " + institute_id);
         System.out.println("scid = " + scid);
@@ -106,7 +130,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
         return em.createQuery(
-                        "SELECT sc" +
+                        "SELECT sc " +
                                 "FROM Schedule sc " +
                                 "WHERE sc.institute.pk = :institute_id " +
                                 "AND sc.lecture.lecture_id = :lectureId " +

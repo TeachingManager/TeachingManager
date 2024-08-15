@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -66,6 +68,14 @@ public class EnrollServiceImpl implements EnrollService{
     @Override
     @Transactional
     public EnrolledLecturesResponse registerEnroll(CustomUser user, Long lecture_id, EnrollLectureRequest request, Short year, Short monthShort) {
+
+        List<EnrolledLecturesResponse> enrolledLecturesResponseList = enrollRepo.findEnrolledLecturesByDate(user.getPk(), year, monthShort);
+        for (EnrolledLecturesResponse one : enrolledLecturesResponseList) {
+            if (Objects.equals(one.getLecture_id(), lecture_id)) {
+                throw new RuntimeException("이미 개설된 강의를 다시 개설할 수 는 없습니다.");
+            }
+        }
+
         Lecture lecture = lectureRepo.findOneById(user.getPk(),lecture_id).orElseThrow(() -> new RuntimeException("강의 개설 오류! 없는 강의임 : " + lecture_id ));
         Institute institute = instituteRepo.findByPk(user.getPk()).orElseThrow(()->new RuntimeException("강의 개설 오류! 없는 학원에서의 요청 :" + user.getPk()));
 
@@ -81,13 +91,14 @@ public class EnrollServiceImpl implements EnrollService{
         String[] timeInfo = null; // 각 시작 or 종료 시점의 정보 저장되는곳 "12:30~13:20" 이 분리됨. -> "12:30","13:20"
         DayOfWeek dayOfWeek  = null; // 요일 정보를 얻기 위한. DayOfWeek.valueOf(string) 으로 변환 가능
 
+
         // 강의의 큰 일정마다
         for(String schedule_time : scheduleTimeList){
-            dayInfo = schedule_time.split(":"); // dayInfo[0] = 요일, dayInfo[1] = 시간
+            dayInfo = schedule_time.split("-"); // dayInfo[0] = 요일, dayInfo[1] = 시간
 
             // 요일과 시간을 저장.
             dayOfWeek = DayOfWeek.valueOf(dayInfo[0]);
-            timeInfo = dayInfo[1].split("~"); //timeInfo[0]  = 시작시간, timeInfo[1] = 종료시간
+            timeInfo = dayInfo[1].split("~"); //timeInfo[0]  = 시작시간, timeInfo[1] = 종료시간\
 
             // String 으로 저장된 정보를 형변환
             LocalDate first_day = date_info.with(TemporalAdjusters.firstInMonth(dayOfWeek)); // 첫 해당 요일 ( ex 첫번재 월요일)
@@ -95,12 +106,16 @@ public class EnrollServiceImpl implements EnrollService{
             LocalTime start_time = LocalTime.parse(timeInfo[0] + ":00");
             LocalTime end_time = LocalTime.parse(timeInfo[1] + ":00");
 
+
+
+
             // 해당 달의 각주의 해당 요일 마다.
             LocalDate current_day = first_day;
             while (!current_day.isAfter(last_day)) {
                 // 시작, 종료 시간 설정
                 LocalDateTime start_date = LocalDateTime.of(current_day, start_time);
                 LocalDateTime end_date = LocalDateTime.of(current_day, end_time);
+
 
                 // 스케쥴 생성
                 Schedule sc = Schedule.builder()
@@ -113,13 +128,23 @@ public class EnrollServiceImpl implements EnrollService{
                         .build();
 
                 scheduleRepo.save(sc);
-
                 current_day = current_day.with(TemporalAdjusters.next(dayOfWeek));
             }
         }
 
         ///////////////////////////////////// 2. 수강 & 출석 테이블 생성
         // 각 학생별로 강의에 대한 수강 요소, 출석 요소를 넣는다.
+        // 그전에 이번달 전체 요금 테이블이 없으면 만들어두기.
+        Optional<Fee> feeTuple = feeRepo.findByInstituteDate(user.getPk(), year, monthShort);
+        if (feeTuple.isEmpty()) {
+            feeRepo.save(Fee.builder()
+                    .institute(institute)
+                    .totalMonthFee(0)
+                    .year(year)
+                    .month(monthShort)
+                    .build());
+        }
+
         for (Long student_id : request.getStudentIdList()) {
             addOneStudentToEnroll(user, lecture_id, student_id, (short) year, monthShort);
         }
@@ -131,26 +156,42 @@ public class EnrollServiceImpl implements EnrollService{
     @Override
     @Transactional
     public EnrollResponse addOneStudentToEnroll(CustomUser user, Long lecture_id, Long student_id, Short year, Short month) {
-        // 1. 수강 테이블 생성
+
+        List<EnrolledStudentsResponse> enrolledStudentsResponseList = enrollRepo.findEnrolledStudentsByDate(user.getPk(), lecture_id, year, month);
+        for (EnrolledStudentsResponse one : enrolledStudentsResponseList) {
+            if (Objects.equals(one.getStudent_id(), student_id)) {
+                throw new RuntimeException("이미 등록한 학생을 또 등록할 순 없습니다.");
+            }
+        }
+
         Student student = studentRepo.findById(user.getPk(), student_id).orElseThrow(() -> new RuntimeException("학생->수강 오류! 없거나 접근 불가능한 학생임 : " + student_id ));
         Lecture lecture = lectureRepo.findOneById(user.getPk(), lecture_id).orElseThrow(() -> new RuntimeException("강의->수강 오류! 없거나 접근 불가능한 강의임 : " + lecture_id ));
-        Enroll newEnroll = new Enroll(lecture, student, year, month);
-        enrollRepo.save(newEnroll);
 
-        //// 수강료에 추가.
-        feeRepo.addMonthTotalFee(user.getPk(), year, month, lecture.getFee());
-        
-        // 2. 출석 테이블 생성
 
+        // 1. 출석 테이블 생성
         // 해당 강의 스케줄 일정 가져오기
         LocalDate date_info = LocalDate.of(year, month, 15);
         Set<Schedule> scheduleSet = scheduleRepo.filter_by_lecture(user.getPk(), lecture_id, date_info);
+
+        if (scheduleSet.isEmpty()) {
+            throw new RuntimeException("개설되지 않은 강의에 대한 수강신청 접근이 있었습니다.");
+        }
 
         // 각 일정마다 학생의 출석 테이블 생성
         for (Schedule schedule : scheduleSet) {
             Attend newAttend = new Attend((byte)0,"-", student, schedule);
             attendRepo.save(newAttend);
         }
+
+
+        // 2. 수강 테이블 생성
+        Enroll newEnroll = new Enroll(lecture, student, year, month);
+        enrollRepo.save(newEnroll);
+        System.out.println("newEnroll = " + newEnroll);
+        
+        //// 수강료에 추가.
+        feeRepo.addMonthTotalFee(user.getPk(), year, month, lecture.getFee());
+
 
         return new EnrollResponse(newEnroll);
     }
@@ -161,10 +202,21 @@ public class EnrollServiceImpl implements EnrollService{
     
     @Override
     @Transactional
-    public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id,Long lecture_id, Short year, Short month) {
-//        Lecture lecture = lectureRepo.findById(user.getPk(), enroll_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 수강 정보 삭제위해 접근하려함"));
+    public String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id, Long lecture_id, Long student_id, Short year, Short month) {
         Lecture lecture = lectureRepo.findOneById(user.getPk(), lecture_id).orElseThrow(()->new RuntimeException("존재하지 않거나 권한이 없는 강의 정보에 접근하려함"));
-        feeRepo.declineMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee());
+        Enroll enroll = enrollRepo.findById(user.getPk(), enroll_id).orElseThrow(()-> new RuntimeException("존재하지 않거나 권한이 없는 수강 정보에 접근하려함."));
+        feeRepo.declineMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee(), enroll.getPayed_fee() );
+
+        // 만약 해당 강의를 수강하는 학생이 없다면, 스케쥴도 삭제.
+        if (enrollRepo.findEnrolledStudentsByDate(user.getPk(), lecture_id, year, month).size() == 1) {
+            System.out.println("강의를 수강하는 학생이 없다.");
+            scheduleRepo.deleteByLectureDate(user.getPk(),lecture_id, LocalDate.of((int) year, (int) month, 1));
+        }else {
+            // 아직 해당 강의를 수강하는 학생이 있다면, 수강 취소하는 학생의 출석부만 삭제
+            System.out.println("강의를 수강하는 학생이 아직 남아 있다.");
+            attendRepo.deleteMonthAttend(user.getPk(), lecture_id, student_id, LocalDate.of((int) year, (int) month, 1));
+        }
+
         return enrollRepo.delete(user.getPk(), enroll_id);
     }
 

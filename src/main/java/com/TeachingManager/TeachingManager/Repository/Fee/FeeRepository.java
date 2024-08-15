@@ -19,6 +19,6 @@ public interface FeeRepository {
 
     long addMonthTotalFee(Long institute_id, Short Year, Short Month, long feeValue);
 
-    long declineMonthTotalAndPaidFee(Long institute_id,  Short Year, Short Month, long feeValue);
+    long declineMonthTotalAndPaidFee(Long institute_id,  Short Year, Short Month, long feeValue, long paidFeeValue);
 
 }

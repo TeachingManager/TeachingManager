@@ -60,7 +60,7 @@ public class FeeRepositoryImpl implements FeeRepository{
     @Override
     public long addMonthTotalFee(Long institute_id, Short year, Short month, long feeValue) {
         return em.createQuery("UPDATE Fee f SET f.totalMonthFee = f.totalMonthFee + :feeValue " +
-                "WHERE f.institute.institute_id =: instituteID " +
+                "WHERE f.institute.pk =: instituteId " +
                 "AND f.year = :year " +
                 "AND f.month = :month")
                 .setParameter("instituteId", institute_id)
@@ -71,16 +71,17 @@ public class FeeRepositoryImpl implements FeeRepository{
     }
 
     @Override
-    public long declineMonthTotalAndPaidFee(Long institute_id, Short year, Short month, long feeValue) {
+    public long declineMonthTotalAndPaidFee(Long institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
         return em.createQuery("UPDATE Fee f " +
-                        "SET f.totalMonthFee = f.totalMonthFee + :feeValue, f.payedMonthFee = f.payedMonthFee - :feeValue " +
-                        "WHERE f.institute.institute_id =: instituteID " +
+                        "SET f.totalMonthFee = f.totalMonthFee - :feeValue, f.payedMonthFee = f.payedMonthFee - :paidFeeValue " +
+                        "WHERE f.institute.pk =: instituteId " +
                         "AND f.year = :year " +
                         "AND f.month = :month")
                 .setParameter("instituteId", institute_id)
                 .setParameter("year", year)
                 .setParameter("month", month)
                 .setParameter("feeValue", feeValue)
+                .setParameter("paidFeeValue", paidFeeValue)
                 .executeUpdate();
     }
 }

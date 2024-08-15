@@ -14,6 +14,8 @@ public interface ScheduleRepository {
 
     String delete(Long institute_id, Long scid);
 
+    String deleteByLectureDate(Long institute_id, Long lecture_id, LocalDate date_info);
+
     Optional<Schedule> searchById(Long institute_id, Long scid);
     Set<ScheduleResponse> search_all(Long institute_id);
 

@@ -44,6 +44,6 @@ public interface EnrollService {
     ///                       삭제                           //
     //////////////////////////////////////////////////////////
 
-    String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id, Long lecture_id, Short year, Short month);
+    String deleteOneStudentFromEnroll(CustomUser user, Long enroll_id, Long lecture_id, Long student_id, Short year, Short month);
 
 }

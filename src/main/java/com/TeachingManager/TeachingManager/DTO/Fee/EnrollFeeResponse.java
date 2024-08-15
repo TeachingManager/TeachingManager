@@ -14,7 +14,9 @@ import java.util.Map;
 @NoArgsConstructor
 public class EnrollFeeResponse {
     private String student_name;
+    private Long student_id;
     private String lecture_name;
+    private Long lecture_id;
     private long fee;
     private String teacher_name;
     private int payed_fee;

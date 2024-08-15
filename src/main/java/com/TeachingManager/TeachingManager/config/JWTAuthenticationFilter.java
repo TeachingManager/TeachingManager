@@ -25,7 +25,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String url = request.getRequestURI();
-        if ("/api/login".equals(url) || "/api/accessToken".equals(url)) {
+        String method = request.getMethod();
+        if ("/api/login".equals(url) || "/api/accessToken".equals(url) || ("/api/institute".equals(url) && "POST".equalsIgnoreCase(method))) {
             filterChain.doFilter(request, response);
             return;
         }

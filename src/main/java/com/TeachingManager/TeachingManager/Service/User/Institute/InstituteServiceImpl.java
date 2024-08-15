@@ -27,9 +27,7 @@ public class InstituteServiceImpl {
                 .address(dto.getAddress())
                 .phoneNum(dto.getPhoneNum()).build();
 
-        return instRepo
-        .save(temp
-        ).getPk();
+        return instRepo.save(temp).getPk();
     }
 
     // 학원 정보 업데이트

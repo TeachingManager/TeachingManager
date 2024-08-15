@@ -43,6 +43,34 @@ public class AttendRepositoryImpl implements AttendRepository{
     }
 
     @Override
+    public String deleteMonthAttend(Long institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
+        // 시작일과 끝날짜
+        LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        int deleteCount =
+                em.createQuery("DELETE FROM Attend at " +
+                                " WHERE at.student.id = :studentId " +
+                                "AND at.schedule.schedule_id IN (SELECT sc.schedule_id " +
+                                                                    "FROM Schedule sc " +
+                                                                    "WHERE sc.institute.pk = :instituteId " +
+                                                                        "AND sc.lecture.lecture_id = :lectureId " +
+                                                                        "AND sc.start_date <= :endOfMonth " +
+                                                                        "AND sc.end_date >= :startOfMonth) ")
+                        .setParameter("instituteId", institute_id)
+                        .setParameter("lectureId", lecture_id)
+                        .setParameter("studentId", student_id)
+                        .setParameter("startOfMonth", startOfMonth)
+                        .setParameter("endOfMonth", endOfMonth)
+                        .executeUpdate();
+
+        if (deleteCount > 0){
+            return "삭제 됨";
+        }
+        return "해당하는 튜플이 없음! 오류!";
+    }
+
+    @Override
     public Optional<Attend> searchById(Long institute_id, Long attend_id) {
         return em.createQuery(
                         "SELECT a " +

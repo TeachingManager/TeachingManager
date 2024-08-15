@@ -24,7 +24,7 @@ public class JpaLectureRepository implements LectureRepository {
 
     @Override
     public Optional<Lecture> findOneById(Long instituteId, Long lectureId) {
-        return em.createQuery("select l from Lecture where l.institute.pk = :instituteId and l.lecture_id = :lectureId", Lecture.class)
+        return em.createQuery("select l from Lecture l where l.institute.pk = :instituteId and l.lecture_id = :lectureId", Lecture.class)
                 .setParameter("instituteId", instituteId).setParameter("lectureId", lectureId)
                 .getResultStream().findFirst();
     }
