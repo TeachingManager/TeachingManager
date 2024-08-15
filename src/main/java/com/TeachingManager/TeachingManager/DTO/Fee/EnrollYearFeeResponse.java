@@ -18,4 +18,12 @@ public class EnrollYearFeeResponse {
     private Short Month;
     private long totalMonthFee = 0;
     private long payedMonthFee = 0;
+
+    // 추가 생성자 정의
+    public EnrollYearFeeResponse(Integer year, Short month, Long totalMonthFee, Long payedMonthFee) {
+        this.Year = year.shortValue(); // Integer를 Short로 변환
+        this.Month = month;
+        this.totalMonthFee = totalMonthFee;
+        this.payedMonthFee = payedMonthFee;
+    }
 }

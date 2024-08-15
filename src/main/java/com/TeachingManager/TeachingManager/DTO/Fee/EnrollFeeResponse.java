@@ -17,7 +17,7 @@ public class EnrollFeeResponse {
     private Long student_id;
     private String lecture_name;
     private Long lecture_id;
-    private long fee;
+    private int fee;
     private String teacher_name;
     private int payed_fee;
     private Boolean fullPaid;

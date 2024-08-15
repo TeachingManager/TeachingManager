@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class ApiFeeController {
-    private FeeService feeService;
+    private final FeeService feeService;
     // 이번 번 달의 전체 수강료 가져오기
     @GetMapping("/api/fee")
     public ResponseEntity<List<EnrollFeeResponse>> findFeeList(

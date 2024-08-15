@@ -22,14 +22,14 @@ public class FeeRepositoryImpl implements FeeRepository{
 
         return em.createQuery(
                     "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollYearFeeResponse(" +
-                                " :year," +
-                                " :month," +
+                                " :currentYear," +
+                                " :currentMonth," +
                                 " COALESCE(fee.totalMonthFee, 0), " + // 없으면 0 반환.
                                 " COALESCE(fee.payedMonthFee, 0)) " + // 없으면 0 반환.
                         "FROM Fee fee " +
                         "WHERE fee.institute.pk = :instituteId " +
                                 "AND ((fee.year = :currentYear AND fee.month <= :currentMonth) " +
-                                "AND (fee.year = :currentYear - 1 AND fee.month > :currentMonth))"
+                                "OR (fee.year = :currentYear - 1 AND fee.month > :currentMonth))"
                         , EnrollYearFeeResponse.class)
                 .setParameter("instituteId", institute_id)
                 .setParameter("currentYear", year)
@@ -58,11 +58,12 @@ public class FeeRepositoryImpl implements FeeRepository{
 
 
     @Override
-    public long addMonthTotalFee(Long institute_id, Short year, Short month, long feeValue) {
-        return em.createQuery("UPDATE Fee f SET f.totalMonthFee = f.totalMonthFee + :feeValue " +
-                "WHERE f.institute.pk =: instituteId " +
-                "AND f.year = :year " +
-                "AND f.month = :month")
+    public long addMonthTotalAndPaidFee(Long institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
+        return em.createQuery("UPDATE Fee f " +
+                        "SET f.totalMonthFee = f.totalMonthFee + :feeValue, f.payedMonthFee = f.payedMonthFee + :paidFeeValue " +
+                        "WHERE f.institute.pk =: instituteId " +
+                        "AND f.year = :year " +
+                        "AND f.month = :month")
                 .setParameter("instituteId", institute_id)
                 .setParameter("year", year)
                 .setParameter("month", month)

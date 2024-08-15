@@ -17,7 +17,7 @@ public interface FeeRepository {
     // 새 튜플 생성하기
     Fee save(Fee fee);
 
-    long addMonthTotalFee(Long institute_id, Short Year, Short Month, long feeValue);
+    long addMonthTotalAndPaidFee(Long institute_id, Short Year, Short Month, long feeValue, long paidFeeValue);
 
     long declineMonthTotalAndPaidFee(Long institute_id,  Short Year, Short Month, long feeValue, long paidFeeValue);
 

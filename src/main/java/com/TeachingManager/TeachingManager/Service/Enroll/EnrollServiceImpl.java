@@ -190,7 +190,7 @@ public class EnrollServiceImpl implements EnrollService{
         System.out.println("newEnroll = " + newEnroll);
         
         //// 수강료에 추가.
-        feeRepo.addMonthTotalFee(user.getPk(), year, month, lecture.getFee());
+        feeRepo.addMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee(), 0);
 
 
         return new EnrollResponse(newEnroll);
