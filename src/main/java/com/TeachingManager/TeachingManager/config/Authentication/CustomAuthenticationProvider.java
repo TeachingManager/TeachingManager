@@ -47,6 +47,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (!passwordMatches) {
+            // 해당 유저의 틀린 비밀번호 횟수 1 늘리고 검사.
             throw new BadCredentialsException("잘못된 자격 증명입니다.");
         }
 
