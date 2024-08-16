@@ -57,6 +57,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if(("/email/initial/prove".equals(url) && queryParams.containsKey("token"))
                 || ("/email/locked/prove".equals(url) && queryParams.containsKey("token")) // 이메일 본인인증
                 || ("/password/change".equals(url) && queryParams.containsKey("token")) // 비밀번호 변경
+                || ("/invite/teacher".equals(url) && queryParams.containsKey("token")) // 선생님 초대 api
         ){
             // 토큰 가져와서 복호화
             String inputToken = null;
@@ -91,8 +92,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (tokenProvider.validToken(token)){
             Authentication authentication = tokenProvider.getAuthentication(token);
+            System.out.println(" JWT 토큰 필터의 authentication 생성 완료.");
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            System.out.println(" JWT 토큰 필터의 유효성 검사 끝남.");
         }
         else{
             System.out.println("유효하지 않은 토큰이었음, token = " + token);

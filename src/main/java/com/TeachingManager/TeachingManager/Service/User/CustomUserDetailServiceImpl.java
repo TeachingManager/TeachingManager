@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -47,13 +49,16 @@ public class CustomUserDetailServiceImpl implements UserDetailsService{
                 .orElseThrow(() -> new UsernameNotFoundException(email)); // 혹은 teacher.getInstitute() 등 필요한 데이터 처리
     }
 
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveStatus(CustomUser user) {
         if (user instanceof Institute) {
             System.out.println("학원 비번 틀림! 저장위함!  : " + user.getFailedCount());
             instRepo.save((Institute) user);
+            System.out.println(" 저장 끝!");
         } else if (user instanceof Teacher) {
             System.out.println("강사 비번 틀림! 저장위함!  : " + user.getFailedCount());
             teacherRepo.save((Teacher) user);
+            System.out.println(" 저장 끝!");
         }
     }
 }

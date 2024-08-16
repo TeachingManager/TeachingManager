@@ -5,8 +5,6 @@ import com.TeachingManager.TeachingManager.config.exceptions.UserDisabledExcepti
 import com.TeachingManager.TeachingManager.config.exceptions.UserLockedException;
 import com.TeachingManager.TeachingManager.config.exceptions.WrongPasswordException;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
-import com.TeachingManager.TeachingManager.domain.Institute;
-import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,19 +54,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!passwordMatches) {
             // 해당 유저의 틀린 비밀번호 횟수 1 늘리고 검사.
             user.setFailedCount((byte) (user.getFailedCount() + 1));
-            if (user.getFailedCount() >= 5) { // 5회 이상 시도했을 시
+            if (user.getFailedCount() >= 10) { // 5회 이상 시도했을 시
                 user.setAccountNonLocked(false);
             }
 
-            if (user instanceof Institute) {
-                System.out.println("학원 비번 틀림! 저장위함!  : " + user.getFailedCount());
-            } else if (user instanceof Teacher) {
-                System.out.println("강사 비번 틀림! 저장위함!  : " + user.getFailedCount());
-            }
+//            if (user instanceof Institute) {
+//                System.out.println("학원 비번 틀림! 저장위함!  : " + user.getFailedCount());
+//            } else if (user instanceof Teacher) {
+//                System.out.println("강사 비번 틀림! 저장위함!  : " + user.getFailedCount());
+//            }
 
-            System.out.println("뭐지... 강사 비번 틀림도 아니고,,");
-
-//            userDetailsService.saveStatus(user);
+            userDetailsService.saveStatus(user);
             throw new WrongPasswordException("잘못된 자격 증명입니다.");
         }
 

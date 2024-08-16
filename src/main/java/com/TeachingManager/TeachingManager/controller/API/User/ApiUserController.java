@@ -1,13 +1,16 @@
 package com.TeachingManager.TeachingManager.controller.API.User;
 
 import com.TeachingManager.TeachingManager.DTO.User.EmailRequest;
+import com.TeachingManager.TeachingManager.DTO.User.InviteRequest;
 import com.TeachingManager.TeachingManager.DTO.User.NewPasswordUpdateRequest;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.Service.User.UserService;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +82,25 @@ public class ApiUserController {
             HttpServletRequest HttpRequest) throws Exception {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.enableUser(token, HttpRequest.getRemoteAddr()));
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 강사 초대 이메일이 발송되게 하는 api
+    @PostMapping("/api/invite/teacher")
+    public ResponseEntity<String> sendInviteEmailToTeacher(
+            @RequestBody InviteRequest request,
+            @AuthenticationPrincipal CustomUser user) throws Exception {
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.sendEmailWithJoinToken(request, user));
+    }
+
+    // 강사가 학원에 등록되는 api
+    @PostMapping("/invite/teacher")
+    public ResponseEntity<String> inviteTeacherToInstitute(@RequestParam(value = "token") String token) throws Exception {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.joinTeacherToInstitute(token));
     }
 
 }

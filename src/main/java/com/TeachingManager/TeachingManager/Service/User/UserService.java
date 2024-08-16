@@ -1,10 +1,16 @@
 package com.TeachingManager.TeachingManager.Service.User;
 
+import com.TeachingManager.TeachingManager.DTO.User.InviteRequest;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.Repository.User.UserRepository;
+import com.TeachingManager.TeachingManager.config.exceptions.UserDoesNotExistException;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.JweUtil;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
+import com.TeachingManager.TeachingManager.domain.Institute;
+import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +30,8 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JweUtil jwtUtil;
     private final JweInfo jweInfo;
+    private final TeacherRepository teacherRepo;
+    private final InstituteRepository instituteRepo;
 
     @Transactional
     // 요청이 들어온 이메일을 찾아보고, 있다면 토큰 생성해서 이메일을 전송
@@ -131,11 +139,54 @@ public class UserService {
             }
             // 계정의 enable 을 true 로 설정.
             user.setEnabled(true);
-//             save 메소드 안해도 되는지 체크 (더티체킹)
 
             return "계정 잠금 해제 완료!";
         }
 
         return "같은 아이피에서 요청해주십시오!";
     }
+
+    /////////////////////////////////////////////////////////////
+    /////////////       강사 초대 서비스           ////////////////
+    /////////////////////////////////////////////////////////////
+
+    @Transactional
+    public String sendEmailWithJoinToken(InviteRequest request, CustomUser user) throws Exception {
+
+        if (!Objects.equals(request.getInstitute_email(), user.getEmail())) {
+            return "강사에게 잘못된 학원 정보로 초대를 보냈음!";
+        }
+
+        // 토큰 생성 ( email, inst_email, 만료시간 )
+        String joinToken = tokenProvider.createJoinToken(Duration.ofMinutes(10), request.getTeacher_email(), request.getInstitute_email());
+        String encodedJoinToken = URLEncoder.encode(joinToken, StandardCharsets.UTF_8);
+        System.out.println("강사 초대의 encodedJoinToken = " + encodedJoinToken);
+
+        // email 보내기
+        return "강사에게 초대 이메일을 전송했습니다..";
+
+    }
+
+    @Transactional
+    public String joinTeacherToInstitute(String token) throws Exception {
+        // JWE 토큰 복호화
+        String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
+
+        System.out.println("/////////////////////////////");
+        System.out.println("decryptedToken = " + decryptedToken);
+        String email = tokenProvider.getUseEmailInToken(decryptedToken);
+        String inst_email = tokenProvider.getInstUserEmailInToken(decryptedToken);
+
+        Institute institute = instituteRepo.findByEmail(inst_email).orElseThrow(() -> new UserDoesNotExistException("없는 학원에 참가하려함."));
+        Teacher teacher = teacherRepo.findByEmail(email).orElseThrow(() -> new UserDoesNotExistException("없는 강사가 참가하려함."));
+
+        if (teacher.getInstitutePk() == null) {
+            teacher.setInstitute(institute);
+            return "가입완료";
+        }
+        else{
+            return "이미 가입된 학원이 있습니다!";
+        }
+    }
+
 }

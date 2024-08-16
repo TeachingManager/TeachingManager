@@ -73,6 +73,24 @@ public class TokenProvider {
         return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
     }
 
+    public String createJoinToken(Duration expiredAt, String teacherEmail, String instEmail) throws Exception {
+        Date now = new Date();
+        Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
+
+        String jwt = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("alg", "HS512")
+                .setIssuedAt(now)
+                .setExpiration(expired_time)
+                .setSubject(teacherEmail)
+                .claim("email", teacherEmail)
+                .claim("inst_email", instEmail)
+                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                .compact();
+        System.out.println("jwt = " + jwt);
+        return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
+    }
+
 
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
@@ -154,6 +172,11 @@ public class TokenProvider {
     public String getUseEmailInToken(String token) {
         Claims claims = getClaims(token);
         return claims.get("email", String.class);
+    }
+
+    public String getInstUserEmailInToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("inst_email", String.class);
     }
 
     public String getUseIpInToken(String token) {
