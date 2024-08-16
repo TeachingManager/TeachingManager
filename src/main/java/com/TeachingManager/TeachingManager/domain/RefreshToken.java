@@ -23,7 +23,7 @@ public class RefreshToken {
     @Column(name="user_id", nullable = false, unique = true)
     private UUID userId;
 
-    @Column(name = "refresh_token", nullable = false, length = 512)
+    @Column(name = "refresh_token", nullable = false, length = 1000)
     private String refreshToken;
 
     @Column(name = "expired_time", nullable = false)

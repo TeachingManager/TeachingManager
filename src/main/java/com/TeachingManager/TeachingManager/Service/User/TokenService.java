@@ -68,13 +68,17 @@ public class TokenService {
 
     // 새 AccessToken 발급
     public String createNewAccessToken(String refreshToken) {
+
         if (!tokenProvider.validToken(refreshToken)) {
+            System.out.println("유효하지 않은 리프레시 토큰!");
             throw new IllegalArgumentException("Unexpected token");
         }
+
         UUID userPk = findByRefreshToken(refreshToken).getUserId();
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByPk(userPk));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByPk(userPk));
 
+        System.out.println("여기까지");
         String Token  = tokenProvider.createAccessToken(user, Duration.ofHours(2));
         System.out.println("Token = " + Token);
         return Token;

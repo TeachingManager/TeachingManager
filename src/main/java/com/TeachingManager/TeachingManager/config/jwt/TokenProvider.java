@@ -40,12 +40,12 @@ public class TokenProvider {
         Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
         String token = createToken(expired_time, user);
 
-
-        RefreshToken newRefreshToken = new RefreshToken(user.getPk(), token, expired_time);
-        // 이미 refreshToken 이 존재하는지 체크하고 있다면 업데이트, 아니라면 저장
+// 이미 refreshToken 이 존재하는지 체크하고 있다면 업데이트, 아니라면 저장
         Optional<RefreshToken> refreshToken = refreshTokenRepo.findByUserId(user.getPk());
+        RefreshToken newRefreshToken = new RefreshToken(user.getPk(), token, expired_time);
+
         if(refreshToken.isPresent()) {
-            refreshToken.get().update(String.valueOf(newRefreshToken));
+            refreshToken.get().update(token);
         }
         else {
             refreshTokenRepo.save(newRefreshToken);
@@ -85,7 +85,7 @@ public class TokenProvider {
                     .setIssuedAt(now)
                     .setExpiration(expiredDate)
                     .setSubject(user.getEmail())
-                    .claim("id", user.getPk())
+                    .claim("id", user.getPk().toString())
                     .claim("roles", user.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .collect(Collectors.toList()))
@@ -99,7 +99,7 @@ public class TokenProvider {
                     .setIssuedAt(now)
                     .setExpiration(expiredDate)
                     .setSubject(user.getEmail())
-                    .claim("id", user.getPk())
+                    .claim("id", user.getPk().toString())
                     .claim("inst_id", ((Teacher) user).getInstitutePk())
                     .claim("roles", user.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
@@ -138,11 +138,14 @@ public class TokenProvider {
         /////////////////// 여기에서 Teacher 이랑 Institute  나누어서 구분하기.
         //////////////////////////////////
         if(roles.contains("ROLE_PRESIDENT")){
-            CustomUser customUser = new CustomUser((claims.get("id", UUID.class)), claims.getSubject(), "", roles);
+            String id = claims.get("id", String.class);
+            CustomUser customUser = new CustomUser((UUID.fromString(id)), claims.getSubject(), "", roles);
             return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
         }
         else if(roles.contains("ROLE_TEACHER")){
-            Teacher teacher = new Teacher(claims.getSubject(), "", (claims.get("id", UUID.class)),claims.get("inst_id",UUID.class));
+            String id = claims.get("id", String.class);
+            String inst_id = claims.get("inst_id", String.class);
+            Teacher teacher = new Teacher(claims.getSubject(), "", (UUID.fromString(id)),(UUID.fromString(inst_id)));
             return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
         }
         return null;
