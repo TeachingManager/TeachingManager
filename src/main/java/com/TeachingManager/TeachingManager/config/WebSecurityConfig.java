@@ -46,7 +46,9 @@ public class WebSecurityConfig{
                 authorizeHttpRequests(authorize -> authorize
 
                         .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
-                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google"
+                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
+                                "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
+                                "/password/change","/api/password/change"
                         ).permitAll()//로그인, 회원가입은 인증
                         .requestMatchers(HttpMethod.POST, "/api/institute", "/api/teacher").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.

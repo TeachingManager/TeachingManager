@@ -10,6 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -33,7 +36,8 @@ public class UserService {
        
        // 토큰 생성 ( email, IpAddress, 만료시간 )
         String resetToken = tokenProvider.createResetToken(Duration.ofMinutes(5), email, IpAddress);
-        System.out.println("resetToken = " + resetToken);
+        String encodedResetToken = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
+        System.out.println("encodedResetToken = " + encodedResetToken);
 
        // 해당 토큰을 담은 url 을 이메일에 담아 해당 유저에게 전송
         // mod 1 : 비번 찾기
@@ -44,10 +48,10 @@ public class UserService {
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
-            return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
+            return "사용자 정보 확인. 초기 인증용 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "unLockUser")) {
             // email 보내기
-            return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
+            return "사용자 정보 확인. 잠금해제용 메일이 보내졌습니다.";
         }
 
         return "잘못된 이메일 전송 요청 모드입니다.";
@@ -56,7 +60,12 @@ public class UserService {
     @Transactional
     public String changePassword( String token, String IpAddress, String newPassword ) throws Exception {
         // JWE 토큰 복호화
+        System.out.println("token = " + token);
+        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
+        System.out.println("decodedToken = " + decodedToken);
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
+
+        System.out.println("newPassword = " + newPassword);
 
         // 토큰 claim 의 IP 값과 IPAddress 가 일치하는지 확인
         if (Objects.equals(IpAddress, tokenProvider.getUseIpInToken(decryptedToken))) {
@@ -69,6 +78,7 @@ public class UserService {
                 return "존재하지 않는 회원입니다.";
             }
             // 비밀번호 변경
+
             user.setPassword(passwordEncoder.encode(newPassword));
             return "비밀번호 변경 완료!";
         }
@@ -78,6 +88,7 @@ public class UserService {
     @Transactional
     // 요청 받은 유저 잠금 해제 (비밀번호 여러번 오입력시 사용)
     public String unLockUser(String token, String IpAddress) throws Exception {
+
         // JWE 토큰 복호화
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 
@@ -104,6 +115,7 @@ public class UserService {
     @Transactional
     // 요청 받은 유저 잠금 해제 ( 신규 회원가입 시 사용)
     public String enableUser(String token, String IpAddress) throws Exception {
+
         // JWE 토큰 복호화
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 

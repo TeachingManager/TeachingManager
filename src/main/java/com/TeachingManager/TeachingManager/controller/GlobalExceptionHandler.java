@@ -3,6 +3,7 @@ package com.TeachingManager.TeachingManager.controller;
 import com.TeachingManager.TeachingManager.config.exceptions.AlreadyRegisteredException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserDisabledException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserLockedException;
+import com.TeachingManager.TeachingManager.config.exceptions.WrongPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AlreadyRegisteredException.class)
     public ResponseEntity<String> handleAlreadyRegisteredException(AlreadyRegisteredException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<String> handleWrongPasswordException(WrongPasswordException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 

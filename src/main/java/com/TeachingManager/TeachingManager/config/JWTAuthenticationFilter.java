@@ -15,6 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +44,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if ("/api/login".equals(url)
                 || "/api/accessToken".equals(url)
-                || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 수신
+                || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
+                || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제
+                || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 송신
                 || ("/api/institute".equals(url) && "POST".equalsIgnoreCase(method)
                 || ("/api/teacher".equals(url) && "POST".equalsIgnoreCase(method)))) {
             filterChain.doFilter(request, response);
@@ -57,13 +61,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             // 토큰 가져와서 복호화
             String inputToken = null;
             try {
-                inputToken = JweUtil.decrypt(queryParams.get("token"), jweInfo.getSecretKey());
+                System.out.println("queryParams = " + queryParams.get("token"));
+                String decodedToken = URLDecoder.decode(queryParams.get("token"), StandardCharsets.UTF_8);
+                inputToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+                System.out.println("inputToken = " + inputToken);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
             // 토큰 유효성 검사.
             if (tokenProvider.validToken(inputToken)){
+                System.out.println("유효성 검사 통과함.");
                 filterChain.doFilter(request, response);
             }
             else{

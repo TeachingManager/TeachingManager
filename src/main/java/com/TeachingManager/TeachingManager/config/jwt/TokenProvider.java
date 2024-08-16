@@ -69,7 +69,7 @@ public class TokenProvider {
                 .claim("IP", IpAddress)
                 .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                 .compact();
-
+        System.out.println("jwt = " + jwt);
         return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
     }
 

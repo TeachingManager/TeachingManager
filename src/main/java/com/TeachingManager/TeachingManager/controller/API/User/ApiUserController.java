@@ -53,9 +53,8 @@ public class ApiUserController {
 
     //  비밀번호 5회 틀림 -> 잠김.... 이를 해제 하기 위한 이메일 인증
     @PostMapping("/email/locked/prove")
-    public ResponseEntity<String> proveInitialUser(
+    public ResponseEntity<String> proveLockedUser(
             @RequestParam(value = "token") String token,
-            @RequestBody NewPasswordUpdateRequest request,
             HttpServletRequest HttpRequest) throws Exception {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.unLockUser(token, HttpRequest.getRemoteAddr()));
@@ -75,9 +74,8 @@ public class ApiUserController {
 
 // 초기 회원가입시 유저 인증을 위해 사용
     @PostMapping("/email/initial/prove")
-    public ResponseEntity<String> proveLockedUser(
+    public ResponseEntity<String> proveInitialUser(
             @RequestParam(value = "token") String token,
-            @RequestBody NewPasswordUpdateRequest request,
             HttpServletRequest HttpRequest) throws Exception {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.enableUser(token, HttpRequest.getRemoteAddr()));
