@@ -95,6 +95,7 @@ public class LectureServiceImpl implements LectureService{
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             List<Lecture> lectures = lectureRepository.findAll(user.getPk());
             System.out.println("institute find all lecture");
+            System.out.println(lectures.getFirst().getTeacher().getPk());
             if (lectures.isEmpty()) {
                 throw new RuntimeException("학원-강의 잘못된 접근");
             }
@@ -105,6 +106,7 @@ public class LectureServiceImpl implements LectureService{
         else {
             List<Lecture> lectures = lectureRepository.findAll(((Teacher) user).getInstitute().getPk());
             System.out.println("teacher find all lecture");
+            System.out.println(((Teacher) user).getInstitute().getPk());
             if (lectures.isEmpty()) {
                 throw new RuntimeException("선생-강의 잘못된 접근");
             }

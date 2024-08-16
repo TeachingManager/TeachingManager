@@ -26,6 +26,7 @@ public class LectureResponse {
     private List<JSONObject> jsonTime;
     // 학원 외래키 등록 후 테스트
 //    private Teacher teacher;
+    private Long teacherId;
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getLecture_id();
@@ -37,6 +38,7 @@ public class LectureResponse {
 //        this.teacher = lecture.getTeacher();
         this.convetedTime = ConvertTime(lecture.getTime());
         this.jsonTime = ConvertJsonTime(lecture.getTime());
+        this.teacherId = lecture.getTeacher().getPk();
     }
 
 
