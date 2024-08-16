@@ -45,7 +45,7 @@ public class WebSecurityConfig{
         return http.
                 authorizeHttpRequests(authorize -> authorize
 
-                        .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
+                        .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
                                 "/password/change","/api/password/change", "/invite/teacher"

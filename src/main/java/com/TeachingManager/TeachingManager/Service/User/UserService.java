@@ -157,13 +157,18 @@ public class UserService {
             return "강사에게 잘못된 학원 정보로 초대를 보냈음!";
         }
 
-        // 토큰 생성 ( email, inst_email, 만료시간 )
-        String joinToken = tokenProvider.createJoinToken(Duration.ofMinutes(10), request.getTeacher_email(), request.getInstitute_email());
-        String encodedJoinToken = URLEncoder.encode(joinToken, StandardCharsets.UTF_8);
-        System.out.println("강사 초대의 encodedJoinToken = " + encodedJoinToken);
-
-        // email 보내기
-        return "강사에게 초대 이메일을 전송했습니다..";
+        Teacher teacher = teacherRepo.findByEmail(request.getTeacher_email()).orElseThrow(() -> new UserDoesNotExistException("없는 강사가 참가하려함."));
+        if(teacher.getInstitutePk() == null) {
+            // 토큰 생성 ( email, inst_email, 만료시간 )
+            String joinToken = tokenProvider.createJoinToken(Duration.ofMinutes(10), request.getTeacher_email(), request.getInstitute_email());
+            String encodedJoinToken = URLEncoder.encode(joinToken, StandardCharsets.UTF_8);
+            System.out.println("강사 초대의 encodedJoinToken = " + encodedJoinToken);
+            // email 보내기
+            return "강사에게 초대 이메일을 전송했습니다..";
+        }
+        else{
+            return "이미 학원 등록된 강사입니다.";
+        }
 
     }
 
