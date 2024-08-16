@@ -1,6 +1,8 @@
 package com.TeachingManager.TeachingManager.config;
 
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
+import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
+import com.TeachingManager.TeachingManager.config.jwt.JweUtil;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
+    private final JweUtil jweUtil;
+    private final JweInfo jweInfo;
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer";
 
@@ -38,6 +43,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if ("/api/login".equals(url)
                 || "/api/accessToken".equals(url)
+                || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 수신
                 || ("/api/institute".equals(url) && "POST".equalsIgnoreCase(method)
                 || ("/api/teacher".equals(url) && "POST".equalsIgnoreCase(method)))) {
             filterChain.doFilter(request, response);
@@ -45,13 +51,24 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 로그인 하지 않아 AccessToken 이 아닌 url 에 접근 권한 토큰이 있을 경우.
-        if(("/email/unlock".equals(url) && queryParams.containsKey("email") && queryParams.containsKey("token"))
-                || ("/email/prove".equals(url) && queryParams.containsKey("email") && queryParams.containsKey("token"))
-                || ("/password/change".equals(url) && queryParams.containsKey("email") && queryParams.containsKey("token"))
+        if(("/email/initial/prove".equals(url) && queryParams.containsKey("token"))
+                || ("/email/locked/prove".equals(url) && queryParams.containsKey("token")) // 이메일 본인인증
+                || ("/password/change".equals(url) && queryParams.containsKey("token")) // 비밀번호 변경
         ){
-            String tempToken = queryParams.get("token");
-            if (tokenProvider.validToken(tempToken)){
+            // 토큰 가져와서 복호화
+            String inputToken = null;
+            try {
+                inputToken = JweUtil.decrypt(queryParams.get("token"), jweInfo.getSecretKey());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            // 토큰 유효성 검사.
+            if (tokenProvider.validToken(inputToken)){
                 filterChain.doFilter(request, response);
+            }
+            else{
+                throw new RuntimeException("유효하지 않은 토큰으로 접근 시도함.");
             }
             return;
         }

@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 public class TokenProvider {
     private final JwtInfo jwtinfo;
+    private final JweInfo jweInfo;
+    private final JweUtil jweUtil;
     private final RefreshTokenRepository refreshTokenRepo;
 
     // 외부에서 호출하기 위한 공용메서드
@@ -52,11 +55,11 @@ public class TokenProvider {
     }
 
     // 비밀번호 찾기, 초기 회원가입시 사용할 본인인증 토큰 발급
-    public String createApproveToken(Duration expiredAt, String userEmail, String IpAddress) {
+    public String createResetToken(Duration expiredAt, String userEmail, String IpAddress) throws Exception {
         Date now = new Date();
         Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
 
-        return  Jwts.builder()
+        String jwt = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("alg", "HS512")
                 .setIssuedAt(now)
@@ -66,12 +69,9 @@ public class TokenProvider {
                 .claim("IP", IpAddress)
                 .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                 .compact();
+
+        return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
     }
-
-
-
-
-
 
 
 // private 을 이용하여 접근제한?
@@ -147,9 +147,14 @@ public class TokenProvider {
         return null;
     }
 
-    public Long getUserId(String token) {
+    public String getUseEmailInToken(String token) {
         Claims claims = getClaims(token);
-        return claims.get("id", Long.class);
+        return claims.get("email", String.class);
+    }
+
+    public String getUseIpInToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("IP", String.class);
     }
 
     private Claims getClaims(String token) {
@@ -158,6 +163,5 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
 
 }

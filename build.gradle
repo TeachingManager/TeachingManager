@@ -52,6 +52,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'javax.xml.bind:jaxb-spi:2.3.1'
 
+	//jwe 관련 서비스
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
+
     // jaxb-api
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'

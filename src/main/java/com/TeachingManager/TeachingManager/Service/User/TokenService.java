@@ -18,7 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -89,9 +91,6 @@ public class TokenService {
         }
     }
 
-    // 헤더를 받으면 Pk 값을 반환하는 함수
-    public Long findPKInHeaderToken(String authorizationHeader) {
-        return tokenProvider.getUserId(extractedToken(authorizationHeader));
-    }
+
 
 }
