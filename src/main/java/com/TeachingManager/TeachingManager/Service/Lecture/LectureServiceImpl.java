@@ -11,10 +11,13 @@ import com.TeachingManager.TeachingManager.Repository.Lecture.LectureRepository;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +44,9 @@ public class LectureServiceImpl implements LectureService{
 
     @Override
     public Lecture findLecture(CustomUser user, Long id) {
-        if (user instanceof Institute) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
+            System.out.println("institute find lecture");
             if (lecture.isPresent()) {
                 return lecture.get();
             }
@@ -52,6 +56,7 @@ public class LectureServiceImpl implements LectureService{
         }
         else {
             Optional<Lecture> lecture = lectureRepository.findOneById(((Teacher) user).getInstitute().getPk(), id);
+            System.out.println("teacher find lecture");
             if (lecture.isPresent()) {
                 return lecture.get();
             }
@@ -76,7 +81,8 @@ public class LectureServiceImpl implements LectureService{
 
     @Override
     public void deleteLecture(CustomUser user, Long id) {
-        if (user instanceof Institute) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
+            System.out.println("institute delete lecture");
             lectureRepository.delete(user.getPk(), id);
         }
         else {
@@ -86,8 +92,9 @@ public class LectureServiceImpl implements LectureService{
 
     @Override
     public List<Lecture> findAll(CustomUser user) {
-        if (user instanceof Institute) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             List<Lecture> lectures = lectureRepository.findAll(user.getPk());
+            System.out.println("institute find all lecture");
             if (lectures.isEmpty()) {
                 throw new RuntimeException("학원-강의 잘못된 접근");
             }
@@ -97,6 +104,7 @@ public class LectureServiceImpl implements LectureService{
         }
         else {
             List<Lecture> lectures = lectureRepository.findAll(((Teacher) user).getInstitute().getPk());
+            System.out.println("teacher find all lecture");
             if (lectures.isEmpty()) {
                 throw new RuntimeException("선생-강의 잘못된 접근");
             }
