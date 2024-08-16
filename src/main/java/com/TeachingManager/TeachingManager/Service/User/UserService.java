@@ -16,11 +16,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Properties;
 
 @RequiredArgsConstructor
 @Service
@@ -56,6 +60,8 @@ public class UserService {
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
+            sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","메일 테스트");
+
             return "사용자 정보 확인. 초기 인증용 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "unLockUser")) {
             // email 보내기
@@ -119,6 +125,7 @@ public class UserService {
 
         return "같은 아이피에서 요청해주십시오!";
     }
+
 
     @Transactional
     // 요청 받은 유저 잠금 해제 ( 신규 회원가입 시 사용)
@@ -194,4 +201,41 @@ public class UserService {
         }
     }
 
+
+    /////////////////////////////////////////////////////////////
+    /////////////       이메일 발송 서비스   /      ////////////////
+    /////////////////////////////////////////////////////////////
+
+    public void sendEmail(String to, String subject, String text) {
+        String host = "smtp.outlook.com";
+        final String username = "teachingmanager@outlook.com";
+        final String password = "$xlcld123$";
+
+        Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", host);
+        properties.setProperty("mail.smtp.port", "587");
+        properties.setProperty("mail.smtp.auth", "true");
+        properties.setProperty("mail.smtp.starttls.enable", "true");
+
+        Session session = Session.getDefaultInstance(properties,
+                new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject(subject);
+            message.setText(text);
+
+            Transport.send(message);
+            System.out.println("Sent message successfully...");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 }

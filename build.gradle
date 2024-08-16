@@ -50,7 +50,6 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.projectlombok:lombok'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'javax.xml.bind:jaxb-spi:2.3.1'
 
 	//jwe 관련 서비스
 	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
@@ -60,6 +59,9 @@ dependencies {
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 	implementation 'javax.activation:activation:1.1.1'
 
+
+	// java 메일 api
+	implementation 'com.sun.mail:javax.mail:1.6.2'
 
 	//Hibernate 직렬화에 도움을 준다. => 무한루프 영향 think
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
