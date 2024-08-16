@@ -19,7 +19,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	implementation 'org.projectlombok:lombok'
+//	implementation 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 //	implementation 'com.h2database:h2'
@@ -50,7 +52,7 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.projectlombok:lombok'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'javax.xml.bind:jaxb-spi:2.3.1'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     // jaxb-api
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
@@ -60,6 +62,9 @@ dependencies {
 
 	//Hibernate 직렬화에 도움을 준다. => 무한루프 영향 think
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
+
+	//json
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 }
 
 tasks.named('test') {
