@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -33,19 +34,25 @@ public class TokenService {
 
     // 처음 로그인 시 access, refresh 토큰 발급하는 함수.
     // 반환값 :  클라이언트에 전달할 DTO
+    @Transactional
     public SetTokenResponse LoginTokenCreate(String email, String password) {
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         try {
+            System.out.println("LoginTokenCreate 의 AuthenticationManager 직전");
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            Institute user =  instituteService.loadInstituteByUsername(email);
-            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-
+            System.out.println("LoginTokenCreate 의 AuthenticationManager 직후");
+            Institute user = instituteService.loadInstituteByUsername(email);
+            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
         } catch (UsernameNotFoundException e) {
             // Institute 유저가 없을 경우 Teacher 유저 조회
-            Teacher user = teacherService.loadTeacherByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
-            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-        } catch (BadCredentialsException bad){
+            try {
+                Teacher user = teacherService.loadTeacherByUsername(email);
+                return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
+            } catch (UsernameNotFoundException ex) {
+                // 둘 다 없는 경우 예외 처리
+                throw ex;
+            }
+        } catch (BadCredentialsException bad) {
             System.out.println("비밀번호 오류!!");
             return null;
         }

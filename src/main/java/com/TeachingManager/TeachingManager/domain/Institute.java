@@ -44,7 +44,7 @@ public class Institute extends CustomUser {
     }
 
     @Builder
-    public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){
+    public Institute(String email, String password      , String auth, String institute_name, String address, String phoneNum){
         this.setEmail(email);
         this.setPassword(password);
         this.setAuthorities(Role.PRESIDENT);

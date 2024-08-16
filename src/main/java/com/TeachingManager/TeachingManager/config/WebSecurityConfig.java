@@ -4,6 +4,7 @@ import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthentication
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
+import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,16 +76,22 @@ public class WebSecurityConfig{
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder());
-        return auth.build();
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
+
+        return authenticationManagerBuilder.build();
     }
 
-//    @Bean
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider(userDetailService,bCryptPasswordEncoder());
+    }
+
+    //    @Bean
 //    public OAuth2SuccessHandler oAuth2SuccessHandler(){
 //
 //    }
-
 
 }
