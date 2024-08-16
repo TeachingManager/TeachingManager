@@ -37,10 +37,8 @@ public class TokenService {
     @Transactional
     public SetTokenResponse LoginTokenCreate(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
         try {
-            System.out.println("LoginTokenCreate 의 AuthenticationManager 직전");
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            System.out.println("LoginTokenCreate 의 AuthenticationManager 직후");
             Institute user = instituteService.loadInstituteByUsername(email);
             return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
         } catch (UsernameNotFoundException e) {

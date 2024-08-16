@@ -27,14 +27,12 @@ public class TokenProvider {
 
     // 외부에서 호출하기 위한 공용메서드
     public String createAccessToken(CustomUser user, Duration expiredAt){
-        System.out.println("createAccessToken 의 user = " + user);
         Date now = new Date();
         return createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
     // 외부에서 refresh 토큰 호출 메서드
     public String createRefreshToken(CustomUser user, Duration expiredAt){
-        System.out.println("createRefreshToken 의 user = " + user);
         Date now = new Date();
         Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
         String token = createToken(expired_time, user);
@@ -53,6 +51,29 @@ public class TokenProvider {
         return token;
     }
 
+    // 비밀번호 찾기, 초기 회원가입시 사용할 본인인증 토큰 발급
+    public String createApproveToken(Duration expiredAt, String userEmail, String IpAddress) {
+        Date now = new Date();
+        Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
+
+        return  Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("alg", "HS512")
+                .setIssuedAt(now)
+                .setExpiration(expired_time)
+                .setSubject(userEmail)
+                .claim("email", userEmail)
+                .claim("IP", IpAddress)
+                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                .compact();
+    }
+
+
+
+
+
+
+
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
         Date now = new Date();
@@ -70,7 +91,6 @@ public class TokenProvider {
                             .collect(Collectors.toList()))
                     .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                     .compact();
-            System.out.println("TokenProvider 의 createToken 의 Institute일 경우의 token = " + token);
         }
         else if(user instanceof Teacher){
             token = Jwts.builder()
@@ -86,7 +106,6 @@ public class TokenProvider {
                             .collect(Collectors.toList()))
                     .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                     .compact();
-            System.out.println("TokenProvider 의 createToken 의 Teacher 일 경우의 token = " + token);
         }
 
         return token;

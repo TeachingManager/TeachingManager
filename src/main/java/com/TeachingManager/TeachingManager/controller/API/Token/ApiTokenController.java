@@ -48,10 +48,7 @@ public class ApiTokenController {
 
     }
 
-
-    // 비밀번호 변경
-
     // 비밀번호 찾기
-
+    
     // 잠금해제
 }
