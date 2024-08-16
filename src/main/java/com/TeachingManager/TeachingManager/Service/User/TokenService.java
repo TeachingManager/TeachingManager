@@ -22,6 +22,7 @@ import java.awt.*;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -70,7 +71,7 @@ public class TokenService {
         if (!tokenProvider.validToken(refreshToken)) {
             throw new IllegalArgumentException("Unexpected token");
         }
-        Long userPk = findByRefreshToken(refreshToken).getUserId();
+        UUID userPk = findByRefreshToken(refreshToken).getUserId();
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByPk(userPk));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByPk(userPk));
 

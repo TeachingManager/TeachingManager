@@ -1,5 +1,6 @@
 package com.TeachingManager.TeachingManager.controller;
 
+import com.TeachingManager.TeachingManager.config.exceptions.AlreadyRegisteredException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserDisabledException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserLockedException;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserDisabledException.class)
-    public ResponseEntity<String> handleAccountLockedException(UserDisabledException ex) {
+    public ResponseEntity<String> handleAccountDisabledException(UserDisabledException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AlreadyRegisteredException.class)
+    public ResponseEntity<String> handleAlreadyRegisteredException(AlreadyRegisteredException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 
 }

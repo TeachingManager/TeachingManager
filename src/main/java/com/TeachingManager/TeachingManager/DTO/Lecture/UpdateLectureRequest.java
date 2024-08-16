@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,6 +18,6 @@ public class UpdateLectureRequest {
     private String grade;
     private int fee;
     private String time;
-    private Long teacherId;
+    private UUID teacherId;
 
 }

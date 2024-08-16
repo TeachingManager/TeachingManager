@@ -12,7 +12,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @Component
 public class JweUtil{
-    private static final String ALGORITHM = "AES";
+
     private static final String TRANSFORMATION = "AES/GCM/NoPadding"; // AES-GCM 방식 사용
 
     // 암호화 메서드
@@ -32,11 +32,5 @@ public class JweUtil{
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
-    // 비밀 키 생성 메서드
-    public static SecretKey generateKey() throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
-        keyGen.init(256); // Key size
-        return keyGen.generateKey();
-    }
 }
 

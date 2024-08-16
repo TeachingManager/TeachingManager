@@ -89,7 +89,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     public MonthScheduleResponse searchAll_scheduleByDate(CustomUser user, LocalDate date_info) {
         // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
-        Long institute_id;
+        UUID institute_id;
 
         if (user instanceof Teacher){
             institute_id = ((Teacher) user).getInstitutePk();
@@ -106,7 +106,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     
 //    스케줄 제목, (날짜 등 추후 추가 예정) 만 뽑아오기
     @Override
-    public List<Map<String, String>> search_all_marker(Long institute_id) {
+    public List<Map<String, String>> search_all_marker(UUID institute_id) {
 
         Collection<ScheduleResponse> scList = scheduleRepo.search_all(institute_id);
         List<Map<String, String>> schedules = new ArrayList<>();
@@ -125,7 +125,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     public MonthScheduleResponse searchAll_schedule(CustomUser user) {
         // 유저의 권한을 확인하여, PRESIDENT 면 자기 pk , TEACHER 라면 외래키를 institute_id 에 저장
-        Long institute_id;
+        UUID institute_id;
 
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("PRESIDENT"))){
             institute_id = user.getPk();

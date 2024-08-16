@@ -31,7 +31,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
 
     @Override
     @Transactional
-    public String delete(Long institute_id, Long scid) {
+    public String delete(UUID institute_id, Long scid) {
         int deleteCount = em.createQuery("DELETE FROM Schedule sc " +
                         "WHERE sc.institute.pk = :instituteId  " +
                             "AND sc.schedule_id = :scheduleId")
@@ -46,7 +46,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     }
 
     @Override
-    public String deleteByLectureDate(Long institute_id, Long lecture_id, LocalDate date_info) {
+    public String deleteByLectureDate(UUID institute_id, Long lecture_id, LocalDate date_info) {
         // 시작일과 끝날짜
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
@@ -70,7 +70,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     }
 
     @Override
-    public Optional<Schedule> searchById(Long institute_id, Long scid) {
+    public Optional<Schedule> searchById(UUID institute_id, Long scid) {
         System.out.println("institute_id = " + institute_id);
         System.out.println("scid = " + scid);
         return em.createQuery(
@@ -85,7 +85,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
 
     // 학원의 전체 일정
     @Override
-    public Set<ScheduleResponse> search_all(Long institute_id) {
+    public Set<ScheduleResponse> search_all(UUID institute_id) {
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse(sc.schedule_id, sc.title, sc.start_date, sc.end_date, sc.memo," +
                                 "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName))" +
@@ -100,7 +100,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
 
     // 학원의 특정 달의 일정
     @Override
-    public Set<ScheduleResponse> filter_by_date(Long institute_id, LocalDate date_info) {
+    public Set<ScheduleResponse> filter_by_date(UUID institute_id, LocalDate date_info) {
 
         // 시작일과 끝날짜
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
@@ -124,7 +124,7 @@ public class JpaScheduleRepository  implements ScheduleRepository{
 
     // 특정강의의 이번달 일정 가져오는 함수.
     @Override
-    public Set<Schedule> filter_by_lecture(Long institute_id, Long lecture_id, LocalDate date_info) {
+    public Set<Schedule> filter_by_lecture(UUID institute_id, Long lecture_id, LocalDate date_info) {
         // 시작일과 끝날짜
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);

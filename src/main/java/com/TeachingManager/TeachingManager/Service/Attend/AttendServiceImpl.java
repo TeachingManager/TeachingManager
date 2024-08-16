@@ -157,7 +157,7 @@ public class AttendServiceImpl implements AttendService{
     @Override
     @Transactional
     public String updateAttends(CustomUser user, UpdateAttendListRequest request) {
-        Long institute_id = user.getPk();
+        UUID institute_id = user.getPk();
         Optional<Attend> attend = Optional.empty();
         for (Map.Entry<Long, Byte> entry : request.getAttendList().entrySet()) {
             Long attend_id = entry.getKey();

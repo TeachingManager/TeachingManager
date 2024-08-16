@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class TeacherDetailServiceImpl implements UserDetailsService {
@@ -22,7 +24,7 @@ public class TeacherDetailServiceImpl implements UserDetailsService {
     public Teacher loadTeacherByUsername(String email) throws UsernameNotFoundException {
         return teacherRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException((email)));
     }
-    public CustomUser loadUserByPk(Long pk){
+    public CustomUser loadUserByPk(UUID pk){
         Teacher teacher =  teacherRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
         return teacher;
     }

@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class TeacherInfo {
-    private Long teacher_id;
+    private UUID teacher_id;
     private String teacher_name;
     private Byte age;
     private LocalDate birth;
@@ -23,7 +24,7 @@ public class TeacherInfo {
     private Long salary;
     private String nickname ;
     private String provider;
-    private Long institute_id;
+    private UUID institute_id;
 
     public TeacherInfo(Teacher teacher) {
         this.teacher_id = teacher.getPk();

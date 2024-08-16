@@ -4,44 +4,52 @@ import com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleInfo;
 import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.DTO.Teacher.*;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
+import com.TeachingManager.TeachingManager.config.exceptions.AlreadyRegisteredException;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Schedule;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl {
     private final TeacherRepository teacherRepo;
+    private final CustomUserDetailServiceImpl userDetailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     @Transactional
-    public Long register(AddTeacherRequest dto){
-        return teacherRepo
-                .save(Teacher.builder()
-                        .email(dto.getEmail())
-                        .nickname(dto.getNickname())
-                        .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                        .teacher_name(dto.getTeacherName())
-                        .birth(dto.getBirth())
-                        .phoneNum(dto.getPhoneNum())
-                        .age(dto.getAge())
-                        .gender(dto.getGender())
-                        .bank_account(dto.getBank_account())
-                        .provider("Local")
-                        .build()
-                ).getPk();
+    public UUID register(AddTeacherRequest dto){
+        String email = dto.getEmail();
+        try {
+            CustomUser user = userDetailService.loadCustomUserByUsername(email);
+        } catch (UsernameNotFoundException e) {
+            return teacherRepo
+                    .save(Teacher.builder()
+                            .email(dto.getEmail())
+                            .nickname(dto.getNickname())
+                            .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                            .teacher_name(dto.getTeacherName())
+                            .birth(dto.getBirth())
+                            .phoneNum(dto.getPhoneNum())
+                            .age(dto.getAge())
+                            .gender(dto.getGender())
+                            .bank_account(dto.getBank_account())
+                            .provider("Local")
+                            .build()
+                    ).getPk();
+        }
+        throw new AlreadyRegisteredException("이미 가입된 계정입니다");
     }
+
     @Transactional
-    public Long social_register(AddSocialTeacherRequest dto) {
+    public UUID social_register(AddSocialTeacherRequest dto) {
         return teacherRepo
                 .save(Teacher.builder()
                         .teacher_name(dto.getTeacherName())
@@ -57,7 +65,7 @@ public class TeacherServiceImpl {
     }
 
     // 선생님 한명 조회
-    public TeacherInfo search_teacher(Long teacher_id, Long institute_id) {
+    public TeacherInfo search_teacher(UUID teacher_id, UUID institute_id) {
         Optional<Teacher> teacher = teacherRepo.findByPk(teacher_id);
         // 해당 티처가 존재하고, 요청 받은 학원 소속일 경우 정보 전달.
         if (teacher.isPresent() && Objects.equals(teacher.get().getInstitutePk(), institute_id)){
@@ -71,7 +79,7 @@ public class TeacherServiceImpl {
     }
 
     // 선생님 명단 조회
-    public FindAllTeacherResponse search_allTeacher(Long institute_id) {
+    public FindAllTeacherResponse search_allTeacher(UUID institute_id) {
         List<Teacher> teacherList = teacherRepo.findByInstitute_Pk(institute_id);
         Set<TeacherInfo> teacherInfoList = teacherList.stream().map(this::convertToDTO).collect(Collectors.toSet());
         return new FindAllTeacherResponse(teacherInfoList);

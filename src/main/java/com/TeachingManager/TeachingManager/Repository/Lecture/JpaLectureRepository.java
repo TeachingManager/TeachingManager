@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class JpaLectureRepository implements LectureRepository {
@@ -23,14 +24,14 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public Optional<Lecture> findOneById(Long instituteId, Long lectureId) {
+    public Optional<Lecture> findOneById(UUID instituteId, Long lectureId) {
         return em.createQuery("select l from Lecture l where l.institute.pk = :instituteId and l.lecture_id = :lectureId", Lecture.class)
                 .setParameter("instituteId", instituteId).setParameter("lectureId", lectureId)
                 .getResultStream().findFirst();
     }
 
     @Override
-    public void delete(Long instituteId, Long lectureId) {
+    public void delete(UUID instituteId, Long lectureId) {
         em.createQuery("delete from Lecture l where l.institute.pk = :instituteId and l.lecture_id = :lectureId")
                 .setParameter("instituteId", instituteId)
                 .setParameter("lectureId", lectureId)
@@ -38,7 +39,7 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public List<Lecture> findAll(Long instituteId) {
+    public List<Lecture> findAll(UUID instituteId) {
         return em.createQuery("select l from Lecture l where l.institute.pk = :instituteId", Lecture.class)
                 .setParameter("instituteId", instituteId)
                 .getResultList();
