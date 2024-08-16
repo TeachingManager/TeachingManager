@@ -5,6 +5,7 @@ import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceI
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
+import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class WebSecurityConfig{
     private final CustomUserDetailServiceImpl userDetailService;
     private final OAuth2UserCustomService oAuth2Service;
     private final TokenProvider tokenProvider;
+    private final JweInfo jweInfo;
 
     @Autowired
     private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
@@ -65,7 +67,7 @@ public class WebSecurityConfig{
                 )
                 .csrf(csrf -> csrf.disable())
                 // jwt 토큰 필터
-                .addFilterBefore(new JWTAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTAuthenticationFilter(tokenProvider, jweInfo), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

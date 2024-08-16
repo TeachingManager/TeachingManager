@@ -132,17 +132,18 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         System.out.println("TokenProvider 의 getAuthentication 의 authorities = " + authorities);
+        System.out.println("roles = " + roles);
 
 
-        /////////////////// 여기에서 Teacher 이랑 Institue  나누어서 구분하기.
+        /////////////////// 여기에서 Teacher 이랑 Institute  나누어서 구분하기.
         //////////////////////////////////
-        if(roles.contains("ROLE_TEACHER")){
-            Teacher teacher = new Teacher(claims.getSubject(), "", (claims.get("id", Long.class)),claims.get("inst_id",Long.class));
-            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
-        }
-        else if (roles.contains("ROLE_PRESIDENT")){
+        if(roles.contains("ROLE_PRESIDENT")){
             CustomUser customUser = new CustomUser((claims.get("id", Long.class)), claims.getSubject(), "", roles);
             return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
+        }
+        else if(roles.contains("ROLE_TEACHER")){
+            Teacher teacher = new Teacher(claims.getSubject(), "", (claims.get("id", Long.class)),claims.get("inst_id",Long.class));
+            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
         }
         return null;
     }

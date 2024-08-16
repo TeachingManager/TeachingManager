@@ -2,6 +2,8 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -27,6 +29,7 @@ public class Fee {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institute_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Institute institute;
 
 

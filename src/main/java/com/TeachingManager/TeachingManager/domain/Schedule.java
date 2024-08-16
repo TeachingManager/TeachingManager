@@ -4,6 +4,8 @@ package com.TeachingManager.TeachingManager.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Time;
 import java.text.DateFormat;
@@ -35,12 +37,14 @@ public class Schedule {
     // Institute와의 Many-to-One 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institute_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Institute institute;
 
 
   //   강의 일대 다 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Lecture lecture;
 
 

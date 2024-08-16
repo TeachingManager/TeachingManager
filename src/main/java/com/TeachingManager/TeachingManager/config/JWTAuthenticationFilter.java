@@ -21,7 +21,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
-    private final JweUtil jweUtil;
     private final JweInfo jweInfo;
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer";

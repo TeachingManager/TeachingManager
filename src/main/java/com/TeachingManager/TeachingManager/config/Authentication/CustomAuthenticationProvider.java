@@ -3,17 +3,16 @@ package com.TeachingManager.TeachingManager.config.Authentication;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.config.exceptions.UserDisabledException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserLockedException;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.security.auth.login.AccountLockedException;
 
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -26,7 +25,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         // 사용자 정보 로드
-        UserDetails user = userDetailsService.loadUserByUsername(username);
+        CustomUser user = userDetailsService.loadCustomUserByUsername(username);
 
         // 고정된 시간 대기
         try {
@@ -52,6 +51,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if (!passwordMatches) {
             // 해당 유저의 틀린 비밀번호 횟수 1 늘리고 검사.
+            user.setFailedCount((byte) (user.getFailedCount() + 1));
+            if (user.getFailedCount() >= 5) { // 5회 이상 시도했을 시
+                user.setAccountNonLocked(false);
+            }
             throw new BadCredentialsException("잘못된 자격 증명입니다.");
         }
 

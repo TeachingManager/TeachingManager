@@ -33,6 +33,7 @@ public class ApiScheduleController {
     // 자기 자신학원, 또는 소속되어있는 학원의 특정 달 정보를 가져온다. (이번달)
     @GetMapping("/api/Schedule")
     public ResponseEntity<MonthScheduleResponse> Schedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
+        System.out.println("user.getAuthorities() = " + user.getAuthorities());
         if (user != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDate(user, request.getDate_info()));
         }

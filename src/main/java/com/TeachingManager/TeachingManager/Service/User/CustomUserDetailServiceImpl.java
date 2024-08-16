@@ -2,6 +2,7 @@ package com.TeachingManager.TeachingManager.Service.User;
 
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
+import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,13 @@ public class CustomUserDetailServiceImpl implements UserDetailsService{
                 .orElseGet(() -> teacherRepo.findByEmail(email)
                         .map(teacher -> (UserDetails) teacher)
                         .orElseThrow(() -> new UsernameNotFoundException(email)));
+    }
+
+
+    public CustomUser loadCustomUserByUsername(String email) {
+        System.out.println("loadUserByUsername");
+        return instRepo.findByEmail(email)
+                .orElseGet(() -> teacherRepo.findByEmail(email)
+                        .orElseThrow(() -> new UsernameNotFoundException(email)).getInstitute());
     }
 }

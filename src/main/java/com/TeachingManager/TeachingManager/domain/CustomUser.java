@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class CustomUser implements UserDetails {
 
     // 학원과 강사 모두가 사용할 속성들
@@ -34,6 +34,12 @@ public class CustomUser implements UserDetails {
 
     @Column(name = "failedCount", nullable = false)
     private Byte failedCount  = 0;
+
+    @Column(name="accountNonLocked", nullable = false)
+    private Boolean accountNonLocked = true;
+
+    @Column(name="enabled", nullable = false)
+    private Boolean enabled = false;
 
     @Column(name = "authorities", nullable = false)
     private String authorities;
@@ -76,7 +82,7 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.accountNonLocked;
     }
 
     @Override
@@ -86,6 +92,6 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }

@@ -2,6 +2,8 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +53,7 @@ public class Teacher extends CustomUser {
 
     @ManyToOne
     @JoinColumn(name = "institute_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Institute institute;
 
     // 외래키 가져오는 함수
@@ -61,7 +64,7 @@ public class Teacher extends CustomUser {
     public Teacher(String email, String password, Long pk, Long inst_id){
         this.setEmail(email);
         this.setPassword(password);
-        this.setAuthorities(Role.PRESIDENT);
+        this.setAuthorities(Role.TEACHER);
         this.setPk(pk);
         this.nickname = "";
         this.teacher_name = "";

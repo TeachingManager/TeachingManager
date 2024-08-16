@@ -32,7 +32,8 @@ public class UserService {
         }
        
        // 토큰 생성 ( email, IpAddress, 만료시간 )
-        String resetToken = tokenProvider.createResetToken(Duration.ofMinutes(30), email, IpAddress);
+        String resetToken = tokenProvider.createResetToken(Duration.ofMinutes(5), email, IpAddress);
+        System.out.println("resetToken = " + resetToken);
 
        // 해당 토큰을 담은 url 을 이메일에 담아 해당 유저에게 전송
         // mod 1 : 비번 찾기
@@ -91,7 +92,7 @@ public class UserService {
                 return "존재하지 않는 회원입니다.";
             }
             // 잠금 해제 && 비밀번호 틀린 횟수 초기화
-//            user.setAccountNonLocked(true);
+            user.setAccountNonLocked(true);
             user.setFailedCount((byte) 0);
             
             return "계정 잠금 해제 완료!";
@@ -117,7 +118,7 @@ public class UserService {
                 return "존재하지 않는 회원입니다.";
             }
             // 계정의 enable 을 true 로 설정.
-//            user.setEnabled(true);
+            user.setEnabled(true);
 //             save 메소드 안해도 되는지 체크 (더티체킹)
 
             return "계정 잠금 해제 완료!";
