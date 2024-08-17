@@ -4,6 +4,8 @@ import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthentication
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
+import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
+import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class WebSecurityConfig{
     private final CustomUserDetailServiceImpl userDetailService;
     private final OAuth2UserCustomService oAuth2Service;
     private final TokenProvider tokenProvider;
+    private final JweInfo jweInfo;
 
     @Autowired
     private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
@@ -42,8 +45,10 @@ public class WebSecurityConfig{
         return http.
                 authorizeHttpRequests(authorize -> authorize
 
-                        .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
-                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google"
+                        .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
+                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
+                                "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
+                                "/password/change","/api/password/change", "/invite/teacher"
                         ).permitAll()//로그인, 회원가입은 인증
                         .requestMatchers(HttpMethod.POST, "/api/institute", "/api/teacher").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
@@ -64,7 +69,7 @@ public class WebSecurityConfig{
                 )
                 .csrf(csrf -> csrf.disable())
                 // jwt 토큰 필터
-                .addFilterBefore(new JWTAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTAuthenticationFilter(tokenProvider, jweInfo), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -75,16 +80,22 @@ public class WebSecurityConfig{
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder());
-        return auth.build();
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
+
+        return authenticationManagerBuilder.build();
     }
 
-//    @Bean
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider(userDetailService,bCryptPasswordEncoder());
+    }
+
+    //    @Bean
 //    public OAuth2SuccessHandler oAuth2SuccessHandler(){
 //
 //    }
-
 
 }

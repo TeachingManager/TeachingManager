@@ -5,9 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByUserId(Long userid);
+    Optional<RefreshToken> findByUserId(UUID userid);
     Optional<RefreshToken> findByRefreshToken(String RefreshToken);
 
 }

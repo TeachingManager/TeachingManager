@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @Setter
 public class InstituteResponse {
 
-    private Long institute_id;
+    private UUID institute_id;
     private String institute_name;
     private String address;
     private String phoneNum;

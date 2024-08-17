@@ -7,14 +7,15 @@ import org.springframework.data.repository.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface LectureRepository {
 
     Lecture save(Lecture lecture);
 
-    Optional<Lecture> findOneById(Long instituteId, Long lectureId);
+    Optional<Lecture> findOneById(UUID instituteId, Long lectureId);
 
-    void delete(Long instituteId, Long lectureId);
+    void delete(UUID instituteId, Long lectureId);
 
-    List<Lecture> findAll(Long instituteId);
+    List<Lecture> findAll(UUID instituteId);
 }

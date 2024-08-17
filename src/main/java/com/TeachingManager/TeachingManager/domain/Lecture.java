@@ -2,6 +2,8 @@ package com.TeachingManager.TeachingManager.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalTime;
 
@@ -34,12 +36,14 @@ public class Lecture {
     // 학원과의 일대다 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institute_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Institute institute;
 
-    // 강의와의 일대다 관계
+    // 선생님와의 일대다 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", nullable = false)
-    private Teacher teacher;
+    @JoinColumn(name = "teacher_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
+    private Teacher teacher = null;
 
 
     @Builder

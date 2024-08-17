@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class InstituteDetailServiceImpl implements UserDetailsService {
         return instRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
-    public UserDetails loadUserByPk(Long pk){
+    public UserDetails loadUserByPk(UUID pk){
         Institute institute =  instRepo.findByPk(pk).orElseThrow(() -> new IllegalArgumentException());
         return institute;
 //        return org.springframework.security.core.userdetails.User.builder()

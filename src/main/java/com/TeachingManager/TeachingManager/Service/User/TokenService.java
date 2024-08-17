@@ -16,9 +16,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -33,19 +37,23 @@ public class TokenService {
 
     // 처음 로그인 시 access, refresh 토큰 발급하는 함수.
     // 반환값 :  클라이언트에 전달할 DTO
+    @Transactional
     public SetTokenResponse LoginTokenCreate(String email, String password) {
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
         try {
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            Institute user =  instituteService.loadInstituteByUsername(email);
-            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-
+            Institute user = instituteService.loadInstituteByUsername(email);
+            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
         } catch (UsernameNotFoundException e) {
             // Institute 유저가 없을 경우 Teacher 유저 조회
-            Teacher user = teacherService.loadTeacherByUsername(email); // 여기서도 예외가 발생할 수 있으니 추가로 처리 필요
-            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user,Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-        } catch (BadCredentialsException bad){
+            try {
+                Teacher user = teacherService.loadTeacherByUsername(email);
+                return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
+            } catch (UsernameNotFoundException ex) {
+                // 둘 다 없는 경우 예외 처리
+                throw ex;
+            }
+        } catch (BadCredentialsException bad) {
             System.out.println("비밀번호 오류!!");
             return null;
         }
@@ -60,13 +68,17 @@ public class TokenService {
 
     // 새 AccessToken 발급
     public String createNewAccessToken(String refreshToken) {
+
         if (!tokenProvider.validToken(refreshToken)) {
+            System.out.println("유효하지 않은 리프레시 토큰!");
             throw new IllegalArgumentException("Unexpected token");
         }
-        Long userPk = findByRefreshToken(refreshToken).getUserId();
+
+        UUID userPk = findByRefreshToken(refreshToken).getUserId();
         Optional<CustomUser> instituteUser = Optional.ofNullable((CustomUser) instituteService.loadUserByPk(userPk));
         CustomUser user = instituteUser.orElseGet(() -> (CustomUser) teacherService.loadUserByPk(userPk));
 
+        System.out.println("여기까지");
         String Token  = tokenProvider.createAccessToken(user, Duration.ofHours(2));
         System.out.println("Token = " + Token);
         return Token;
@@ -84,9 +96,6 @@ public class TokenService {
         }
     }
 
-    // 헤더를 받으면 Pk 값을 반환하는 함수
-    public Long findPKInHeaderToken(String authorizationHeader) {
-        return tokenProvider.getUserId(extractedToken(authorizationHeader));
-    }
+
 
 }

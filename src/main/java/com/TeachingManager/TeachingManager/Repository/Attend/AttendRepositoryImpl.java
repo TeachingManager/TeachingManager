@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Component
@@ -32,7 +33,7 @@ public class AttendRepositoryImpl implements AttendRepository{
 
     @Override
     @Transactional
-    public String delete(Long institute_pk, Long attend_id) {
+    public String delete(UUID institute_pk, Long attend_id) {
         Attend attend = em.find(Attend.class, attend_id);
         // 조인을 하는 것보다 차라리 select 연산 을 두 번 하는게 더 저렴해보인다.
         if (attend != null && Objects.equals(attend.getSchedule().getInstitute().getPk(), institute_pk)){
@@ -43,7 +44,7 @@ public class AttendRepositoryImpl implements AttendRepository{
     }
 
     @Override
-    public String deleteMonthAttend(Long institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
+    public String deleteMonthAttend(UUID institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
         // 시작일과 끝날짜
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
@@ -71,7 +72,7 @@ public class AttendRepositoryImpl implements AttendRepository{
     }
 
     @Override
-    public Optional<Attend> searchById(Long institute_id, Long attend_id) {
+    public Optional<Attend> searchById(UUID institute_id, Long attend_id) {
         return em.createQuery(
                         "SELECT a " +
                             "FROM Attend a " +
@@ -83,7 +84,7 @@ public class AttendRepositoryImpl implements AttendRepository{
     }
 
     @Override
-    public List<Attend> searchAttendanceByScheduleId(Long institute_id, Long schedule_id) {
+    public List<Attend> searchAttendanceByScheduleId(UUID institute_id, Long schedule_id) {
         return em.createQuery(
                 "select at " +
                     "from Attend at " +
@@ -97,7 +98,7 @@ public class AttendRepositoryImpl implements AttendRepository{
 
     // 특정 학생의 특정 스케쥴에 대한 출석 정보 가져오기
     @Override
-    public Optional<Attend> searchOneByStudentId(Long institute_id, Long schedule_id, Long student_id) {
+    public Optional<Attend> searchOneByStudentId(UUID institute_id, Long schedule_id, Long student_id) {
         Attend attend =  em.createQuery(
                 "select at " +
                         "from Attend at " +
@@ -113,7 +114,7 @@ public class AttendRepositoryImpl implements AttendRepository{
 
     // 학생의 특정 달의 모든 강의에 대한  출석
     @Override
-    public List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(Long institute_id, Long student_id, LocalDate date_info) {
+    public List<StudentsMonthAttendRecord> searchMonthlyAttendanceByStudentId(UUID institute_id, Long student_id, LocalDate date_info) {
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
@@ -135,7 +136,7 @@ public class AttendRepositoryImpl implements AttendRepository{
 
     // 특정 강의의 모든 학생들의 특정달의 출석
     @Override
-    public List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(Long institute_id, Long lecture_id, LocalDate date_info) {
+    public List<LectureMonthAttendanceRecord> searchMonthlyAttendanceByLectureId(UUID institute_id, Long lecture_id, LocalDate date_info) {
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
@@ -159,7 +160,7 @@ public class AttendRepositoryImpl implements AttendRepository{
     
 // 특정 강의의 특정 학생의 특정 달의 출석
     @Override
-    public List<StudentMonthLectureAttendRecord> searchMonthlyAttendanceByLectureAndStudentId(Long institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
+    public List<StudentMonthLectureAttendRecord> searchMonthlyAttendanceByLectureAndStudentId(UUID institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
         LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 

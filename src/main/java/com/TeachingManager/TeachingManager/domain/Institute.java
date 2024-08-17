@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ public class Institute extends CustomUser {
     @Column(name = "phone_num", nullable = false)
     private String phoneNum;
 
-    public Institute(String email, String password, Long pk){
+    public Institute(String email, String password, UUID pk){
         this.setEmail(email);
         this.setPassword(password);
         this.setAuthorities(Role.PRESIDENT);
@@ -34,7 +35,7 @@ public class Institute extends CustomUser {
         this.phoneNum = "";
     }
 
-    public Institute(Long pk){
+    public Institute(UUID pk){
         this.setEmail("");
         this.setPassword("");
         this.setAuthorities(Role.PRESIDENT);
@@ -44,7 +45,7 @@ public class Institute extends CustomUser {
     }
 
     @Builder
-    public Institute(String email, String password, String auth, String institute_name, String address, String phoneNum){
+    public Institute(String email, String password      , String auth, String institute_name, String address, String phoneNum){
         this.setEmail(email);
         this.setPassword(password);
         this.setAuthorities(Role.PRESIDENT);

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Component
@@ -18,7 +19,7 @@ public class FeeRepositoryImpl implements FeeRepository{
     private final EntityManager em;
 
     @Override
-    public List<EnrollYearFeeResponse> findYearFee(Long institute_id, Short year, Short month) {
+    public List<EnrollYearFeeResponse> findYearFee(UUID institute_id, Short year, Short month) {
 
         return em.createQuery(
                     "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollYearFeeResponse(" +
@@ -37,7 +38,7 @@ public class FeeRepositoryImpl implements FeeRepository{
     }
 
     @Override
-    public Optional<Fee> findByInstituteDate(Long institute_id, Short year, Short month) {
+    public Optional<Fee> findByInstituteDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
                         "SELECT fee " + // 없으면 0 반환.
                                 "FROM Fee fee " +
@@ -58,7 +59,7 @@ public class FeeRepositoryImpl implements FeeRepository{
 
 
     @Override
-    public long addMonthTotalAndPaidFee(Long institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
+    public long addMonthTotalAndPaidFee(UUID institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
         return em.createQuery("UPDATE Fee f " +
                         "SET f.totalMonthFee = f.totalMonthFee + :feeValue, f.payedMonthFee = f.payedMonthFee + :paidFeeValue " +
                         "WHERE f.institute.pk =: instituteId " +
@@ -72,7 +73,7 @@ public class FeeRepositoryImpl implements FeeRepository{
     }
 
     @Override
-    public long declineMonthTotalAndPaidFee(Long institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
+    public long declineMonthTotalAndPaidFee(UUID institute_id, Short year, Short month, long feeValue, long paidFeeValue) {
         return em.createQuery("UPDATE Fee f " +
                         "SET f.totalMonthFee = f.totalMonthFee - :feeValue, f.payedMonthFee = f.payedMonthFee - :paidFeeValue " +
                         "WHERE f.institute.pk =: instituteId " +

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,15 +21,15 @@ public class RefreshToken {
     private Long id;
 
     @Column(name="user_id", nullable = false, unique = true)
-    private Long userId;
+    private UUID userId;
 
-    @Column(name = "refresh_token", nullable = false, length = 512)
+    @Column(name = "refresh_token", nullable = false, length = 1000)
     private String refreshToken;
 
     @Column(name = "expired_time", nullable = false)
     private Date expired_time;
 
-    public RefreshToken(Long userId, String refreshToken, Date expired_time){
+    public RefreshToken(UUID userId, String refreshToken, Date expired_time){
         this.userId = userId;
         this.refreshToken = refreshToken;
         this.expired_time = expired_time;

@@ -8,11 +8,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @Getter
 public class InstituteAdapter extends User {
     private Institute institute;
-    private Long pk;
+    private UUID pk;
     private String institute_name;
 
     public InstituteAdapter(Institute institute) {

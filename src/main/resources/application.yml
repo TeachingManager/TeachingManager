@@ -47,3 +47,7 @@ logging:
 jwt:
   jwtUser: yhe01152@naver.com
   sKey: teachingManager
+
+jwe:
+  secret:
+    key: "Gi570yMw47p2QHTJiGrYz5vjeMsJGryxhqQLO1j3QiY="

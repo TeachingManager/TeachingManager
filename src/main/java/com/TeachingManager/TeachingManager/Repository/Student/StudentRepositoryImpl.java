@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Component
@@ -18,7 +19,7 @@ public class StudentRepositoryImpl implements StudentRepository{
     private final EntityManager em;
 
     @Override
-    public List<Student> findByInstitute_Pk(Long pk) {
+    public List<Student> findByInstitute_Pk(UUID pk) {
         return em.createQuery("SELECT st " +
                 "FROM Student st " +
                 "WHERE st.institute.pk = :instituteId", Student.class)
@@ -35,7 +36,7 @@ public class StudentRepositoryImpl implements StudentRepository{
     }
 
     @Override
-    public Optional<Student> findById(Long institute_id, Long student_id) {
+    public Optional<Student> findById(UUID institute_id, Long student_id) {
         return em.createQuery("SELECT st " +
                                 "FROM Student st " +
                                 "WHERE st.institute.pk = :instituteId " +
@@ -48,7 +49,7 @@ public class StudentRepositoryImpl implements StudentRepository{
 
     @Override
     @Transactional
-    public String deleteById(Long institute_id, Long student_id) {
+    public String deleteById(UUID institute_id, Long student_id) {
         int deleteCount = em.createQuery("DELETE FROM Student st " +
                         "WHERE st.institute.pk = :instituteId  " +
                         "AND st.id = :studentId")

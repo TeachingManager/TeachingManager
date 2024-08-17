@@ -8,7 +8,6 @@ import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRe
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Enroll;
 import com.TeachingManager.TeachingManager.domain.Fee;
-import com.TeachingManager.TeachingManager.domain.Institute;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

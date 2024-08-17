@@ -31,7 +31,7 @@ public interface ScheduleService {
 
     // 목록 검색
 
-    List<Map<String, String>> search_all_marker(Long institute_id);
+    List<Map<String, String>> search_all_marker(UUID institute_id);
 //    전체 검색
 
     MonthScheduleResponse searchAll_schedule(CustomUser user);

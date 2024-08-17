@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Component
@@ -26,7 +27,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     
     // 특정 달의 특정 강의를 등록한 학생들 리스트 반환
     @Override
-    public List<EnrolledStudentsResponse> findEnrolledStudentsByDate(Long institute_id, Long lecture_id, Short year, Short month) {
+    public List<EnrolledStudentsResponse> findEnrolledStudentsByDate(UUID institute_id, Long lecture_id, Short year, Short month) {
         return em.createQuery(
                 "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse(en.lecture.lecture_id, en.student.id, " +
                         "en.student.name, en.year, en.month, en.payed_fee," +
@@ -45,7 +46,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
 
     // 특정달에 개설된 강의 리스트 반환
     @Override
-    public List<EnrolledLecturesResponse> findEnrolledLecturesByDate(Long institute_id, Short year, Short month) {
+    public List<EnrolledLecturesResponse> findEnrolledLecturesByDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee) " +
                                 "FROM Lecture lec " +
@@ -64,7 +65,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
 
     // 특정 달에 개설되지 않은 강의 리스트 반환
     @Override
-    public List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(Long institute_id, Short year, Short month) {
+    public List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse(lec.lecture_id, lec.name) " +
                                 "FROM Lecture lec " +
@@ -82,7 +83,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     }
 
     @Override
-    public Optional<Enroll> findById(Long institute_id, Long enroll_id) {
+    public Optional<Enroll> findById(UUID institute_id, Long enroll_id) {
         return em.createQuery("SELECT en " +
                 "FROM Enroll en " +
                 "WHERE en.lecture.institute.pk  = :instituteId " +
@@ -94,7 +95,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
 
     // 해당 달의 수강료/ 수강료 납부 일정 가져오기
     @Override
-    public List<EnrollFeeResponse> findEnrolledFeeByDate(Long institute_id, Short year, Short month) {
+    public List<EnrollFeeResponse> findEnrolledFeeByDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse(en.student.name, en.student.id, en.lecture.name, en.lecture.lecture_id, en.lecture.fee, en.lecture.teacher.teacher_name, en.payed_fee, en.fullPayment, en.enroll_id)" +
                                 "FROM Enroll en " +
@@ -125,7 +126,7 @@ public class EnrollRepositoryImpl implements EnrollRepository{
     //////////////////////////////////////////////////////////
     @Override
     @Transactional
-    public String delete(Long institute_id, Long enroll_id) {
+    public String delete(UUID institute_id, Long enroll_id) {
         int deleteCount =
                 em.createQuery(
             "DELETE FROM Enroll en" +

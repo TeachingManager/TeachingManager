@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,8 @@ public class InstituteServiceImpl {
     private final InstituteRepository instRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Long register(AddInstituteRequest dto){
+    @Transactional
+    public UUID register(AddInstituteRequest dto){
         Institute temp = Institute.builder()
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
@@ -27,7 +29,10 @@ public class InstituteServiceImpl {
                 .address(dto.getAddress())
                 .phoneNum(dto.getPhoneNum()).build();
 
-        return instRepo.save(temp).getPk();
+
+        UUID institute_id = instRepo.save(temp).getPk();
+        System.out.println("institute_id = " + institute_id);
+        return institute_id;
     }
 
     // 학원 정보 업데이트

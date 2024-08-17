@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,28 +24,28 @@ import java.util.stream.Collectors;
 @Service
 public class TokenProvider {
     private final JwtInfo jwtinfo;
+    private final JweInfo jweInfo;
+    private final JweUtil jweUtil;
     private final RefreshTokenRepository refreshTokenRepo;
 
     // 외부에서 호출하기 위한 공용메서드
     public String createAccessToken(CustomUser user, Duration expiredAt){
-        System.out.println("createAccessToken 의 user = " + user);
         Date now = new Date();
         return createToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
     // 외부에서 refresh 토큰 호출 메서드
     public String createRefreshToken(CustomUser user, Duration expiredAt){
-        System.out.println("createRefreshToken 의 user = " + user);
         Date now = new Date();
         Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
         String token = createToken(expired_time, user);
 
-
-        RefreshToken newRefreshToken = new RefreshToken(user.getPk(), token, expired_time);
-        // 이미 refreshToken 이 존재하는지 체크하고 있다면 업데이트, 아니라면 저장
+// 이미 refreshToken 이 존재하는지 체크하고 있다면 업데이트, 아니라면 저장
         Optional<RefreshToken> refreshToken = refreshTokenRepo.findByUserId(user.getPk());
+        RefreshToken newRefreshToken = new RefreshToken(user.getPk(), token, expired_time);
+
         if(refreshToken.isPresent()) {
-            refreshToken.get().update(String.valueOf(newRefreshToken));
+            refreshToken.get().update(token);
         }
         else {
             refreshTokenRepo.save(newRefreshToken);
@@ -52,6 +53,44 @@ public class TokenProvider {
 
         return token;
     }
+
+    // 비밀번호 찾기, 초기 회원가입시 사용할 본인인증 토큰 발급
+    public String createResetToken(Duration expiredAt, String userEmail, String IpAddress) throws Exception {
+        Date now = new Date();
+        Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
+
+        String jwt = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("alg", "HS512")
+                .setIssuedAt(now)
+                .setExpiration(expired_time)
+                .setSubject(userEmail)
+                .claim("email", userEmail)
+                .claim("IP", IpAddress)
+                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                .compact();
+        System.out.println("jwt = " + jwt);
+        return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
+    }
+
+    public String createJoinToken(Duration expiredAt, String teacherEmail, String instEmail) throws Exception {
+        Date now = new Date();
+        Date expired_time = new Date(now.getTime() + expiredAt.toMillis());
+
+        String jwt = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("alg", "HS512")
+                .setIssuedAt(now)
+                .setExpiration(expired_time)
+                .setSubject(teacherEmail)
+                .claim("email", teacherEmail)
+                .claim("inst_email", instEmail)
+                .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
+                .compact();
+        System.out.println("jwt = " + jwt);
+        return JweUtil.encrypt(jwt, jweInfo.getSecretKey());
+    }
+
 
 // private 을 이용하여 접근제한?
     private String createToken(Date expiredDate, CustomUser user){
@@ -64,13 +103,12 @@ public class TokenProvider {
                     .setIssuedAt(now)
                     .setExpiration(expiredDate)
                     .setSubject(user.getEmail())
-                    .claim("id", user.getPk())
+                    .claim("id", user.getPk().toString())
                     .claim("roles", user.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .collect(Collectors.toList()))
                     .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                     .compact();
-            System.out.println("TokenProvider 의 createToken 의 Institute일 경우의 token = " + token);
         }
         else if(user instanceof Teacher){
             token = Jwts.builder()
@@ -79,14 +117,13 @@ public class TokenProvider {
                     .setIssuedAt(now)
                     .setExpiration(expiredDate)
                     .setSubject(user.getEmail())
-                    .claim("id", user.getPk())
+                    .claim("id", user.getPk().toString())
                     .claim("inst_id", ((Teacher) user).getInstitutePk())
                     .claim("roles", user.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .collect(Collectors.toList()))
                     .signWith(SignatureAlgorithm.HS512, jwtinfo.getSKey())
                     .compact();
-            System.out.println("TokenProvider 의 createToken 의 Teacher 일 경우의 token = " + token);
         }
 
         return token;
@@ -113,24 +150,38 @@ public class TokenProvider {
                 .collect(Collectors.toList());
 
         System.out.println("TokenProvider 의 getAuthentication 의 authorities = " + authorities);
+        System.out.println("roles = " + roles);
 
 
-        /////////////////// 여기에서 Teacher 이랑 Institue  나누어서 구분하기.
+        /////////////////// 여기에서 Teacher 이랑 Institute  나누어서 구분하기.
         //////////////////////////////////
-        if(roles.contains("ROLE_TEACHER")){
-            Teacher teacher = new Teacher(claims.getSubject(), "", (claims.get("id", Long.class)),claims.get("inst_id",Long.class));
-            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
-        }
-        else if (roles.contains("ROLE_PRESIDENT")){
-            CustomUser customUser = new CustomUser((claims.get("id", Long.class)), claims.getSubject(), "", roles);
+        if(roles.contains("ROLE_PRESIDENT")){
+            String id = claims.get("id", String.class);
+            CustomUser customUser = new CustomUser((UUID.fromString(id)), claims.getSubject(), "", roles);
             return new UsernamePasswordAuthenticationToken(customUser, token, authorities);
+        }
+        else if(roles.contains("ROLE_TEACHER")){
+            String id = claims.get("id", String.class);
+            String inst_id = claims.get("inst_id", String.class);
+            Teacher teacher = new Teacher(claims.getSubject(), "", (UUID.fromString(id)),(UUID.fromString(inst_id)));
+            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
         }
         return null;
     }
 
-    public Long getUserId(String token) {
+    public String getUseEmailInToken(String token) {
         Claims claims = getClaims(token);
-        return claims.get("id", Long.class);
+        return claims.get("email", String.class);
+    }
+
+    public String getInstUserEmailInToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("inst_email", String.class);
+    }
+
+    public String getUseIpInToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("IP", String.class);
     }
 
     private Claims getClaims(String token) {
@@ -139,6 +190,5 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
 
 }

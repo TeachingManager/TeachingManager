@@ -8,6 +8,7 @@ import com.TeachingManager.TeachingManager.domain.Enroll;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface EnrollRepository {
 
@@ -16,19 +17,19 @@ public interface EnrollRepository {
     //////////////////////////////////////////////////////////
     
     // 특정 강의에 등록된던 학생들
-    List<EnrolledStudentsResponse> findEnrolledStudentsByDate(Long institute_id, Long lecture_id, Short year, Short month);
+    List<EnrolledStudentsResponse> findEnrolledStudentsByDate(UUID institute_id, Long lecture_id, Short year, Short month);
 
     // 특정달에 개설되었던 강의들
-    List<EnrolledLecturesResponse> findEnrolledLecturesByDate(Long institute_id, Short year, Short month);
+    List<EnrolledLecturesResponse> findEnrolledLecturesByDate(UUID institute_id, Short year, Short month);
 
     // 특정달에 개설되지 않았던 강의들
-    List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(Long institute_id, Short year, Short month);
+    List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(UUID institute_id, Short year, Short month);
 
     // 단일 검색
-    Optional<Enroll> findById(Long institute_id, Long enroll_id);
+    Optional<Enroll> findById(UUID institute_id, Long enroll_id);
 
     // 수강에서 학원비 정보 가져오기
-    List<EnrollFeeResponse> findEnrolledFeeByDate(Long institute_id, Short year, Short month);
+    List<EnrollFeeResponse> findEnrolledFeeByDate(UUID institute_id, Short year, Short month);
 
     //////////////////////////////////////////////////////////
     ///                       추가                           //
@@ -40,5 +41,5 @@ public interface EnrollRepository {
     ///                       삭제                           //
     //////////////////////////////////////////////////////////
     // 삭제
-    String delete(Long institute_id, Long enroll_id);
+    String delete(UUID institute_id, Long enroll_id);
 }

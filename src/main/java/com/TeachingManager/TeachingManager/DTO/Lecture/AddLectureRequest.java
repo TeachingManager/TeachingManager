@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,7 +20,7 @@ public class AddLectureRequest {
     private String grade;
     private int fee;
     private String time;
-    private Long teacherId;
+    private UUID teacherId;
 
     public Lecture toEntity(Institute institute, Teacher teacher) {
         return Lecture.builder()

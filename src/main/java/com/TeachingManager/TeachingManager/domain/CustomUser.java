@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
@@ -22,9 +24,15 @@ public class CustomUser implements UserDetails {
 
     // 학원과 강사 모두가 사용할 속성들
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk", updatable = false)
-    private Long pk;
+    @GeneratedValue(generator = "UUID")
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "pk", nullable = false, updatable = false)
+    private UUID pk;
+
+//    @PrePersist
+//    public void generateId() {
+//        this.pk = UUID.randomUUID(); // UUID 자동 생성
+//    }
 
     @Column(name = "email",updatable = false, nullable = false, unique = true)
     private String email;
@@ -35,10 +43,16 @@ public class CustomUser implements UserDetails {
     @Column(name = "failedCount", nullable = false)
     private Byte failedCount  = 0;
 
+    @Column(name="accountNonLocked", nullable = false)
+    private Boolean accountNonLocked = true;
+
+    @Column(name="enabled", nullable = false)
+    private Boolean enabled = false;
+
     @Column(name = "authorities", nullable = false)
     private String authorities;
 
-    public CustomUser(Long pk, String email, String password, List<String> roles) {
+    public CustomUser(UUID pk, String email, String password, List<String> roles) {
         this.pk = pk;
         this.email = email;
         this.password = password;
@@ -76,7 +90,7 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.accountNonLocked;
     }
 
     @Override
@@ -86,6 +100,6 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }
