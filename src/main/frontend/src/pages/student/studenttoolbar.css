@@ -1,9 +1,0 @@
-.toolbar-container {
-    border: solid 1px;
-    border-color: rgb(220,226,228);
-    padding: 12px 16px;
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
