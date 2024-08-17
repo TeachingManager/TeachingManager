@@ -48,7 +48,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제
                 || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 송신
                 || ("/api/institute".equals(url) && "POST".equalsIgnoreCase(method)
-                || ("/api/teacher".equals(url) && "POST".equalsIgnoreCase(method)))) {
+                || ("/api/teacher".equals(url) && "POST".equalsIgnoreCase(method)))
+                || ("/email/initial/prove".equals(url) && "GET".equalsIgnoreCase(method))
+                || ("/email/locked/prove".equals(url) && "GET".equalsIgnoreCase(method))
+                || ("/password/change".equals(url) && "GET".equalsIgnoreCase(method))
+                || ("/invite/teacher".equals(url) && "GET".equalsIgnoreCase(method))
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -64,6 +69,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             try {
                 System.out.println("queryParams = " + queryParams.get("token"));
                 String decodedToken = URLDecoder.decode(queryParams.get("token"), StandardCharsets.UTF_8);
+                System.out.println("decodedToken = " + decodedToken);
                 inputToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
                 System.out.println("inputToken = " + inputToken);
             } catch (Exception e) {

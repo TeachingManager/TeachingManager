@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -36,6 +38,7 @@ public class UserService {
     private final JweInfo jweInfo;
     private final TeacherRepository teacherRepo;
     private final InstituteRepository instituteRepo;
+    private final TemplateEngine templateEngine;
 
     @Transactional
     // 요청이 들어온 이메일을 찾아보고, 있다면 토큰 생성해서 이메일을 전송
@@ -48,8 +51,10 @@ public class UserService {
        
        // 토큰 생성 ( email, IpAddress, 만료시간 )
         String resetToken = tokenProvider.createResetToken(Duration.ofMinutes(5), email, IpAddress);
-        String encodedResetToken = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
-        System.out.println("encodedResetToken = " + encodedResetToken);
+        System.out.println("resetToken = " + resetToken);
+        // 이렇게 안보내도, HTML 으로 들어가면 encode 되더라.....
+//        String encodedResetToken = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
+//        System.out.println("encodedResetToken = " + encodedResetToken);
 
        // 해당 토큰을 담은 url 을 이메일에 담아 해당 유저에게 전송
         // mod 1 : 비번 찾기
@@ -60,7 +65,7 @@ public class UserService {
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
-            sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","메일 테스트");
+            sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","/EmailForm/InitialAuthenticationEmail", resetToken);
 
             return "사용자 정보 확인. 초기 인증용 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "unLockUser")) {
@@ -73,10 +78,10 @@ public class UserService {
 
     @Transactional
     public String changePassword( String token, String IpAddress, String newPassword ) throws Exception {
-        // JWE 토큰 복호화
-        System.out.println("token = " + token);
-        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
-        System.out.println("decodedToken = " + decodedToken);
+
+//        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
+//        String decryptedToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 
         System.out.println("newPassword = " + newPassword);
@@ -103,7 +108,10 @@ public class UserService {
     // 요청 받은 유저 잠금 해제 (비밀번호 여러번 오입력시 사용)
     public String unLockUser(String token, String IpAddress) throws Exception {
 
-        // JWE 토큰 복호화
+
+//        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
+//        String decryptedToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 
         // 토큰 claim 의 IP 값과 IPAddress 가 일치하는지 확인
@@ -133,6 +141,7 @@ public class UserService {
 
         // JWE 토큰 복호화
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
+        System.out.println("decryptedToken = " + decryptedToken);
 
         // 토큰 claim 의 IP 값과 IPAddress 가 일치하는지 확인
         if (Objects.equals(IpAddress, tokenProvider.getUseIpInToken(decryptedToken))) {
@@ -181,7 +190,9 @@ public class UserService {
 
     @Transactional
     public String joinTeacherToInstitute(String token) throws Exception {
-        // JWE 토큰 복호화
+//        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
+//        String decryptedToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 
         System.out.println("/////////////////////////////");
@@ -206,7 +217,7 @@ public class UserService {
     /////////////       이메일 발송 서비스   /      ////////////////
     /////////////////////////////////////////////////////////////
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(String to, String subject, String templateLocation, String token) {
         String host = "smtp.outlook.com";
         final String username = "teachingmanager@outlook.com";
         final String password = "$xlcld123$";
@@ -225,11 +236,15 @@ public class UserService {
                 });
 
         try {
+            Context context = new Context();
+            context.setVariable("token", token);
+            String htmlBody = templateEngine.process(templateLocation, context);
+
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject(subject);
-            message.setText(text);
+            message.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Transport.send(message);
             System.out.println("Sent message successfully...");
