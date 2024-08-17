@@ -31,19 +31,29 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    
+
+
+
         // 접근 경로 관련
         String url = request.getRequestURI();
         String method = request.getMethod();
+
+        if ("/api/login".equals(url)&& "POST".equalsIgnoreCase(method)){
+
+        }
+
+
+
+
         String queryString = request.getQueryString();
         Map<String, String> queryParams = parseQueryString(queryString);
+
         
         // 토큰 관련
         String authorizationHeader  = request.getHeader("Authorization");
         String token;
 
-        if ("/api/login".equals(url)
-                || "/api/accessToken".equals(url)
+        if ("/api/accessToken".equals(url)
                 || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
                 || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제
                 || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 송신
@@ -67,11 +77,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             // 토큰 가져와서 복호화
             String inputToken = null;
             try {
-                System.out.println("queryParams = " + queryParams.get("token"));
+
                 String decodedToken = URLDecoder.decode(queryParams.get("token"), StandardCharsets.UTF_8);
-                System.out.println("decodedToken = " + decodedToken);
                 inputToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+
+                System.out.println("queryParams = " + queryParams.get("token"));
+                System.out.println("decodedToken = " + decodedToken);
                 System.out.println("inputToken = " + inputToken);
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

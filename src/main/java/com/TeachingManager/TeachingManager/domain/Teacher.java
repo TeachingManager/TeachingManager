@@ -48,7 +48,7 @@ public class Teacher extends CustomUser {
     private String provider;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institute_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Institute institute;
