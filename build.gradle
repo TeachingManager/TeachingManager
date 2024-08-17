@@ -1,0 +1,72 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.TeachingManager'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+//	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+//	// MySQL JDBC 드라이버 의존성 추가
+//	implementation 'mysql:mysql-connector-j:8.0.32'// 사용하려는 MySQL 버전에 맞는 버전으로 변경
+//	implementation 'mysql:mysql-connector-java'
+
+	implementation 'org.springframework.boot:spring-boot-starter'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	
+//	스프링 시큐리티 관련
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+//	oauth2.0 관련
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+
+	// jwt 토큰 관련 서비스
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.projectlombok:lombok'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	//jwe 관련 서비스
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
+
+    // jaxb-api
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	implementation 'javax.activation:activation:1.1.1'
+
+
+	// java 메일 api
+	implementation 'com.sun.mail:javax.mail:1.6.2'
+
+	//Hibernate 직렬화에 도움을 준다. => 무한루프 영향 think
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

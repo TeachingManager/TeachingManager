@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>일정 세부사항</title>
+    <script th:src="@{/schedule/js/schedule_detail.js}" defer ></script>
+</head>
+<div layout:fragment="content">
+    <input type = "hidden" id="schedule-id" th:value="${schedule.id}">
+    <div>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <h1 th:text="${schedule.title}"></h1>
+                    <span> 시작일 : <span th:text="${schedule.start_date}"> </span></span><br>
+                    <span> 종료일 : <span th:text="${schedule.end_date}"></span></span><br>
+                    <span th:text="${schedule.memo}"></span>
+                </td>
+                <td>
+                    <div>
+                        <a th:href="@{'/Schedule/form?pk=' + ${schedule.id}}"><span>수정</span></a>
+                        <button onclick="deleteScheduleRequest()">삭제하기</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</html>

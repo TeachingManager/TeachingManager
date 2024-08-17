@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}"
+>
+    <head>
+        <meta charset="UTF-8">
+        <title>스케쥴 홈</title>
+    </head>
+    <div layout:fragment="content">
+        <div class="schedule-btn-list">
+            <a href="/Schedule/form">새 일정 추가</a>
+        </div>
+        <div>
+            <table>
+                <tbody>
+                    <tr th:each="schedule : ${schedules}">
+                        <td>
+                            <a th:href="@{'/Schedule/Detail' + '?pk=' + ${schedule.schedule_id}}">
+                            <span th:text="${schedule.title}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</html>
