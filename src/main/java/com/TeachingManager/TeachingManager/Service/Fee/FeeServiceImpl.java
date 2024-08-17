@@ -42,12 +42,14 @@ public class FeeServiceImpl implements FeeService {
     public Boolean purchaseLectureFee(CustomUser user, Long enroll_id, int paid_amount, Short year, Short month) {
         // 개인 수강 정보 수정
         Enroll enroll = enrollRepo.findById(user.getPk(), enroll_id).orElseThrow(()->new RuntimeException("존재하지 않거나 접근 불가능한 수강 정보에 접근시도"));
+        // 차액 저장
+        long difference = paid_amount - enroll.getPayed_fee();
         enroll.updatePaidFee(paid_amount);
 
 
         Optional<Fee> feeTuple = feeRepo.findByInstituteDate(user.getPk(), year, month);
         if (feeTuple.isPresent()) {
-            feeTuple.get().increaseTotalMonthFee(paid_amount);
+            feeTuple.get().increasePayedMonthFee(difference);
         }
         else{ // Fee 없을 경우 에러
             throw  new RuntimeException("납입액 수정을 요청했으면, fee 테이블이 없을리 없다.");

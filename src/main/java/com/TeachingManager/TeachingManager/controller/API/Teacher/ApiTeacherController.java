@@ -19,10 +19,10 @@ public class ApiTeacherController {
 
     // 선생님 회원가입
     @PostMapping("/api/teacher")
-    public String signup(AddTeacherRequest request) {
+    public ResponseEntity<String> signup(@RequestBody AddTeacherRequest request) {
         // 여기에 일반적인 방법으롤 회원가입을 하는 경우
         teacherService.register(request);
-     return "redirect:/login";
+        return ResponseEntity.ok().body("선생님 생성됨");
     }
 
     @PostMapping("/api/social/teacher")

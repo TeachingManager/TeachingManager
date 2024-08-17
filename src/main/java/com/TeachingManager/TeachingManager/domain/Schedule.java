@@ -39,7 +39,7 @@ public class Schedule {
 
 
   //   강의 일대 다 관계
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = true)
     private Lecture lecture;
 

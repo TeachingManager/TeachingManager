@@ -41,11 +41,13 @@ public class WebSecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.
                 authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
+
+                        .requestMatchers("/api/login","login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google"
                         ).permitAll()//로그인, 회원가입은 인증
+                        .requestMatchers(HttpMethod.POST, "/api/institute", "/api/teacher").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
-                        .requestMatchers("/api/fee", "/api/teacher", "/teacher").hasRole("PRESIDENT")// 수강료, 선생님 api 등은 학원장만
+                        .requestMatchers("/api/fee", "/api/teacher", "/teacher", "/api/lecture").hasRole("PRESIDENT")// 수강료, 선생님 api 등은 학원장만
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
                 )

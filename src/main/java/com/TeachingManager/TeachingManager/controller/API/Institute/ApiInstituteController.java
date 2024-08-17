@@ -23,9 +23,9 @@ public class ApiInstituteController {
 
     // 학원 추가
     @PostMapping("/api/institute")
-    public String signup(AddInstituteRequest request){
+    public ResponseEntity<String> signup(@RequestBody AddInstituteRequest request){
         instService.register(request);
-        return "redirect:/login";
+        return ResponseEntity.ok().body("생성됨!");
     }
 
     // 학원 정보 수정

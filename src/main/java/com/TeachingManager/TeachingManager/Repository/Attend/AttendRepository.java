@@ -16,6 +16,8 @@ public interface AttendRepository {
 
     String delete(Long institute_id, Long attend_id);
 
+    String deleteMonthAttend(Long institute_id, Long lecture_id, Long student_id, LocalDate date_info);
+
     Optional<Attend> searchById (Long institute_id, Long attend_id);
 
     // 특정 스케줄의 모든 학생 출석 정보 가져오기

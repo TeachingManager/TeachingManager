@@ -2,7 +2,6 @@ package com.TeachingManager.TeachingManager.controller.API.Fee;
 
 import com.TeachingManager.TeachingManager.DTO.Fee.EnrollFeeResponse;
 import com.TeachingManager.TeachingManager.DTO.Fee.EnrollYearFeeResponse;
-import com.TeachingManager.TeachingManager.Service.Enroll.EnrollService;
 import com.TeachingManager.TeachingManager.Service.Fee.FeeService;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class ApiFeeController {
-    private FeeService feeService;
+    private final FeeService feeService;
     // 이번 번 달의 전체 수강료 가져오기
     @GetMapping("/api/fee")
     public ResponseEntity<List<EnrollFeeResponse>> findFeeList(

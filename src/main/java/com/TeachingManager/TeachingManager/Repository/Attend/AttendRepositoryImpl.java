@@ -43,12 +43,40 @@ public class AttendRepositoryImpl implements AttendRepository{
     }
 
     @Override
+    public String deleteMonthAttend(Long institute_id, Long lecture_id, Long student_id, LocalDate date_info) {
+        // 시작일과 끝날짜
+        LocalDateTime startOfMonth = date_info.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        int deleteCount =
+                em.createQuery("DELETE FROM Attend at " +
+                                " WHERE at.student.id = :studentId " +
+                                "AND at.schedule.schedule_id IN (SELECT sc.schedule_id " +
+                                                                    "FROM Schedule sc " +
+                                                                    "WHERE sc.institute.pk = :instituteId " +
+                                                                        "AND sc.lecture.lecture_id = :lectureId " +
+                                                                        "AND sc.start_date <= :endOfMonth " +
+                                                                        "AND sc.end_date >= :startOfMonth) ")
+                        .setParameter("instituteId", institute_id)
+                        .setParameter("lectureId", lecture_id)
+                        .setParameter("studentId", student_id)
+                        .setParameter("startOfMonth", startOfMonth)
+                        .setParameter("endOfMonth", endOfMonth)
+                        .executeUpdate();
+
+        if (deleteCount > 0){
+            return "삭제 됨";
+        }
+        return "해당하는 튜플이 없음! 오류!";
+    }
+
+    @Override
     public Optional<Attend> searchById(Long institute_id, Long attend_id) {
         return em.createQuery(
                         "SELECT a " +
                             "FROM Attend a " +
                             "WHERE a.attend_id = :attendId " +
-                                "AND a.student.institute.id = :instituteId", Attend.class)
+                                "AND a.student.institute.pk = :instituteId", Attend.class)
                 .setParameter("attendId", attend_id)
                 .setParameter("instituteId", institute_id)
                 .getResultStream().findFirst();
@@ -90,15 +118,13 @@ public class AttendRepositoryImpl implements AttendRepository{
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord(at.attend_id,lec.lecture_id,lec.name, at.attendance, sc.start_date)" +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Attend.RepoDto.StudentsMonthAttendRecord(at.attend_id, at.schedule.lecture.lecture_id, at.schedule.lecture.name, at.attendance, at.schedule.start_date)" +
                             "FROM Attend at " +
-                            "INNER JOIN at.schedule sc " +
-                            "INNER JOIN sc.lecture lec " +
                             "WHERE at.student.id = :student_id " +
-                                "AND sc.institute.pk = :institute_id " +
-                                "AND sc.start_date <= :endOfMonth " +
-                                "AND sc.end_date >= :startOfMonth " +
-                            "ORDER BY sc.lecture_id ASC, sc.start_date ASC", // 강의 순서대로, 동일 강의에선 시작날짜 순서대로
+                                "AND at.student.institute.pk = :institute_id " +
+                                "AND at.schedule.start_date <= :endOfMonth " +
+                                "AND at.schedule.end_date >= :startOfMonth " +
+                            "ORDER BY at.schedule.lecture.lecture_id ASC, at.schedule.start_date ASC", // 강의 순서대로, 동일 강의에선 시작날짜 순서대로
                         StudentsMonthAttendRecord.class
                 ).setParameter("student_id", student_id)
                 .setParameter("institute_id", institute_id)
@@ -118,11 +144,11 @@ public class AttendRepositoryImpl implements AttendRepository{
                                 "FROM Attend at " +
                                 "INNER JOIN at.schedule sc " +
                                 "INNER JOIN at.student st " +
-                                "WHERE sc.lecture_id = :lecture_id " +
-                                    "AND sc.institute_id = :institute_id " +
+                                "WHERE sc.lecture.lecture_id = :lecture_id " +
+                                    "AND sc.institute.id = :institute_id " +
                                     "AND sc.start_date <= :endOfMonth " +
                                     "AND sc.end_date >= :startOfMonth " +
-                                "ORDER BY at.student_name ASC, sc.start_date ASC", // 학생 순서대로, 동일학생이면 시작날짜 순서대로.
+                                "ORDER BY at.student.name ASC, sc.start_date ASC", // 학생 순서대로, 동일학생이면 시작날짜 순서대로.
                         LectureMonthAttendanceRecord.class
                 ).setParameter("lecture_id", lecture_id)
                 .setParameter("institute_id", institute_id)
@@ -138,13 +164,12 @@ public class AttendRepositoryImpl implements AttendRepository{
         LocalDateTime endOfMonth = date_info.withDayOfMonth(date_info.lengthOfMonth()).atTime(LocalTime.MAX);
 
         return em.createQuery(
-                        "SELECT at.student_id, lec.lecture_id, at.attendance, sc.start_date" +
+                        "SELECT at.student_id, sc.lecture.lecture_id, at.attendance, sc.start_date" +
                                 "FROM Attend at " +
                                 "INNER JOIN at.schedule sc " +
-                                "INNER JOIN sc.lecture lec " +
                                 "WHERE at.student_id = :student_id " +
                                     "AND sc.institute_id = :institute_id " +
-                                    "AND sc.lecture_id = :lecture_id " +
+                                    "AND sc.lecture.lecture_id = :lecture_id " +
                                     "AND sc.start_date <= :endOfMonth " +
                                     "AND sc.end_date >= :startOfMonth " +
                                 "ORDER BY sc.start_date ASC", // 날짜 순서대로
