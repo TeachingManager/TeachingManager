@@ -4,6 +4,7 @@ import com.TeachingManager.TeachingManager.DTO.Token.AccessTokenRequest;
 import com.TeachingManager.TeachingManager.DTO.Token.AccessTokenResponse;
 import com.TeachingManager.TeachingManager.DTO.Token.SetTokenRequest;
 import com.TeachingManager.TeachingManager.DTO.Token.SetTokenResponse;
+import com.TeachingManager.TeachingManager.Service.User.RecaptchaService;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,13 +19,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ApiTokenController {
     private final TokenService tokenService;
+    private final RecaptchaService recaptchaService;
 
     @PostMapping("/api/login")
-    public ResponseEntity<SetTokenResponse> login(@RequestBody SetTokenRequest request) {
-        String email = request.getEmail();
-        String password = request.getPassword();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(tokenService.LoginTokenCreate(email, password));
+    public ResponseEntity<SetTokenResponse> login(
+            @RequestBody SetTokenRequest request
+    ) {
+        // 리캡챠 인증 성공시 로그인 단계
+        if(recaptchaService.RecaptchaTest(request.getRecaptchaResponse(),"login")){
+            String email = request.getEmail();
+            String password = request.getPassword();
+            return ResponseEntity.status(HttpStatus.CREATED).body(tokenService.LoginTokenCreate(email, password));
+        }
+        // 리캡챠 인증 실패시
+        else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @GetMapping("/api/logout")
