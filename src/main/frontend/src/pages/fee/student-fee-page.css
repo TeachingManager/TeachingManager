@@ -1,0 +1,9 @@
+.feepage-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.check-tution-table {
+    margin-left: 64px;
+}

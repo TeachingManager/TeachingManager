@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Box, Stack, TextField, Modal, Typography } from '@mui/material';
+import { Button, Box, Stack, TextField, Modal, Typography, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
+import BookIcon from '@mui/icons-material/Book';
 
 export default function StudentList() {
   const [rows, setRows] = useState([
@@ -24,6 +26,8 @@ export default function StudentList() {
   });
 
   const [selectedRows, setSelectedRows] = useState([]);
+
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -52,7 +56,7 @@ export default function StudentList() {
   };
 
   const handleAddStudent = () => {
-    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1; // 새로운 ID 설정
+    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1;
     setRows(prevRows => [...prevRows, { ...newStudent, id: newId }]);
     handleClose();
   };
@@ -63,9 +67,9 @@ export default function StudentList() {
   };
 
   const handleDeleteSelected = () => {
-    const selectedIds = selectedRows.map(Number); // 선택된 행 ID를 숫자로 변환
+    const selectedIds = selectedRows.map(Number);
     setRows(prevRows => prevRows.filter(row => !selectedIds.includes(row.id)));
-    setSelectedRows([]); // 삭제 후 선택 상태를 초기화
+    setSelectedRows([]);
   };
 
   const handleRowDoubleClick = (params) => {
@@ -103,7 +107,24 @@ export default function StudentList() {
           { field: 'guardianContact', headerName: '보호자 연락처', width: 130 },
           { field: 'gender', headerName: '성별', width: 90 },
           { field: 'level', headerName: '수준', width: 90 },
-          { field: 'birthday', headerName: '생일', width: 130 }
+          { field: 'birthday', headerName: '생일', width: 130 },
+          {
+            field: 'attendance',
+            headerName: '출석현황',
+            width: 150,
+            renderCell: (params) => {
+              const handleClick = () => {
+                const studentId = params.row.id;
+                navigate(`/students/attendance/${studentId}`); // useNavigate로 URL 이동
+              };
+
+              return (
+                <IconButton onClick={handleClick}>
+                  <BookIcon />
+                </IconButton>
+              );
+            },
+          },
         ]}
         rows={rows}
         pageSize={5}

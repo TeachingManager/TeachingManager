@@ -1,0 +1,25 @@
+.header {
+    padding-bottom: 48px;
+    box-sizing: border-box;
+}
+
+
+.header .header_inner .logo {
+    display: inline-block;
+    margin-top: 108px;
+    vertical-align: top;
+    width: auto;
+    height: auto;
+
+   
+    
+}
+.header .header_inner {
+    position: relative;
+    width: 743px;
+    margin: 0 auto;
+    text-align: center;
+    box-sizing: border-box;
+
+}
+

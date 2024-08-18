@@ -1,0 +1,12 @@
+.chart-container {
+    background-color: #f9f9f9;
+    margin : 8px;
+    padding : 8px;
+    border-radius: 8px;    
+    border : solid 1px;
+    height: 400px;
+}
+.fee-overview-container{
+    margin-left: 64px;
+    padding: 32px;
+}
