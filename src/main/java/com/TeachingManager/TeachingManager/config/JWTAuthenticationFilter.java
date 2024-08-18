@@ -32,19 +32,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-
-
         // 접근 경로 관련
         String url = request.getRequestURI();
         String method = request.getMethod();
-
-        if ("/api/login".equals(url)&& "POST".equalsIgnoreCase(method)){
-
-        }
-
-
-
-
         String queryString = request.getQueryString();
         Map<String, String> queryParams = parseQueryString(queryString);
 
@@ -54,6 +44,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String token;
 
         if ("/api/accessToken".equals(url)
+                || "/api/login".equals(url)
                 || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
                 || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제
                 || "/api/password/change".equals(url) // 비밀번호 찾을 이메일 송신

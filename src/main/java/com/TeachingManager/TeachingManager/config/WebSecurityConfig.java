@@ -2,7 +2,6 @@ package com.TeachingManager.TeachingManager.config;//package com.TeachingManager
 
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
-import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;

@@ -19,10 +19,10 @@ spring:
   application:
     name: TeachingManager
   datasource:
-    url: jdbc:mysql://localhost:3306/teachingmanager
+    url: jdbc:mysql://teachingmanager.cdmye8swu029.ap-northeast-2.rds.amazonaws.com:3306/teachingmanager?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: xlcld123
+    username: admin
+    password: $xlcld123
   jpa:
     show-sql: true
     hibernate:
