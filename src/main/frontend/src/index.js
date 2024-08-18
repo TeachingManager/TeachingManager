@@ -14,16 +14,27 @@ import Example from './example';
 import { AuthProvider } from './common/Auth/AuthProvider';
 import ProtectedRoute from './common/Auth/ProtectedRoute';
 import LecturePage from './pages/lecture/LecturePage';
-import FeeManagement from './pages/fee/FeePage';
+import FeePage from './pages/fee/FeePage';
+import { RecoilRoot } from 'recoil';
+import StudentAttendance from './pages/student/StudentAttendance';
+import OpenLecturePage from './pages/lecture/OpenLecturePage';
+import StudentFeePage from './pages/fee/StudentFeePage';
+import LectureAttendancePage from './pages/lecture/LectureAttendancePage';
+import HomePage from './pages/home/HomePage';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <div>Hello world!!</div>
+    path: "/home",
+    element: <HomePage/>
   },
   {
     path: "/students",
-    element: <Students />
+    element: <Students />,
+
+  },
+  {
+    path: "/students/attendance/:id",
+    element: <StudentAttendance/>
   },
   {
     path: "/teachers",
@@ -54,17 +65,34 @@ const router = createBrowserRouter([
     path:"/lecture",
     element: <LecturePage/>
   },
+  {
+    path:'/openlecture',
+    element: <OpenLecturePage/>
+  },
+  {
+    path: "/openlecture/attendance/:id",
+    element: <LectureAttendancePage/>
+  },
   {path: "/fee",
-    element : <FeeManagement/>}
+    element : <FeePage/>},
+
+  {path: "/studentfee",
+    element : <StudentFeePage/>},
+
+  {path: '/home',
+    element: <HomePage/>}
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  //<React.StrictMode>
+  <RecoilRoot>
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </React.StrictMode>
+  </RecoilRoot>
+    
+  //</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

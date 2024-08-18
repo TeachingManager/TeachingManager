@@ -9,6 +9,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import SchoolIcon from '@mui/icons-material/School';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 export default function Sidenavbar() {
     const [isHovered, setIsHovered] = useState(false);
@@ -24,25 +25,29 @@ export default function Sidenavbar() {
                     {isHovered ? <p className='logo'>Teaching Manager</p> : <p className='logo'>T</p>}
                 </span>
             </div>
-            <a href="/">
+            <a href="/home">
                 <FaHome className="icon" />
                 <span className="text">홈</span>
             </a>
-            <a href="teachers">
+            <a href="/teachers">
                 <PiChalkboardTeacher className="icon" />
                 <span className="text">선생님</span>
             </a>
-            <a href="students">
+            <a href="/students">
                 <IoMdPeople className="icon" />
                 <span className="text">학생</span>
             </a>
-            <a href="calendar">
+            <a href="/calendar">
                 <CiCalendarDate className="icon" />
                 <span className="text">일정</span>
             </a>
-            <a href ="lecture">
+            <a href ="/openlecture">
                 <MenuBookIcon />
                 <span className='text'>강의</span>
+            </a>
+            <a href ="/studentfee">
+                <AttachMoneyIcon/>
+                <span className='text'>수강료</span>
             </a>
         </div>
     );

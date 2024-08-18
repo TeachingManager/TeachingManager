@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Button, Box, Stack, IconButton, TextField, Modal, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
+import { Box, IconButton, Button, Stack, TextField, Modal, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import StudentListModal from './StudentListModal';
+import { useNavigate } from 'react-router-dom';
+import BookIcon from '@mui/icons-material/Book';
 
-export default function LectureList() {
+export default function OpenLectureList() {
+    const navigate = useNavigate();
   const [rows, setRows] = useState([
     { id: 1, subject: '수학', name: '기초 수학', teacher: '홍길동', day: '월', time: '10:00-11:30', fee: '100000' },
     { id: 2, subject: '영어', name: '기초 영어', teacher: '김철수', day: '화', time: '13:00-14:30', fee: '120000' }
@@ -28,7 +29,6 @@ export default function LectureList() {
 
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     setIsEditing(false);
@@ -74,23 +74,6 @@ export default function LectureList() {
     return timeRange.map(time => time ? time.format('HH:mm') : '').join('-');
   };
 
-  const handleAddLecture = () => {
-    const newId = rows.length > 0 ? Math.max(...rows.map(row => row.id)) + 1 : 1;
-    setRows(prevRows => [...prevRows, { ...newLecture, id: newId, time: formatTimeRange(newLecture.time), day: newLecture.day.join(', ') }]);
-    handleClose();
-  };
-
-  const handleEditLecture = () => {
-    setRows(prevRows => prevRows.map(row => (row.id === newLecture.id ? { ...newLecture, time: formatTimeRange(newLecture.time), day: newLecture.day.join(', ') } : row)));
-    handleClose();
-  };
-
-  const handleDeleteSelected = () => {
-    const selectedIds = selectedRows.map(Number);
-    setRows(prevRows => prevRows.filter(row => !selectedIds.includes(row.id)));
-    setSelectedRows([]);
-  };
-
   const handleRowDoubleClick = (params) => {
     const lecture = { 
       ...params.row, 
@@ -99,7 +82,7 @@ export default function LectureList() {
     };
     setNewLecture(lecture);
     setIsEditing(true);
-    handleOpen();
+    setOpen(true);
   };
 
   const modalStyle = {
@@ -116,44 +99,13 @@ export default function LectureList() {
 
   const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
 
-
- // 여기부터 studentListModal 관련 함수
- const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
-
- const handleOpenStudentModal = () => {
-   setIsStudentModalOpen(true);
- };
-
- const handleCloseStudentModal = () => {
-   setIsStudentModalOpen(false);
- };
-
- // Sample students data
- const students = [
-   { id: 1, name: '홍길동', age: 20 },
-   { id: 2, name: '김철수', age: 15 },
-   { id: 3, name: '아이유', age: 28 },
- ];
-
- const [selectedStudentIds, setSelectedStudentIds] = useState([]);
-
- const handleToggleStudent = (studentId) => {
-   setSelectedStudentIds((prevSelectedIds) => {
-     if (prevSelectedIds.includes(studentId)) {
-       return prevSelectedIds.filter((id) => id !== studentId);
-     } else {
-       return [...prevSelectedIds, studentId];
-     }
-   });
- };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ height: 600, mt: 6 }}>
-        <Stack direction="row" spacing={2} mb={2}>
-          <Button variant="contained" onClick={handleOpen}>강의 추가하기</Button>
-          <Button variant="contained" color="error" onClick={handleDeleteSelected}>선택된 강의 삭제</Button>
-        </Stack>
+      <Box sx={{ height: 600}}>
+        <Button onClick={()=> {
+            navigate("/lecture")
+        }}>강의 개설</Button>
+        <Button>선택 강의 폐강</Button>
         <DataGrid
           columns={[
             { field: 'id', headerName: 'ID', width: 70 },
@@ -164,21 +116,22 @@ export default function LectureList() {
             { field: 'time', headerName: '강의 시각', width: 130 },
             { field: 'fee', headerName: '수강료', width: 130 },
             {
-              field: 'openlecture',
-              headerName: '강의 개설',
-              width: 150,
-              renderCell: (params) => {
-                const handleClick = () => {
-                  setIsStudentModalOpen(true)
-                };
-  
-                return (
-                  <IconButton onClick={handleClick}>
-                    <MenuBookIcon/>
-                  </IconButton>
-                );
+                field: 'attendance',
+                headerName: '출석현황',
+                width: 150,
+                renderCell: (params) => {
+                  const handleClick = () => {
+                    const studentId = params.row.id;
+                    navigate(`/openlecture/attendance/${studentId}`); // useNavigate로 URL 이동
+                  };
+    
+                  return (
+                    <IconButton onClick={handleClick}>
+                      <BookIcon />
+                    </IconButton>
+                  );
+                },
               },
-            },
           ]}
           rows={rows}
           pageSize={5}
@@ -229,21 +182,13 @@ export default function LectureList() {
               />
               <TextField label="수강료" name="fee" value={newLecture.fee} onChange={handleChange} />
               {isEditing ? (
-                <Button variant="contained" onClick={handleEditLecture}>수정</Button>
+                <Button variant="contained" onClick={()=>{}}>수정</Button>
               ) : (
-                <Button variant="contained" onClick={handleAddLecture}>추가</Button>
+                <Button variant="contained" onClick={()=>{}}>추가</Button>
               )}
             </Stack>
           </Box>
         </Modal>
-
-        <StudentListModal
-        open={isStudentModalOpen}
-        handleClose={handleCloseStudentModal}
-        students={students}
-        selectedStudentIds={selectedStudentIds}
-        handleToggle={handleToggleStudent}
-      />
       </Box>
     </LocalizationProvider>
   );

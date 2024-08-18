@@ -1,44 +1,63 @@
-import React, {createContext, useContext, useState, useEffect} from 'react';
+// src/common/Auth/AuthProvider.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { isAuthenticatedState } from './recoilAtom'; // recoilAtoms.js에서 가져옴
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const AuthProvider = ({ children }) => {
+    const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
+    const [token, setToken] = useState(localStorage.getItem('token') || '');
 
     useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-
-        if (accessToken && refreshToken) {
+        if (token) {
             setIsAuthenticated(true);
         }
-    }, [])
-
-    const login  = (accessToken, refreshToken) => {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken)
-        setIsAuthenticated(true)
-    }
+    }, [token, setIsAuthenticated]);
+    
+    const login = async (email, password) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setToken(data.token);
+                localStorage.setItem('token', data.token);
+                setIsAuthenticated(true);
+            } else {
+                throw new Error(data.message || 'Login failed');
+            }
+        } catch (error) {
+            console.error('Login error', error);
+            setIsAuthenticated(false);
+            throw error;
+        }
+    };
 
     const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        setToken('');
+        localStorage.removeItem('token');
         setIsAuthenticated(false);
-
-    }
+    };
 
     const value = {
         isAuthenticated,
+        setIsAuthenticated,
+        token,
         login,
         logout
     };
 
-
-    return(
-        <AuthContext.Provider value = {value}>
+    return (
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
 export const useAuth = () => useContext(AuthContext);

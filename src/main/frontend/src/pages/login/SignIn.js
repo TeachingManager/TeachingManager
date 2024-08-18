@@ -34,8 +34,12 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const { login } = useAuth(); // useAuth 훅 사용
+  const { login, isAuthenticated } = useAuth(); // useAuth 훅 사용
   const [error, setError] = useState('');
+
+  console.log("login page is")
+  console.log(isAuthenticated)
+  
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -44,25 +48,11 @@ export default function SignIn() {
     const password = data.get('password');
 
     try {
-      const response = await fetch('http://your-api-url.com/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const { accessToken, refreshToken } = await response.json();
-      login(accessToken, refreshToken);
-      <Navigate to="/students" replace />;
+      await login(email, password);
     } catch (error) {
-      setError('로그인에 실패했습니다. 다시 시도해주세요.');
-      console.error('Login error:', error);
+      setError('Login failed, Please check you credentials')
     }
+    
   };
 
   return (
