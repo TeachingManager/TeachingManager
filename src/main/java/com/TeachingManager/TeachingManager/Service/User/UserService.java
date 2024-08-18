@@ -3,7 +3,6 @@ package com.TeachingManager.TeachingManager.Service.User;
 import com.TeachingManager.TeachingManager.DTO.User.InviteRequest;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
-import com.TeachingManager.TeachingManager.Repository.User.UserRepository;
 import com.TeachingManager.TeachingManager.config.exceptions.UserDoesNotExistException;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.JweUtil;
@@ -27,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -39,6 +39,21 @@ public class UserService {
     private final TeacherRepository teacherRepo;
     private final InstituteRepository instituteRepo;
     private final TemplateEngine templateEngine;
+
+
+    // 비밀번호 틀릴시 1 증가.
+    @Transactional
+    public String increaseFailCount(UUID pk) {
+        // 먼저 유저를 찾는다.
+        CustomUser user = userDetailService.loadCustomUserByPk(pk);
+        user.setFailedCount((byte) (user.getFailedCount() + 1));
+        if(user.getFailedCount() >= 5) {
+            user.setAccountNonLocked(false);
+            return "비번5회 틀림! : 계정이 잠겼습니다!";
+        }
+        return "비밀번호 오류! 틀린 횟수 :  " + user.getFailedCount() + "/5";
+    }
+
 
     @Transactional
     // 요청이 들어온 이메일을 찾아보고, 있다면 토큰 생성해서 이메일을 전송
@@ -53,8 +68,8 @@ public class UserService {
         String resetToken = tokenProvider.createResetToken(Duration.ofMinutes(5), email, IpAddress);
         System.out.println("resetToken = " + resetToken);
         // 이렇게 안보내도, HTML 으로 들어가면 encode 되더라.....
-//        String encodedResetToken = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
-//        System.out.println("encodedResetToken = " + encodedResetToken);
+        String encodedResetToken = URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
+        System.out.println("encodedResetToken = " + encodedResetToken);
 
        // 해당 토큰을 담은 url 을 이메일에 담아 해당 유저에게 전송
         // mod 1 : 비번 찾기
@@ -104,6 +119,11 @@ public class UserService {
         return "같은 아이피에서 요청해주십시오!";
     }
 
+
+    /////////////////////////////////////////////////////////////
+    /////////////       잠금 해제 서비스           ////////////////
+    /////////////////////////////////////////////////////////////
+
     @Transactional
     // 요청 받은 유저 잠금 해제 (비밀번호 여러번 오입력시 사용)
     public String unLockUser(String token, String IpAddress) throws Exception {
@@ -111,7 +131,7 @@ public class UserService {
 
 //        String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
 //        String decryptedToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
-
+//
         String decryptedToken = JweUtil.decrypt(token, jweInfo.getSecretKey());
 
         // 토큰 claim 의 IP 값과 IPAddress 가 일치하는지 확인
@@ -134,7 +154,9 @@ public class UserService {
         return "같은 아이피에서 요청해주십시오!";
     }
 
-
+    /////////////////////////////////////////////////////////////
+    /////////////        신규 회원 인증            ////////////////
+    /////////////////////////////////////////////////////////////
     @Transactional
     // 요청 받은 유저 잠금 해제 ( 신규 회원가입 시 사용)
     public String enableUser(String token, String IpAddress) throws Exception {

@@ -25,10 +25,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig{
 
-    private final CustomUserDetailServiceImpl userDetailService;
     private final OAuth2UserCustomService oAuth2Service;
     private final TokenProvider tokenProvider;
     private final JweInfo jweInfo;
+    private final CustomUserDetailServiceImpl userDetailService;
+//    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     @Autowired
     private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;

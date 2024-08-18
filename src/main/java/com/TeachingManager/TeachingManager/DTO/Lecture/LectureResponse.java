@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
@@ -26,7 +23,7 @@ public class LectureResponse {
     private List<JSONObject> jsonTime;
     // 학원 외래키 등록 후 테스트
 //    private Teacher teacher;
-    private Long teacherId;
+    private UUID teacherId;
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getLecture_id();

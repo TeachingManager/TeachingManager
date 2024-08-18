@@ -2,6 +2,7 @@ package com.TeachingManager.TeachingManager.config.Authentication;
 
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.config.exceptions.UserDisabledException;
+import com.TeachingManager.TeachingManager.config.exceptions.UserDoesNotExistException;
 import com.TeachingManager.TeachingManager.config.exceptions.UserLockedException;
 import com.TeachingManager.TeachingManager.config.exceptions.WrongPasswordException;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
@@ -12,10 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 
 
 @RequiredArgsConstructor
+@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final CustomUserDetailServiceImpl userDetailsService;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -29,6 +34,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         // 사용자 정보 로드
         CustomUser user = userDetailsService.loadCustomUserByUsername(username);
 
+        System.out.println("정보 로드 완료");
+
         // 고정된 시간 대기
         try {
             Thread.sleep(100); // 예: 100ms 대기
@@ -38,7 +45,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         // 사용자 유무 검사
         if (user == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
+            throw new UserDoesNotExistException("사용자를 찾을 수 없습니다.");
+        }else{
+            System.out.println("사용자 찾음!");
         }
 
         // 비밀번호 검증
@@ -52,20 +61,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (!passwordMatches) {
-            // 해당 유저의 틀린 비밀번호 횟수 1 늘리고 검사.
-            user.setFailedCount((byte) (user.getFailedCount() + 1));
-            if (user.getFailedCount() >= 10) { // 5회 이상 시도했을 시
-                user.setAccountNonLocked(false);
-            }
-
-//            if (user instanceof Institute) {
-//                System.out.println("학원 비번 틀림! 저장위함!  : " + user.getFailedCount());
-//            } else if (user instanceof Teacher) {
-//                System.out.println("강사 비번 틀림! 저장위함!  : " + user.getFailedCount());
-//            }
-
-            userDetailsService.saveStatus(user);
-            throw new WrongPasswordException("잘못된 자격 증명입니다.");
+            System.out.println("비밀번호가 틀렸다.");
+            throw new WrongPasswordException("잘못된 자격 증명입니다.", user.getPk());
         }
 
         if (!user.isAccountNonLocked()){

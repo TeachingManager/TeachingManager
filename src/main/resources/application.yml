@@ -51,3 +51,10 @@ jwt:
 jwe:
   secret:
     key: "Gi570yMw47p2QHTJiGrYz5vjeMsJGryxhqQLO1j3QiY="
+
+recaptcha:
+  site_key : "6LdH9ygqAAAAAN6WdRyVPVTe7eoOS32DUCZXyZvK"
+  secret_key: "6LdH9ygqAAAAAEM2qZ51pLvjvCuGwAriDjt6xkvi"
+  verify_url: "https://www.google.com/recaptcha/api/siteverify"
+  api_url: "https://recaptchaenterprise.googleapis.com/v1/projects/teachingmanager-1723903701900/assessments?key="
+  api_key : "AIzaSyCU7tG2He7ttPVtN_S62YQnMxuGsVA6BHI"

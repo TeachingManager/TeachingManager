@@ -1,14 +1,21 @@
 package com.TeachingManager.TeachingManager.Service.User;
 
 import com.TeachingManager.TeachingManager.DTO.Token.SetTokenResponse;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.RefreshTokenRepository;
+import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteDetailServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Institute.InstituteServiceImpl;
 import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherDetailServiceImpl;
+import com.TeachingManager.TeachingManager.Service.User.Teacher.TeacherServiceImpl;
+import com.TeachingManager.TeachingManager.config.exceptions.UserDoesNotExistException;
+import com.TeachingManager.TeachingManager.config.exceptions.WrongPasswordException;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.RefreshToken;
 import com.TeachingManager.TeachingManager.domain.Teacher;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,22 +47,30 @@ public class TokenService {
     @Transactional
     public SetTokenResponse LoginTokenCreate(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        CustomUser user = null;
+        System.out.println("logintokenCreate 의 authentication 직전.");
         try {
-            Institute user = instituteService.loadInstituteByUsername(email);
-            return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-        } catch (UsernameNotFoundException e) {
-            // Institute 유저가 없을 경우 Teacher 유저 조회
-            try {
-                Teacher user = teacherService.loadTeacherByUsername(email);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            System.out.println("logintokenCreate 의 authentication 직후");
+
+             user = (CustomUser) authentication.getPrincipal();
+            if (user instanceof Teacher)
+            {
+                System.out.println("인증된 강사임");
+                user.setFailedCount((byte) 0);
                 return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
-            } catch (UsernameNotFoundException ex) {
-                // 둘 다 없는 경우 예외 처리
-                throw ex;
+            } else if (user instanceof Institute) {
+                System.out.println("인증된 학원임");
+                user.setFailedCount((byte) 0);
+                return new SetTokenResponse("Bearer", tokenProvider.createAccessToken(user, Duration.ofMinutes(30)), tokenProvider.createRefreshToken(user, Duration.ofHours(2)));
             }
-        } catch (BadCredentialsException bad) {
-            System.out.println("비밀번호 오류!!");
+            System.out.println("사용자 타입이 정해지지 않았음?");
             return null;
+        } catch (UserDoesNotExistException e) {
+            System.out.println("없는 사용자!!");
+            return null;
+        } catch (WrongPasswordException bad) {
+            throw bad;
         }
     }
 

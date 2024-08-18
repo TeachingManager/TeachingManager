@@ -1,15 +1,22 @@
 package com.TeachingManager.TeachingManager.controller;
 
+import com.TeachingManager.TeachingManager.Service.User.UserService;
 import com.TeachingManager.TeachingManager.config.exceptions.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import javax.security.auth.login.AccountLockedException;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final UserService userService;
+
     @ExceptionHandler(UserLockedException.class)
     public ResponseEntity<String> handleAccountLockedException(UserLockedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
@@ -27,11 +34,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WrongPasswordException.class)
     public ResponseEntity<String> handleWrongPasswordException(WrongPasswordException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(userService.increaseFailCount(ex.getUserId()), HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(UserDoesNotExistException.class)
     public ResponseEntity<String> handleUserDoesNotExistsException(UserDoesNotExistException ex) {
+
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 

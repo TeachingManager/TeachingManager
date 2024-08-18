@@ -67,6 +67,11 @@ dependencies {
 	// java 메일 api
 	implementation 'com.sun.mail:javax.mail:1.6.2'
 
+	// recaptcha 관련 api
+	implementation 'com.google.code.gson:gson:2.8.9' // JSON 파싱 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
 	//Hibernate 직렬화에 도움을 준다. => 무한루프 영향 think
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.1'
 
