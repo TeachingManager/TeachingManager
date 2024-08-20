@@ -72,7 +72,7 @@ public class EnrollRepositoryImpl implements EnrollRepository {
                                 "AND lec.lecture_id IN ( SELECT en.lecture.lecture_id " +
                                                         "FROM Enroll en " +
                                                         "WHERE en.lecture.institute.pk = :instituteId " +
-                                                        "AND en.lecture.teacher.pk = :teacherId" +
+                                                        "AND en.lecture.teacher.pk = :teacherId " +
                                                         "AND en.year = :year " +
                                                         "AND en.month = :month)"
                         , EnrolledLecturesResponse.class

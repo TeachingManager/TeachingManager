@@ -69,6 +69,7 @@ public class FeeRepositoryImpl implements FeeRepository{
                 .setParameter("year", year)
                 .setParameter("month", month)
                 .setParameter("feeValue", feeValue)
+                .setParameter("paidFeeValue", paidFeeValue)
                 .executeUpdate();
     }
 
