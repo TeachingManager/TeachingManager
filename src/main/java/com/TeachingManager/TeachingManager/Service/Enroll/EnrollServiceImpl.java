@@ -45,6 +45,9 @@ public class EnrollServiceImpl implements EnrollService{
 
     @Override
     public List<EnrolledLecturesResponse> findMonthlyEnrolledLectures(CustomUser user, Short year, Short month) {
+        if(user instanceof  Teacher){
+            return enrollRepo.findEnrolledLecturesByTeacherAndDate(((Teacher) user).getInstitutePk(),user.getPk(),year,month);
+        }
         return enrollRepo.findEnrolledLecturesByDate(user.getPk(), year, month);
     }
 

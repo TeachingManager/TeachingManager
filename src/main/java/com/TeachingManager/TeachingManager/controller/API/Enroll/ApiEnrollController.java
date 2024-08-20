@@ -43,7 +43,7 @@ public class ApiEnrollController {
             @AuthenticationPrincipal CustomUser user
             , @RequestParam(value = "year") Short year
             , @RequestParam(value = "month") Short month) {
-        if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
+        if(user != null) {
             return ResponseEntity.ok().body(enrollService.findMonthlyEnrolledLectures(user, year, month));
         }
         return ResponseEntity.badRequest().build();
@@ -63,7 +63,7 @@ public class ApiEnrollController {
 
 
     // 특정 달에 특정 강사의 개설된 강의 리스트
-    
+
 
 
     //////////////////////////////////////////////////////////

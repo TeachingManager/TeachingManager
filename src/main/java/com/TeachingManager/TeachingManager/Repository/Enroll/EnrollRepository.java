@@ -22,6 +22,8 @@ public interface EnrollRepository {
     // 특정달에 개설되었던 강의들
     List<EnrolledLecturesResponse> findEnrolledLecturesByDate(UUID institute_id, Short year, Short month);
 
+    List<EnrolledLecturesResponse> findEnrolledLecturesByTeacherAndDate(UUID institute_id, UUID teacher_id, Short year, Short month);
+
     // 특정달에 개설되지 않았던 강의들
     List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(UUID institute_id, Short year, Short month);
 
