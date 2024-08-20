@@ -37,7 +37,7 @@ public class ApiTokenController {
         }
     }
 
-    @GetMapping("/api/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return ResponseEntity.ok()

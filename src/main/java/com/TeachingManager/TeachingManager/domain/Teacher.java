@@ -55,7 +55,7 @@ public class Teacher extends CustomUser {
 
     // 외래키 가져오는 함수
     public UUID getInstitutePk() {
-        return institute != null ? institute.getPk() : null; 
+        return institute != null ? institute.getPk() : (UUID) null;
     }
     
     public Teacher(String email, String password, UUID pk, UUID inst_id){

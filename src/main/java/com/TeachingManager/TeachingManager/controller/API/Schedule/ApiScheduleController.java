@@ -33,7 +33,7 @@ public class ApiScheduleController {
     // 자기 자신학원, 또는 소속되어있는 학원의 특정 달 정보를 가져온다. (이번달)
     @GetMapping("/api/Schedule")
     public ResponseEntity<MonthScheduleResponse> Schedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
-        System.out.println("user.getAuthorities() = " + user.getAuthorities());
+        System.out.println("request = " + request.getDate_info());
         if (user != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDate(user, request.getDate_info()));
         }
@@ -51,12 +51,12 @@ public class ApiScheduleController {
     }
 
     /*  일정 삭제 api  */
-    @PostMapping("/api/delete/Schedule/{pk}")
-    public ResponseEntity<Void> Delete_Schedule(@PathVariable("pk") Long pk, @AuthenticationPrincipal CustomUser user) {
+    @PutMapping("/api/delete/Schedule/{pk}")
+    public ResponseEntity<String> Delete_Schedule(@PathVariable("pk") Long pk, @AuthenticationPrincipal CustomUser user) {
         // 학원 권한을 가진 쪽에서 요청인지
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             scheduleService.delete_schedule(user, pk);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("삭제됨");
         }
         // 아니라면 거절
         return ResponseEntity.badRequest().build();

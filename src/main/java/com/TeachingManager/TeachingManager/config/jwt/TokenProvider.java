@@ -163,8 +163,14 @@ public class TokenProvider {
         else if(roles.contains("ROLE_TEACHER")){
             String id = claims.get("id", String.class);
             String inst_id = claims.get("inst_id", String.class);
-            Teacher teacher = new Teacher(claims.getSubject(), "", (UUID.fromString(id)),(UUID.fromString(inst_id)));
-            return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
+            if (inst_id == null){
+                Teacher teacher = new Teacher(claims.getSubject(), "", (UUID.fromString(id)), null);
+                return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
+            }
+            else {
+                Teacher teacher = new Teacher(claims.getSubject(), "", (UUID.fromString(id)), (UUID.fromString(inst_id)));
+                return new UsernamePasswordAuthenticationToken(teacher, token, authorities);
+            }
         }
         return null;
     }
