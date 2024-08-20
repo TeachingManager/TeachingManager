@@ -18,7 +18,7 @@ import java.util.UUID;
 @Transactional
 @Component
 @RequiredArgsConstructor
-public class EnrollRepositoryImpl implements EnrollRepository{
+public class EnrollRepositoryImpl implements EnrollRepository {
     private final EntityManager em;
 
     //////////////////////////////////////////////////////////
@@ -62,6 +62,27 @@ public class EnrollRepositoryImpl implements EnrollRepository{
                 .setParameter("month", month)
                 .getResultList();
     }
+    // 특정달에 특정 강사에 의해 개설된 강의 리스트 변환
+    @Override
+    public List<EnrolledLecturesResponse> findEnrolledLecturesByTeacherAndDate(UUID institute_id, UUID teacher_id, Short year, Short month) {
+        return em.createQuery(
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee) " +
+                                "FROM Lecture lec " +
+                                "WHERE lec.institute.pk = :instituteId " +
+                                "AND lec.lecture_id IN ( SELECT en.lecture.lecture_id " +
+                                                        "FROM Enroll en " +
+                                                        "WHERE en.lecture.institute.pk = :instituteId " +
+                                                        "AND en.lecture.teacher.pk = :teacherId " +
+                                                        "AND en.year = :year " +
+                                                        "AND en.month = :month)"
+                        , EnrolledLecturesResponse.class
+                ).setParameter("instituteId", institute_id)
+                .setParameter("teacherId", teacher_id)
+                .setParameter("year", year)
+                .setParameter("month", month)
+                .getResultList();
+    }
+
 
     // 특정 달에 개설되지 않은 강의 리스트 반환
     @Override

@@ -65,10 +65,13 @@ public class TeacherServiceImpl {
     }
 
     // 선생님 한명 조회
-    public TeacherInfo search_teacher(UUID teacher_id, UUID institute_id) {
+    public TeacherInfo search_teacher(UUID teacher_id, UUID userPk) {
         Optional<Teacher> teacher = teacherRepo.findByPk(teacher_id);
-        // 해당 티처가 존재하고, 요청 받은 학원 소속일 경우 정보 전달.
-        if (teacher.isPresent() && Objects.equals(teacher.get().getInstitutePk(), institute_id)){
+
+        //  해당 티처가 존재하고,
+        if (teacher.isPresent() &&   // 강사가 자기 자신!!의 정보를 요청했을 경우이거나, 요청 받은 학원 소속일 경우 정보 전달
+                (teacher_id.equals(userPk) || Objects.equals(teacher.get().getInstitutePk(), userPk))){
+
             System.out.println("teacher = " + teacher);
             Teacher teacherInstance = teacher.get();
             return convertToDTO(teacherInstance);

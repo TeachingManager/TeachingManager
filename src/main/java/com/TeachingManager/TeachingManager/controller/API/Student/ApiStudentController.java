@@ -52,7 +52,7 @@ public class ApiStudentController {
     }
 
     //  삭제. 삭제시 삭제된 학생 이름 전달.
-    @PostMapping("/api/delete/students/{id}")
+    @PutMapping("/api/delete/students/{id}")
     public ResponseEntity<String> deleteArticle(@AuthenticationPrincipal CustomUser user,@PathVariable(name="id") long id){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             String student_name = studentService.delete(user, id);

@@ -102,9 +102,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (tokenProvider.validToken(token)){
             Authentication authentication = tokenProvider.getAuthentication(token);
-            System.out.println(" JWT 토큰 필터의 authentication 생성 완료.");
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println(" JWT 토큰 필터의 유효성 검사 끝남.");
         }
         else{
             System.out.println("유효하지 않은 토큰이었음, token = " + token);

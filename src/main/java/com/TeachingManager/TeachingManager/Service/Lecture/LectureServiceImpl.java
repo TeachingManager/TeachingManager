@@ -69,7 +69,9 @@ public class LectureServiceImpl implements LectureService{
     @Override
     public void updateLecture(UpdateLectureRequest request, CustomUser user, Long id) {
         Optional<Teacher> teacher = teacherRepository.findById(request.getTeacherId());
+        System.out.println("teacher = " + teacher);
         Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
+        System.out.println("lecture = " + lecture);
         if (teacher.isPresent() && lecture.isPresent()) {
             lecture.get().update(request.getName(), request.getCategory(), request.getGrade(), request.getFee(), request.getTime(), teacher.get());
             lectureRepository.save(lecture.get());

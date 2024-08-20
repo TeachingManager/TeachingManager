@@ -25,6 +25,7 @@ public class ScheduleServiceImpl  implements  ScheduleService{
     @Override
     @Transactional
     public Schedule create_schedule(AddScheduleRequest request, CustomUser user) {
+        System.out.println("create_schedule 들어옴");
         Optional<Institute> institute = instituteRepo.findByPk(user.getPk());
         if (institute.isPresent()){
             return scheduleRepo.save(request.toEntity(institute.get()));

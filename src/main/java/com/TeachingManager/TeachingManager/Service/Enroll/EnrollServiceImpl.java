@@ -45,6 +45,9 @@ public class EnrollServiceImpl implements EnrollService{
 
     @Override
     public List<EnrolledLecturesResponse> findMonthlyEnrolledLectures(CustomUser user, Short year, Short month) {
+        if(user instanceof  Teacher){
+            return enrollRepo.findEnrolledLecturesByTeacherAndDate(((Teacher) user).getInstitutePk(),user.getPk(),year,month);
+        }
         return enrollRepo.findEnrolledLecturesByDate(user.getPk(), year, month);
     }
 
@@ -187,7 +190,7 @@ public class EnrollServiceImpl implements EnrollService{
         // 2. 수강 테이블 생성
         Enroll newEnroll = new Enroll(lecture, student, year, month);
         enrollRepo.save(newEnroll);
-        System.out.println("newEnroll = " + newEnroll);
+        System.out.println("newEnroll = " + newEnroll.getPayed_fee());
         
         //// 수강료에 추가.
         feeRepo.addMonthTotalAndPaidFee(user.getPk(), year, month, lecture.getFee(), 0);

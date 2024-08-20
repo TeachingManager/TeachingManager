@@ -51,7 +51,7 @@ public class ApiLectureController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/api/lectures/delete/{id}")
+    @PutMapping("/api/delete/lectures/{id}")
     public ResponseEntity<Objects> deleteLecture(@AuthenticationPrincipal CustomUser user, @PathVariable Long id) {
         lectureService.deleteLecture(user, id);
         return ResponseEntity.ok().build();
