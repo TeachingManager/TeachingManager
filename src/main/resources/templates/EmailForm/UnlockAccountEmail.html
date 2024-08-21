@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>현재 잠긴 계정을 풀기 위한 본인 인증용 이메일 입니다!</title>
+    <style>
+        body,footer{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content : center;
+        }
+        header{
+            color: white;
+            background-color: skyblue;
+            padding-left : 10px;
+            padding-right : 10px;
+            margin-bottom: 20px;
+            width: 100%;
+
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content : center;
+
+        }
+        .button-form{
+           display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content : center;
+        }
+        .custom-button {
+            width: 200px;
+            height: 60px;
+            font-size: 16px; /* 글자 크기 조정 */
+            border : 1px;
+            padding : 1px;
+            margin: 5px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+
+            font-bold : bold;
+
+            cursor : pointer;
+        }
+        .custom-button:hover {
+            filter : brightness(0.8);
+        }
+
+
+    </style>
+</head>
+<body>
+<header>
+    <h1> Teaching Manager </h1>
+</header>
+<main>
+    <div>
+        아래의 버튼을 눌러 본인 인증을 완료하고 계정을 잠금해제하세요!<br>
+        해당 버튼은 해당 기능 요청을 하신 순간 부터 5분간만 유효합니다.
+    </div>
+
+    <div>
+        <form th:action="@{http://localhost:8080/email/locked/prove(token=${token})}" method="POST" class="button-form">
+            <button type="submit" class="custom-button">인증하기</button>
+        </form>
+    </div>
+<footer>
+    <div>
+        고객의 계정 잠금은 비밀번호 과다 오입력 때문입니다.
+    </div>
+</footer>
+</main>
+<script>
+
+    const value = document.querySelector('.myToken').value;
+
+    const formData = new URLSearchParams();
+formData.append('token', myToken);
+
+fetch('/email/locked/prove', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+    body: formData
+});
+</script>
+</body>
+</html>
