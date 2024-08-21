@@ -46,15 +46,14 @@ public class ApiLectureController {
     }
 
     @PutMapping("/api/lectures/{id}")
-    public ResponseEntity<Objects> updateLecture(@AuthenticationPrincipal CustomUser user, @RequestBody UpdateLectureRequest request, @PathVariable Long id) {
-        lectureService.updateLecture(request, user, id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<LectureResponse> updateLecture(@AuthenticationPrincipal CustomUser user, @RequestBody UpdateLectureRequest request, @PathVariable Long id) {
+        LectureResponse response = new LectureResponse(lectureService.updateLecture(request, user, id));
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/api/delete/lectures/{id}")
-    public ResponseEntity<Objects> deleteLecture(@AuthenticationPrincipal CustomUser user, @PathVariable Long id) {
-        lectureService.deleteLecture(user, id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteLecture(@AuthenticationPrincipal CustomUser user, @PathVariable Long id) {
+        return ResponseEntity.ok(lectureService.deleteLecture(user, id));
     }
 
 }

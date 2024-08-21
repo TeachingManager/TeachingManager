@@ -13,9 +13,9 @@ public interface LectureService {
 
     Lecture findLecture(CustomUser user, Long id);
 
-    void updateLecture(UpdateLectureRequest request, CustomUser user, Long id);
+    Lecture updateLecture(UpdateLectureRequest request, CustomUser user, Long id);
 
-    void deleteLecture(CustomUser user, Long id);
+    String deleteLecture(CustomUser user, Long id);
 
     List<Lecture> findAll(CustomUser user);
 }
