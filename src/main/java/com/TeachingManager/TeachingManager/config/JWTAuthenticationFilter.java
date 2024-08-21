@@ -43,6 +43,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader  = request.getHeader("Authorization");
         String token;
 
+
+        //OAuth 2.0 관련 url 들
+        if("/login/oauth2/code/naver".equals(url)
+        || "/login/oauth2/code/google".equals(url)){
+
+        }
+
+
+        // 토큰 없이 접근 가능해야할 링크들
         if ("/api/accessToken".equals(url)
                 || "/api/login".equals(url)
                 || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
@@ -59,7 +68,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 로그인 하지 않아 AccessToken 이 아닌 url 에 접근 권한 토큰이 있을 경우.
+        // 로그인 하지 않아서 AccessToken 이 아닌 url 에 접근 권한 토큰이 있을 경우.
         if(("/email/initial/prove".equals(url) && queryParams.containsKey("token"))
                 || ("/email/locked/prove".equals(url) && queryParams.containsKey("token")) // 이메일 본인인증
                 || ("/password/change".equals(url) && queryParams.containsKey("token")) // 비밀번호 변경
