@@ -2,9 +2,12 @@ package com.TeachingManager.TeachingManager.EventHandler;
 
 
 import com.TeachingManager.TeachingManager.DTO.Teacher.SocialTeacherInfo;
+import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.Service.User.TokenForOAuth2Service;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
+import com.TeachingManager.TeachingManager.config.exceptions.AlreadyRegisteredException;
+import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -26,6 +29,7 @@ import java.util.Optional;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final TeacherRepository teacherRepo;
+    private final InstituteRepository instRepo;
     private final TokenForOAuth2Service OAuth2TokenService;
 
     @Override
@@ -74,6 +78,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         System.out.println("provider = " + provider);
         System.out.println("name = " + name);
         System.out.println("email = " + email);
+
+        Optional<Institute> institute = instRepo.findByEmail(email);
+        if(institute.isPresent()) {
+            throw new AlreadyRegisteredException("이미 학원으로 등록된 계정입니다!");
+        }
+
 
         Optional<Teacher> teacher = teacherRepo.findByEmail(email);
         
