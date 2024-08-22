@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.config;
 
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
+import com.TeachingManager.TeachingManager.config.exceptions.ForbiddenAccessException;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.JweUtil;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
@@ -54,6 +55,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰 없이 접근 가능해야할 링크들
         if ("/api/accessToken".equals(url)
+                || "/favicon.ico".equals(url)
+                || "/login".equals(url)
                 || "/api/login".equals(url)
                 || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
                 || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제
@@ -116,6 +119,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         else{
             System.out.println("유효하지 않은 토큰이었음, token = " + token);
+            throw new ForbiddenAccessException("접근불가능합니다.");
+
         }
 
         // Spring Security 에 있는 다양한 필터가 연쇄적으로 인증 검사를 하는데, 다음 필터 검사로 넘어가라는 뜻.

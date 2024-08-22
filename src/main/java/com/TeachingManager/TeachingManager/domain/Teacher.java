@@ -22,17 +22,17 @@ public class Teacher extends CustomUser {
     @Column(name = "teacher_name", nullable = false)
     private String teacher_name;
 
-    @Column(name = "age", nullable = false)
+    @Column(name = "age", nullable = true)
     private Byte age;
 
-    @Column(name = "birth", nullable = false)
+    @Column(name = "birth", nullable = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
-    @Column(name = "phoneNum", nullable = false)
+    @Column(name = "phoneNum", nullable = true)
     private String phoneNum;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender", nullable = true)
     private Character gender;
 
     @Column(name = "bank_account", nullable = true)
@@ -82,8 +82,8 @@ public class Teacher extends CustomUser {
         this.setPassword(setRandomString());
         this.setAuthorities(Role.TEACHER);
         this.nickname = nickname;
-        this.teacher_name = "";
-        this.age = 0;
+        this.teacher_name = nickname;
+        this.age = 20;
         this.birth = LocalDate.now();
         this.phoneNum = "";
         this.gender = '?';

@@ -48,11 +48,8 @@ public class TokenService {
     public SetTokenResponse LoginTokenCreate(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         CustomUser user = null;
-        System.out.println("logintokenCreate 의 authentication 직전.");
         try {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            System.out.println("logintokenCreate 의 authentication 직후");
-
              user = (CustomUser) authentication.getPrincipal();
             if (user instanceof Teacher)
             {
@@ -73,7 +70,6 @@ public class TokenService {
             throw bad;
         }
     }
-
 
 
     // 리프레쉬 토큰이 있는지 체크
