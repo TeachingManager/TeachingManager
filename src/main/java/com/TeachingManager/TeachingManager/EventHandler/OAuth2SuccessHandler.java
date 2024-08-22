@@ -30,51 +30,48 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        System.out.println("OAuth2SuccessHandler 실행됨");
-
-        // 아래는 구글 기준. Provider 을 구분하여 Naver, Google 에 맞게 형식이 다름.
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-        String email = (String) attributes.get("email");
-        String name = (String) attributes.get("name");
-        String provider = (String) attributes.get("provider");
-
-        System.out.println("provider = " + provider);
-
-        System.out.println("name = " + name);
-        System.out.println("email = " + email);
-
-        Optional<Teacher> teacher = teacherRepo.findByEmail(email);
-
-        // 이미 있는 선생님일 경우 업데이트하지 않고 그대로 전달
-        if (teacher.isPresent()) {
-            response.sendRedirect("/home");
-        }
-
-        // 기존에 가입하지 않았던 user 일 경우
-        else {
-            Teacher newTeacher = new Teacher(email, name, "google");
-            teacherRepo.save(newTeacher);
-            response.sendRedirect("/additional_teacher_info");
-        }
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
         System.out.println("OAuth2SuccessHandler 실행됨");
 
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        // 아래는 구글 기준. Provider 을 구분하여 Naver, Google 에 맞게 형식이 다름.
+        // 요청이 들어오 url
+        String url = request.getRequestURI();
+
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        String email = (String) attributes.get("email");
-        String name = (String) attributes.get("name");
-        String provider = (String) attributes.get("provider");
+
+        String email = null;
+        String name = null;
+        String provider = null;
+
+        switch (url){
+            case "/login/oauth2/code/naver":
+                // 아래는 네이버 기준
+
+                Map<String, Object> naverResponse = (Map<String, Object>) attributes.get("response");
+                System.out.println("response = " + attributes.get("response"));
+
+                email = (String) naverResponse.get("email");
+                name = (String)  naverResponse.get("name");
+                provider = "naver";
+                break;
+
+            case "/login/oauth2/code/google":
+                // 아래는 구글 기준. 
+                email = (String) attributes.get("email");
+                name = (String) attributes.get("name");
+                provider = "google";
+                break;
+
+            default:
+                break;
+        }
 
         System.out.println("provider = " + provider);
-
         System.out.println("name = " + name);
         System.out.println("email = " + email);
 
@@ -82,7 +79,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         
         // 기존에 가입하지 않았던 user 일 경우 가입처리
         if(teacher.isEmpty()) {
-            Teacher newTeacher = new Teacher(email, name, "google");
+            Teacher newTeacher = new Teacher(email, name, provider);
             teacherRepo.save(newTeacher);
 //            response.sendRedirect("/additional_teacher_info");
         }
