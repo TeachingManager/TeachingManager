@@ -21,8 +21,9 @@
 - 유저 사용 시나리오 작성
 
 
-김동겸 : 4개 API
+김동겸 : 5개 API
 - (Lecture) CRUD API 
+- Jenkins 을 이용한 CI/CD
 
 
 양현 : 43개 API
@@ -37,6 +38,7 @@
 - 유저 사용 시나리오 작성
 - 리캡챠 적용
 - api 명세서 작성
+- 구글 , Naver OAuth2.0 적용
 
 
 

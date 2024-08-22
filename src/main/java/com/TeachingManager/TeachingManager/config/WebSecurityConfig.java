@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
+import com.TeachingManager.TeachingManager.EventHandler.OAuth2SuccessHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
@@ -30,8 +31,8 @@ public class WebSecurityConfig{
     private final CustomUserDetailServiceImpl userDetailService;
 //    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    @Autowired
-    private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public WebSecurityCustomizer configure() {
@@ -65,6 +66,7 @@ public class WebSecurityConfig{
                         .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
                                 .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                         )
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login/institute")

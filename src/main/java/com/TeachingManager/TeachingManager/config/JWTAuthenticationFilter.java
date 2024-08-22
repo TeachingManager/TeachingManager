@@ -47,7 +47,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         //OAuth 2.0 관련 url 들
         if("/login/oauth2/code/naver".equals(url)
         || "/login/oauth2/code/google".equals(url)){
-
+            filterChain.doFilter(request, response);
+            return;
         }
 
 

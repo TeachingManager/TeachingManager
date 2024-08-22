@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -74,6 +75,23 @@ public class Teacher extends CustomUser {
         this.provider = "";
         this.institute = new Institute(inst_id);
     }
+
+    // 소셜 로그인시 사용할 생성자
+    public Teacher(String email, String nickname, String provider){
+        this.setEmail(email);
+        this.setPassword(setRandomString());
+        this.setAuthorities(Role.TEACHER);
+        this.nickname = nickname;
+        this.teacher_name = "";
+        this.age = 0;
+        this.birth = LocalDate.now();
+        this.phoneNum = "";
+        this.gender = '?';
+        this.bank_account = null;
+        this.salary = 0L;
+        this.provider = provider;
+        this.institute = null;
+    }
     
     @Builder
     public Teacher(String email, String nickname, String password, String auth, String teacher_name, Byte age, LocalDate birth, String phoneNum, Character gender, String bank_account, Long salary, Institute institute, String provider
@@ -102,5 +120,25 @@ public class Teacher extends CustomUser {
         this.bank_account = bank_account;
         this.salary = salary;
         this.nickname = nickname;
+    }
+
+    public void setTempPassword(){
+        this.setPassword(setRandomString());
+    }
+
+
+    private String setRandomString() {
+        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
+        SecureRandom secureRandom = new SecureRandom();
+
+        int passwordLength = 8 + secureRandom.nextInt(5); // 0에서 4까지의 랜덤 숫자를 더해 8~12 생성
+        StringBuilder password = new StringBuilder(passwordLength);
+
+        for (int i = 0; i < passwordLength; i++) {
+            int randomIndex = secureRandom.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return password.toString();
     }
 }
