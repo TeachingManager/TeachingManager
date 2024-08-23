@@ -20,6 +20,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -249,13 +250,13 @@ public class UserService {
         final String username = "teachingmanager@outlook.com";
         final String password = "$xlcld123$";
 
-        Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", host);
-        properties.setProperty("mail.smtp.port", "587");
-        properties.setProperty("mail.smtp.auth", "true");
-        properties.setProperty("mail.smtp.starttls.enable", "true");
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
 
-        Session session = Session.getDefaultInstance(properties,
+        Session session = Session.getInstance(properties,
                 new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
@@ -270,13 +271,17 @@ public class UserService {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            message.setSubject(subject);
+
+            // 이메일 제목을 인코딩하여 설정
+            message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B"));
+
+            // 이메일 내용을 설정하고 인코딩
             message.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Transport.send(message);
             System.out.println("Sent message successfully...");
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }

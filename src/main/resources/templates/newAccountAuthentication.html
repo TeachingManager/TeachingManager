@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>초기 유저 인증</title>
+</head>
+<body>
+    <header><h1>가입인증을 해야합니다! 아래의 버튼을 누르고 인증을 보내세요!</h1></header>
+    <main>
+        <form id="jsonForm" class="button-form">
+            <input type="hidden" id="emailValue" th:value="${email}"/>
+            <button type="submit" class="custom-button">인증하기</button>
+        </form>
+    </main>
+    <footer></footer>
+    <script>
+        console.log("스크립트 정상 실행됨!");
+
+        document.getElementById('jsonForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 기본 폼 제출 동작을 막음
+
+            const emailValue = document.getElementById('emailValue').value;
+            console.log("email : ", emailValue);
+
+            // 전송할 JSON 데이터 생성
+            const jsonData = {
+                email: emailValue
+            };
+
+            // JSON 데이터를 포함한 POST 요청
+            fetch('http://localhost:8080/api/email/initial/prove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // 성공 시 처리할 로직 추가
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // 에러 발생 시 처리할 로직 추가
+            });
+        });
+    </script>
+</body>
+</html>

@@ -57,6 +57,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if ("/api/accessToken".equals(url)
                 || "/favicon.ico".equals(url)
                 || "/login".equals(url)
+                || "/newAccountAuthentication".equals(url)
                 || "/api/login".equals(url)
                 || "/api/email/initial/prove".equals(url) // 초기 가입시 인증
                 || "/api/email/locked/prove".equals(url) // 비번 틀렸을시 잠금해제

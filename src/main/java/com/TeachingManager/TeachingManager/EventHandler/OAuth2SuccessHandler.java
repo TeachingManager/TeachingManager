@@ -18,9 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -86,17 +89,26 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         Optional<Teacher> teacher = teacherRepo.findByEmail(email);
+
+        ObjectMapper objectMapper = new ObjectMapper();
         
         // 기존에 가입하지 않았던 user 일 경우 가입처리
         if(teacher.isEmpty()) {
             Teacher newTeacher = new Teacher(email, name, provider);
             teacherRepo.save(newTeacher);
-//            response.sendRedirect("/additional_teacher_info");
+            response.sendRedirect("/newAccountAuthentication?email=" + URLEncoder.encode(newTeacher.getEmail(), StandardCharsets.UTF_8));
         }
+        // enabled 가 0 이면 인증 메일 발송 버튼이 있는 url 로
+        else if(!teacher.get().getEnabled()){
+            response.sendRedirect("/newAccountAuthentication?email=" + URLEncoder.encode(teacher.get().getEmail(), StandardCharsets.UTF_8));
+        }
+
+        // 로그인 해제
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
+
 
         // 로컬 JWT 토큰 생성하여 전달
         response.setContentType("application/json");
-        ObjectMapper objectMapper = new ObjectMapper();
         response.getWriter().write(objectMapper.writeValueAsString(OAuth2TokenService.OAuthLoginTokenCreate(email, name)));
         response.getWriter().flush();
     }

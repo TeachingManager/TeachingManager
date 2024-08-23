@@ -51,7 +51,8 @@ public class WebSecurityConfig{
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
                                 "/password/change","/api/password/change", "/invite/teacher",
                                 //OAuth2.0 관련
-                                "/login/oauth2/code/naver","/login/oauth2/code/google"
+                                "/login/oauth2/code/naver","/login/oauth2/code/google",
+                                "/newAccountAuthentication"
                         ).permitAll()//로그인, 회원가입은 인증
                         .requestMatchers(HttpMethod.POST, "/api/institute", "/api/teacher").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
