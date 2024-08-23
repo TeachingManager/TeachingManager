@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
 import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
+import com.TeachingManager.TeachingManager.EventHandler.OAuth2SuccessHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
@@ -30,8 +31,8 @@ public class WebSecurityConfig{
     private final CustomUserDetailServiceImpl userDetailService;
 //    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    @Autowired
-    private InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public WebSecurityCustomizer configure() {
@@ -48,7 +49,9 @@ public class WebSecurityConfig{
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
-                                "/password/change","/api/password/change", "/invite/teacher"
+                                "/password/change","/api/password/change", "/invite/teacher",
+                                //OAuth2.0 관련
+                                "/login/oauth2/code/naver","/login/oauth2/code/google"
                         ).permitAll()//로그인, 회원가입은 인증
                         .requestMatchers(HttpMethod.POST, "/api/institute", "/api/teacher").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
@@ -57,12 +60,14 @@ public class WebSecurityConfig{
 
                 )
                 // oAUTH 2.0 로그인
-//                .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
-//                        .defaultSuccessUrl("/home", true) // 로그인 성공시 이동할 URL
-//                        .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
-//                                .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
-//                        )
-//                )
+                .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true) // 로그인 성공시 이동할 URL
+                        .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
+                                .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
+                        )
+                        .successHandler(oAuth2SuccessHandler)
+                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login/institute")
                         .invalidateHttpSession(true)

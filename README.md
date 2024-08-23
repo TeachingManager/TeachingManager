@@ -21,11 +21,12 @@
 - 유저 사용 시나리오 작성
 
 
-김동겸 : 4개 API
+김동겸 : 5개 API
 - (Lecture) CRUD API 
+- Jenkins 을 이용한 CI/CD
 
 
-양현 : 43개 API
+양현 : 44개 API
 - (Student, Schedule, Teacher, Institute, Enroll, Attend, Fee) CRUD & 인증 & 메일전송 API 작성 
 - DB 초기 세팅 & 등록
 - 유저 타입별로 도메인 별도 구현
@@ -37,6 +38,7 @@
 - 유저 사용 시나리오 작성
 - 리캡챠 적용
 - api 명세서 작성
+- 구글 , Naver OAuth2.0 적용
 
 
 

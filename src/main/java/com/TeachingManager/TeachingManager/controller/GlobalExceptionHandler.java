@@ -43,4 +43,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<String> handleForbiddenAccessException(ForbiddenAccessException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+
 }

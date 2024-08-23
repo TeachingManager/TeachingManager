@@ -72,19 +72,19 @@ public class UserService {
         System.out.println("encodedResetToken = " + encodedResetToken);
 
        // 해당 토큰을 담은 url 을 이메일에 담아 해당 유저에게 전송
-        // mod 1 : 비번 찾기
-        // mod 2 : 초기 이메일 인증
-        // mod 3 : 비번 오입력 잠금 풀기
+        // mod unLockUser : 비번 찾기
+        // mod initialAuthentication : 초기 이메일 인증
+        // mod setNewPassword : 비번 오입력 잠금 풀기
         if (Objects.equals(mod, "setNewPassword")) {
             // email 보내기
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
             sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","/EmailForm/InitialAuthenticationEmail", resetToken);
-
             return "사용자 정보 확인. 초기 인증용 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "unLockUser")) {
             // email 보내기
+            sendEmail(email,"TeachingManager - 잠금 해제용 이메일입니다.","/EmailForm/UnlockAccountEmail", resetToken);
             return "사용자 정보 확인. 잠금해제용 메일이 보내졌습니다.";
         }
 
@@ -197,11 +197,16 @@ public class UserService {
 
         Teacher teacher = teacherRepo.findByEmail(request.getTeacher_email()).orElseThrow(() -> new UserDoesNotExistException("없는 강사가 참가하려함."));
         if(teacher.getInstitutePk() == null) {
+            Institute institute = instituteRepo.findByEmail(request.getInstitute_email()).orElseThrow(()->new RuntimeException("없는 학원으로 부터의 초대를 보내려함."));
+
             // 토큰 생성 ( email, inst_email, 만료시간 )
             String joinToken = tokenProvider.createJoinToken(Duration.ofMinutes(10), request.getTeacher_email(), request.getInstitute_email());
             String encodedJoinToken = URLEncoder.encode(joinToken, StandardCharsets.UTF_8);
             System.out.println("강사 초대의 encodedJoinToken = " + encodedJoinToken);
+
             // email 보내기
+            sendEmail(request.getTeacher_email(),"TeachingManager  - " + institute.getInstitute_name() + "으로부터의 초대가 도착했습니다.",
+                    "/EmailForm/InviteAccountEmail", joinToken);
             return "강사에게 초대 이메일을 전송했습니다..";
         }
         else{
