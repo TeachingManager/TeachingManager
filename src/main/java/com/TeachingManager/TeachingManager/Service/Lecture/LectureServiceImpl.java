@@ -67,7 +67,7 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public void updateLecture(UpdateLectureRequest request, CustomUser user, Long id) {
+    public Lecture updateLecture(UpdateLectureRequest request, CustomUser user, Long id) {
         Optional<Teacher> teacher = teacherRepository.findById(request.getTeacherId());
         System.out.println("teacher = " + teacher);
         Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
@@ -75,6 +75,7 @@ public class LectureServiceImpl implements LectureService{
         if (teacher.isPresent() && lecture.isPresent()) {
             lecture.get().update(request.getName(), request.getCategory(), request.getGrade(), request.getFee(), request.getTime(), teacher.get());
             lectureRepository.save(lecture.get());
+            return lecture.get();
         }
         else {
             throw new RuntimeException("잘못된 업데이트");
@@ -82,10 +83,18 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public void deleteLecture(CustomUser user, Long id) {
+    public String deleteLecture(CustomUser user, Long id) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             System.out.println("institute delete lecture");
+            Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
             lectureRepository.delete(user.getPk(), id);
+            if(lecture.isPresent()) {
+                return lecture.get().getName();
+            }
+            else {
+                throw new RuntimeException("존재하지 않는 강의");
+            }
+
         }
         else {
             throw new RuntimeException("강사는 삭제 불가");
