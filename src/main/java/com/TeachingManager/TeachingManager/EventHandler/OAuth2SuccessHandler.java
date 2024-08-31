@@ -105,7 +105,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
         // enabled 가 0 이면 인증 메일 발송 버튼이 있는 url 로
         else if(!teacher.get().getEnabled()){
-            deleteCookie(response, "쿠키명");
+//            deleteCookie(response, "쿠키명");
             response.sendRedirect("/newAccountAuthentication?email=" + URLEncoder.encode(teacher.get().getEmail(), StandardCharsets.UTF_8));
         }
 
