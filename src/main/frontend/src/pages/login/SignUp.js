@@ -10,11 +10,12 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-//import { registerUser } from '../../api/institute';
-
+import { registerUser } from '../../api/institute';
+import { useNavigate } from 'react-router-dom';
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState({
     insName: '',
     email: '',
@@ -48,13 +49,16 @@ export default function SignUp() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // formValues를 사용하여 제출 작업 수행
-//    registerUser(formValues)
-//        try {
-//          const result = await registerUser(formValues);
-//          console.log('User registered successfully:', result);
-//      } catch (error) {
-//          console.error('Failed to register user:', error);
-//      }
+    //registerUser(formValues)
+        try {
+          const result = await registerUser(formValues);
+          if(result.status === 200)
+            alert('계정이 생성 되었습니다.');
+          navigate('/login')
+      } catch (error) {
+          if(error.status === 409)
+            alert('이미 생성된 계정입니다.')
+      }
   };
 
   // 모든 필드가 유효한지 확인

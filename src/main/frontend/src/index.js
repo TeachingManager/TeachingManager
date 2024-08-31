@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Students from './pages/student/Students.js';
 import Teachers from './pages/teacher/Teachers.js';
-import CalendarContainer from './pages/calendar/CalendarContainer.js';
 import Calendars from './pages/calendar/Calendars.js';
 import LoginPage from './pages/login/LoginPage';
 import SignUp from './pages/login/SignUp';
@@ -21,6 +19,8 @@ import OpenLecturePage from './pages/lecture/OpenLecturePage';
 import StudentFeePage from './pages/fee/StudentFeePage';
 import LectureAttendancePage from './pages/lecture/LectureAttendancePage';
 import HomePage from './pages/home/HomePage';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const router = createBrowserRouter([
   {
@@ -30,7 +30,6 @@ const router = createBrowserRouter([
   {
     path: "/students",
     element: <Students />,
-
   },
   {
     path: "/students/attendance/:id",
@@ -55,12 +54,9 @@ const router = createBrowserRouter([
   {
     path: "/example",
     element: (
-      
         <ProtectedRoute><Example /></ProtectedRoute>
-      
     )
-  }
-  ,
+  },
   {
     path:"/lecture",
     element: <LecturePage/>
@@ -73,14 +69,18 @@ const router = createBrowserRouter([
     path: "/openlecture/attendance/:id",
     element: <LectureAttendancePage/>
   },
-  {path: "/fee",
-    element : <FeePage/>},
-
-  {path: "/studentfee",
-    element : <StudentFeePage/>},
-
-  {path: '/home',
-    element: <HomePage/>}
+  {
+    path: "/fee",
+    element : <FeePage/>
+  },
+  {
+    path: "/studentfee",
+    element : <StudentFeePage/>
+  },
+  {
+    path: '/home',
+    element: <HomePage/>
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -88,14 +88,12 @@ root.render(
   //<React.StrictMode>
   <RecoilRoot>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </AuthProvider>
   </RecoilRoot>
-    
   //</React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

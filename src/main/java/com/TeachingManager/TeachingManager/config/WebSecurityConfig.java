@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -60,7 +61,6 @@ public class WebSecurityConfig{
         return source;
     }
 
-
 //     HTTP 의 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -68,7 +68,7 @@ public class WebSecurityConfig{
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
-                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
+                                "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
                                 "/password/change","/api/password/change", "/invite/teacher",
                                 //OAuth2.0 관련
