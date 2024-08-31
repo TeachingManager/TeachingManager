@@ -1,6 +1,6 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
-import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
+import com.TeachingManager.TeachingManager.EventHandler.CustomAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.EventHandler.OAuth2SuccessHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
@@ -8,7 +8,6 @@ import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthentic
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,9 +33,8 @@ public class WebSecurityConfig{
     private final TokenProvider tokenProvider;
     private final JweInfo jweInfo;
     private final CustomUserDetailServiceImpl userDetailService;
-//    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    private final InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
@@ -68,7 +65,6 @@ public class WebSecurityConfig{
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
                                         "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",

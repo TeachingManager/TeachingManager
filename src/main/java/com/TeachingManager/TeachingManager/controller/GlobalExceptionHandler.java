@@ -40,12 +40,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserDoesNotExistException.class)
     public ResponseEntity<String> handleUserDoesNotExistsException(UserDoesNotExistException ex) {
 
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ForbiddenAccessException.class)
     public ResponseEntity<String> handleForbiddenAccessException(ForbiddenAccessException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }

@@ -1,10 +1,8 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,37 +10,55 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { saveUserInfo } from '../../Test/userService';
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+//import { registerUser } from '../../api/institute';
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    
-    saveUserInfo({
-      email: data.get('email'),
-      password: data.get('password'),
-    })
+  const [formValues, setFormValues] = useState({
+    insName: '',
+    email: '',
+    password: '',
+    address: '',
+    phoneNum: ''
+  });
 
-    
+  const [formErrors, setFormErrors] = useState({
+    insName: false,
+    email: false,
+    password: false,
+    address: false,
+    phoneNum: false
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+
+    // 유효성 검사
+    setFormErrors({
+      ...formErrors,
+      [name]: value === ''
+    });
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // formValues를 사용하여 제출 작업 수행
+//    registerUser(formValues)
+//        try {
+//          const result = await registerUser(formValues);
+//          console.log('User registered successfully:', result);
+//      } catch (error) {
+//          console.error('Failed to register user:', error);
+//      }
+  };
+
+  // 모든 필드가 유효한지 확인
+  const isFormValid = Object.values(formValues).every(value => value !== '');
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -60,22 +76,25 @@ export default function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            회원가입
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="insName"
                   required
                   fullWidth
-                  id="firstName"
-                  label="이름"
+                  id="insName"
+                  label="기관명"
                   autoFocus
+                  value={formValues.insName}
+                  onChange={handleInputChange}
+                  error={formErrors.insName}
+                  helperText={formErrors.insName ? '이 필드는 필수입니다.' : ''}
                 />
               </Grid>
-              
               <Grid item xs={12}>
                 <TextField
                   required
@@ -84,6 +103,10 @@ export default function SignUp() {
                   label="이메일 주소"
                   name="email"
                   autoComplete="email"
+                  value={formValues.email}
+                  onChange={handleInputChange}
+                  error={formErrors.email}
+                  helperText={formErrors.email ? '이 필드는 필수입니다.' : ''}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -95,15 +118,49 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={formValues.password}
+                  onChange={handleInputChange}
+                  error={formErrors.password}
+                  helperText={formErrors.password ? '이 필드는 필수입니다.' : ''}
                 />
               </Grid>
-              
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="address"
+                  label="주소명"
+                  type="text"
+                  id="address"
+                  autoComplete="address-line1"
+                  value={formValues.address}
+                  onChange={handleInputChange}
+                  error={formErrors.address}
+                  helperText={formErrors.address ? '이 필드는 필수입니다.' : ''}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="phoneNum"
+                  label="전화번호"
+                  type="tel"
+                  id="phoneNum"
+                  autoComplete="tel"
+                  value={formValues.phoneNum}
+                  onChange={handleInputChange}
+                  error={formErrors.phoneNum}
+                  helperText={formErrors.phoneNum ? '이 필드는 필수입니다.' : ''}
+                />
+              </Grid>
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!isFormValid} // 폼이 유효하지 않으면 버튼을 비활성화
             >
               회원가입
             </Button>
@@ -116,7 +173,6 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );

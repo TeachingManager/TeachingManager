@@ -91,7 +91,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("inputToken = " + inputToken);
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ForbiddenAccessException("유효하지 않은 형식");
             }
 
             // 토큰 유효성 검사.
@@ -100,7 +100,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
             else{
-                throw new RuntimeException("유효하지 않은 토큰으로 접근 시도함.");
+                throw new ForbiddenAccessException("유효하지 않은 토큰.");
             }
             return;
         }
@@ -121,7 +121,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         else{
             System.out.println("유효하지 않은 토큰이었음, token = " + token);
             throw new ForbiddenAccessException("접근불가능합니다.");
-
         }
 
         // Spring Security 에 있는 다양한 필터가 연쇄적으로 인증 검사를 하는데, 다음 필터 검사로 넘어가라는 뜻.
