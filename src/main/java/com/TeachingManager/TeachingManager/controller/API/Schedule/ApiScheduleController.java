@@ -56,7 +56,7 @@ public class ApiScheduleController {
         // 학원 권한을 가진 쪽에서 요청인지
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             scheduleService.delete_schedule(user, pk);
-            return ResponseEntity.ok().body("삭제됨");
+            return ResponseEntity.ok().build();
         }
         // 아니라면 거절
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

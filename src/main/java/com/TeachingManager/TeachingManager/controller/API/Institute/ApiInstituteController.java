@@ -33,13 +33,13 @@ public class ApiInstituteController {
     // 학원 추가
 
     @PostMapping("/api/institute")
-    public ResponseEntity<String> signup(@RequestBody AddInstituteRequest request){
+    public ResponseEntity<Object> signup(@RequestBody AddInstituteRequest request){
         String email = request.getEmail();
         try {
             CustomUser user = userDetailService.loadCustomUserByUsername(email);
         } catch (UsernameNotFoundException e) {
             System.out.println("e = " + instService.register(request));
-            return ResponseEntity.ok().body("생성됨!");
+            return ResponseEntity.ok().build();
         }
         throw new AlreadyRegisteredException("이미 가입된 계정입니다");
     }
@@ -79,10 +79,10 @@ public class ApiInstituteController {
 
     // 회원탈퇴 api
     @PutMapping("/api/delete/institute")
-    public ResponseEntity<String> delete_Institute(@AuthenticationPrincipal CustomUser user){
+    public ResponseEntity<Object> delete_Institute(@AuthenticationPrincipal CustomUser user){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok()
-                    .body(instService.delete_Institute(user));
+            instService.delete_Institute(user);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
