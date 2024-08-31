@@ -5,13 +5,14 @@ import Sidenavbar from '../../common/component/sidebar/Sidenavbar'
 import CalendarContents from './CalendarContainer.js'
 
 import "./calendars.css"
+import ScheduleManager from './ScheduleManager.js'
 
 export default function Calendars(){
     return(
         <div className='calendarpage-container'>
             <Topbar/> 
             <Sidenavbar/>
-            <CalendarContents/>
+            <ScheduleManager/>
             
         </div>
     )

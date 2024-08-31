@@ -16,9 +16,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -40,14 +46,31 @@ public class WebSecurityConfig{
                 .requestMatchers("/static/**");
     }
 
-//     HTTP 의 웹 기반 보안 구성
+    //CORS 설정
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 허용할 출처
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메소드
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 적용
+
+        return source;
+    }
+
+
+    //     HTTP 의 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.
-                authorizeHttpRequests(authorize -> authorize
+        return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(authorize -> authorize
 
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
-                                        "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
+                                "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
                                 "/password/change","/api/password/change", "/invite/teacher",
                                 //OAuth2.0 관련
@@ -71,9 +94,11 @@ public class WebSecurityConfig{
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login/institute")
+                        .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                 )
                 .csrf(csrf -> csrf.disable())
+
                 // jwt 토큰 필터
                 .addFilterBefore(new JWTAuthenticationFilter(tokenProvider, jweInfo), UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -33,16 +37,25 @@ public class ApiInstituteController {
     // 학원 추가
 
     @PostMapping("/api/institute")
-    public ResponseEntity<String> signup(@RequestBody AddInstituteRequest request){
+    public ResponseEntity<Map<String, String>> signup(@RequestBody AddInstituteRequest request) {
         String email = request.getEmail();
+        Map<String, String> response = new HashMap<>();
+
         try {
             CustomUser user = userDetailService.loadCustomUserByUsername(email);
+            // 이미 존재하는 사용자가 있는 경우
+            response.put("error", "Already Registered");
+            response.put("message", "이미 가입된 계정입니다");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT); // 409 Conflict
         } catch (UsernameNotFoundException e) {
-            System.out.println("e = " + instService.register(request));
-            return ResponseEntity.ok().body("생성됨!");
+            // 계정이 존재하지 않는 경우 새로 생성
+            instService.register(request);
+            response.put("message", "생성됨!");
+            return ResponseEntity.ok().body(response); // 200 OK
         }
-        throw new AlreadyRegisteredException("이미 가입된 계정입니다");
     }
+
+
 
     // 요청한 학원 정보 조회
     @GetMapping("/api/institute")
