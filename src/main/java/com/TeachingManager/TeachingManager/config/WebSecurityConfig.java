@@ -55,8 +55,20 @@ public class WebSecurityConfig{
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
         configuration.setAllowCredentials(true);
 
+        // 구글, 네이버, 다음만
+        CorsConfiguration configurationEmail = new CorsConfiguration();
+        configurationEmail.setAllowedOriginPatterns(Arrays.asList("*"));
+        configurationEmail.setAllowedMethods(Arrays.asList("GET", "POST"));
+        configurationEmail.setAllowedHeaders(Arrays.asList("*")); // 허용할 헤더
+        configurationEmail.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 적용
+        source.registerCorsConfiguration("/api/**", configuration); // 모든 경로에 대해 적용
+
+        source.registerCorsConfiguration("/password/change", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/email/locked/prove", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/email/initial/prove", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/invite/teacher", configurationEmail); // 이메일 링크에서 오는 것
 
         return source;
     }
