@@ -56,8 +56,7 @@ public class ApiStudentController {
     public ResponseEntity<String> deleteArticle(@AuthenticationPrincipal CustomUser user,@PathVariable(name="id") long id){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             String student_name = studentService.delete(user, id);
-            return ResponseEntity.ok()
-                    .body(student_name);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }

@@ -1,14 +1,14 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
-import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
+import com.TeachingManager.TeachingManager.EventHandler.CustomAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.EventHandler.OAuth2SuccessHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
+import com.TeachingManager.TeachingManager.config.EntryPoints.CustomEntryPoint;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,9 +35,9 @@ public class WebSecurityConfig{
     private final TokenProvider tokenProvider;
     private final JweInfo jweInfo;
     private final CustomUserDetailServiceImpl userDetailService;
-//    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    private final InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomEntryPoint customEntryPoint;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
@@ -61,14 +61,12 @@ public class WebSecurityConfig{
         return source;
     }
 
-
-    //     HTTP 의 웹 기반 보안 구성
+//     HTTP 의 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
                                 "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
@@ -83,6 +81,8 @@ public class WebSecurityConfig{
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
                 )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customEntryPoint))
                 // oAUTH 2.0 로그인
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
                         .loginPage("/login")

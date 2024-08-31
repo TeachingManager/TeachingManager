@@ -19,12 +19,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserLockedException.class)
     public ResponseEntity<String> handleAccountLockedException(UserLockedException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserDisabledException.class)
     public ResponseEntity<String> handleAccountDisabledException(UserDisabledException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AlreadyRegisteredException.class)
@@ -34,18 +34,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WrongPasswordException.class)
     public ResponseEntity<String> handleWrongPasswordException(WrongPasswordException ex) {
-        return new ResponseEntity<>(userService.increaseFailCount(ex.getUserId()), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(userService.increaseFailCount(ex.getUserId()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserDoesNotExistException.class)
     public ResponseEntity<String> handleUserDoesNotExistsException(UserDoesNotExistException ex) {
 
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ForbiddenAccessException.class)
     public ResponseEntity<String> handleForbiddenAccessException(ForbiddenAccessException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }

@@ -38,10 +38,9 @@ public class ApiTokenController {
     }
 
     @PostMapping("/api/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response){
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-        return ResponseEntity.ok()
-                .body("로그아웃됨");
+        return ResponseEntity.ok().build();
     }
 
     // RefreshToken 을 가지고, 새 AccessToken 을 발급받는 API

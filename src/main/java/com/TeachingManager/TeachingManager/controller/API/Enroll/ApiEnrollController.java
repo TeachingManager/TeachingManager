@@ -121,7 +121,8 @@ public class ApiEnrollController {
     {
         // 특정달의 특정강의의 특정학생의 수강신청 여부 삭제
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok().body(enrollService.deleteOneStudentFromEnroll(user, enroll_id,lecture_id, student_id, year, month));
+            enrollService.deleteOneStudentFromEnroll(user, enroll_id,lecture_id, student_id, year, month);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
