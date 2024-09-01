@@ -14,7 +14,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../../assets/TeachingManager.svg';
 import { useAuth } from '../../common/Auth/AuthProvider';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { loginUser } from '../../api/institute';
 
 function Copyright(props) {
   return (
@@ -34,24 +36,47 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const { login, isAuthenticated } = useAuth(); // useAuth 훅 사용
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   console.log("login page is")
   console.log(isAuthenticated)
   
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email');
-    const password = data.get('password');
 
-    try {
-      await login(email, password);
-    } catch (error) {
-      setError('Login failed, Please check you credentials')
+    if (!executeRecaptcha) {
+      console.log("리캡차가 활성화 되지 않았습니다.");
+      return;
     }
+
+    const token = await executeRecaptcha('login')
+
+    const {email, password} = event.target;
+    console.log(email.value, password.value)
+    
+    const requestData = {
+      "recaptchaResponse" : token,
+      "email" : email.value,
+      "password" : password.value
+    }
+
+    console.log(requestData)
+
+    const result = await login(requestData)
+    console.log(result)
+    if (result === true)
+      navigate('/home')
+      
+   
+
+    // try {
+    //   await login(email, password);
+    // } catch (error) {
+    //   setError('Login failed, Please check you credentials')
+    // }
     
   };
 

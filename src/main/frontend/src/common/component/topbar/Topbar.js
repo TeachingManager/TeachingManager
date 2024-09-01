@@ -1,10 +1,12 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './topbar.css';
-
+import { useAuth } from '../../Auth/AuthProvider';
 export default function Topbar() {
     const location = useLocation();
     const path = location.pathname;
+    const { logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
     let pageTitle = 'Home'; // default title
     if (path.includes('/students/attendance')) {
@@ -26,6 +28,12 @@ export default function Topbar() {
         pageTitle  = '수강료';
     }
 
+    const handleLogout = ()=> {
+        logout();
+        navigate('/login')
+
+    }
+
     return (
         <div className="topbar-container">
             <div className="topbar-left">
@@ -36,6 +44,7 @@ export default function Topbar() {
                 <i className="fas fa-question-circle"></i>
                 <span className="user-name">seungchan kim</span>
                 <div className="user-icon">KS</div>
+                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
             </div>
         </div>
     );

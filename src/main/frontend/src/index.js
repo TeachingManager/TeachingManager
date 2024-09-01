@@ -25,7 +25,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 const router = createBrowserRouter([
   {
     path: "/home",
-    element: <HomePage/>
+    element: <ProtectedRoute><HomePage/></ProtectedRoute>
   },
   {
     path: "/students",
