@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class ApiUserController {
@@ -27,40 +30,47 @@ public class ApiUserController {
     // 이메일을 입력받아, 해당 이메일이 회원에 존재하면, 새 토큰을 이메일과 IP 주소를 통해 발급받고,
     // 해당 토큰을
     @PostMapping("/api/password/change")
-    public ResponseEntity<String> sendEmailToUserWhoLostPassword(
+    public ResponseEntity<Map<String, String>> sendEmailToUserWhoLostPassword(
             @RequestBody EmailRequest request,
             HttpServletRequest HttpRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "setNewPassword"));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "setNewPassword"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
 
     // 비밀번호 분실시 -> 비밀번호 재설정 사이트에서 들어오는 요청
     @PostMapping("/password/change")
-    public ResponseEntity<String> changePasswordByToken(
+    public ResponseEntity<Map<String, String>> changePasswordByToken(
             @RequestParam(value = "token") String token,
             @RequestBody NewPasswordUpdateRequest request,
             HttpServletRequest HttpRequest) throws Exception {
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.changePassword(token, HttpRequest.getRemoteAddr(), request.getNewPassword()));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.changePassword(token, HttpRequest.getRemoteAddr(), request.getNewPassword()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // 계정 잠김시 해제 요청을 하는 api
     @PostMapping("/api/email/locked/prove")
-    public ResponseEntity<String> sendEmailToLockedUser(
+    public ResponseEntity<Map<String, String>> sendEmailToLockedUser(
             @RequestBody EmailRequest request,
             HttpServletRequest HttpRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "unLockUser"));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "unLockUser"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     //  비밀번호 5회 틀림 -> 잠김.... 이를 해제 하기 위한 이메일 인증
     @PostMapping("/email/locked/prove")
-    public ResponseEntity<String> proveLockedUser(
+    public ResponseEntity<Map<String, String>> proveLockedUser(
             @RequestParam(value = "token") String token,
             HttpServletRequest HttpRequest) throws Exception {
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.unLockUser(token, HttpRequest.getRemoteAddr()));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.unLockUser(token, HttpRequest.getRemoteAddr()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,20 +78,23 @@ public class ApiUserController {
 
 // 초기 회원 가입시 인증 메일 발송되게 하는 api
     @PostMapping("/api/email/initial/prove")
-    public ResponseEntity<String> sendEmailToSignUpUser(
+    public ResponseEntity<Map<String, String>> sendEmailToSignUpUser(
             @RequestBody EmailRequest request,
             HttpServletRequest HttpRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "initialAuthentication"));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.sendEmailWithResetToken(request.getEmail(), HttpRequest.getRemoteAddr(), "initialAuthentication"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
 
 // 초기 회원가입시 유저 인증을 위해 사용
     @PostMapping("/email/initial/prove")
-    public ResponseEntity<String> proveInitialUser(
+    public ResponseEntity<Map<String, String>> proveInitialUser(
             @RequestParam(value = "token") String token,
             HttpServletRequest HttpRequest) throws Exception {
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.enableUser(token, HttpRequest.getRemoteAddr()));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.enableUser(token, HttpRequest.getRemoteAddr()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
 
@@ -90,17 +103,20 @@ public class ApiUserController {
 
     // 강사 초대 이메일이 발송되게 하는 api
     @PostMapping("/api/invite/teacher")
-    public ResponseEntity<String> sendInviteEmailToTeacher(
+    public ResponseEntity<Map<String, String>> sendInviteEmailToTeacher(
             @RequestBody InviteRequest request,
             @AuthenticationPrincipal CustomUser user) throws Exception {
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.sendEmailWithJoinToken(request, user));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.sendEmailWithJoinToken(request, user));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     // 강사가 학원에 등록되는 api
     @PostMapping("/invite/teacher")
-    public ResponseEntity<String> inviteTeacherToInstitute(@RequestParam(value = "token") String token) throws Exception {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.joinTeacherToInstitute(token));
+    public ResponseEntity<Map<String, String>> inviteTeacherToInstitute(@RequestParam(value = "token") String token) throws Exception {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", userService.joinTeacherToInstitute(token));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
 }

@@ -75,7 +75,8 @@ public class ApiAttendController {
     ){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT")))  { // 학원만 생성 가능
             return ResponseEntity.ok().body(attendService.createSingleAttend(user, schedule_id, student_id));
-        } else return ResponseEntity.ok().build();
+        }
+        else return ResponseEntity.badRequest().build();
     }
 
     //////////////////////////////////////////////////////////
@@ -87,7 +88,8 @@ public class ApiAttendController {
             @AuthenticationPrincipal CustomUser user,
             @RequestBody UpdateAttendListRequest request){
         if(user != null ) {
-            return ResponseEntity.ok().body(attendService.updateAttends(user, request));
+            attendService.updateAttends(user, request);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
@@ -102,7 +104,9 @@ public class ApiAttendController {
             @RequestParam(value = "attend_id") Long attend_id
     ) {
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) { // 학원만 삭제 가능
-            return ResponseEntity.ok().body(attendService.deleteSingleAttend(user, attend_id));
-        } else return ResponseEntity.ok().body("학원 계정만 접근이 가능합니다.");
+            attendService.deleteSingleAttend(user, attend_id);
+            return ResponseEntity.ok().build();
+        }
+        else return ResponseEntity.badRequest().build();
     }
 }

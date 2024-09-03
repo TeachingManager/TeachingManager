@@ -37,6 +37,7 @@ public class ApiInstituteController {
     // 학원 추가
 
     @PostMapping("/api/institute")
+
     public ResponseEntity<Map<String, String>> signup(@RequestBody AddInstituteRequest request) {
         String email = request.getEmail();
         Map<String, String> response = new HashMap<>();
@@ -92,10 +93,10 @@ public class ApiInstituteController {
 
     // 회원탈퇴 api
     @PutMapping("/api/delete/institute")
-    public ResponseEntity<String> delete_Institute(@AuthenticationPrincipal CustomUser user){
+    public ResponseEntity<Object> delete_Institute(@AuthenticationPrincipal CustomUser user){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
-            return ResponseEntity.ok()
-                    .body(instService.delete_Institute(user));
+            instService.delete_Institute(user);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }

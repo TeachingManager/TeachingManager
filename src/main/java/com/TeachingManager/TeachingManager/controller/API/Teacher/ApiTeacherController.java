@@ -65,8 +65,8 @@ public class ApiTeacherController {
     // 회원탈퇴 api
     @PutMapping("/api/delete/teacher") ResponseEntity<String> delete_Teacher(@AuthenticationPrincipal CustomUser user){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
-            return ResponseEntity.ok()
-                    .body(teacherService.delete_Teacher(user));
+            teacherService.delete_Teacher(user);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }

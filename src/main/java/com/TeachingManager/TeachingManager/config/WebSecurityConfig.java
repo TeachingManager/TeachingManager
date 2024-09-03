@@ -1,14 +1,14 @@
 package com.TeachingManager.TeachingManager.config;//package com.TeachingManager.TeachingManager.config;
 
-import com.TeachingManager.TeachingManager.EventHandler.InstitutonAuthenticationFailureHandler;
+import com.TeachingManager.TeachingManager.EventHandler.CustomAuthenticationFailureHandler;
 import com.TeachingManager.TeachingManager.EventHandler.OAuth2SuccessHandler;
 import com.TeachingManager.TeachingManager.Service.User.CustomUserDetailServiceImpl;
 import com.TeachingManager.TeachingManager.Service.oauth.OAuth2UserCustomService;
 import com.TeachingManager.TeachingManager.config.Authentication.CustomAuthenticationProvider;
+import com.TeachingManager.TeachingManager.config.EntryPoints.CustomEntryPoint;
 import com.TeachingManager.TeachingManager.config.jwt.JweInfo;
 import com.TeachingManager.TeachingManager.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,9 +35,9 @@ public class WebSecurityConfig{
     private final TokenProvider tokenProvider;
     private final JweInfo jweInfo;
     private final CustomUserDetailServiceImpl userDetailService;
-//    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    private final InstitutonAuthenticationFailureHandler institutonAuthenticationFailureHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomEntryPoint customEntryPoint;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
@@ -55,20 +55,30 @@ public class WebSecurityConfig{
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
         configuration.setAllowCredentials(true);
 
+        // 구글, 네이버, 다음만
+        CorsConfiguration configurationEmail = new CorsConfiguration();
+        configurationEmail.setAllowedOriginPatterns(Arrays.asList("*"));
+        configurationEmail.setAllowedMethods(Arrays.asList("GET", "POST"));
+        configurationEmail.setAllowedHeaders(Arrays.asList("*")); // 허용할 헤더
+        configurationEmail.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 적용
+        source.registerCorsConfiguration("/api/**", configuration); // 모든 경로에 대해 적용
+
+        source.registerCorsConfiguration("/password/change", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/email/locked/prove", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/email/initial/prove", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/invite/teacher", configurationEmail); // 이메일 링크에서 오는 것
 
         return source;
     }
 
-
-    //     HTTP 의 웹 기반 보안 구성
+//     HTTP 의 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-
                         .requestMatchers("/api/login","/login","/api/accessToken", "/signup/institute", "/institute",
                                 "/signup/teacher","/signup/social/teacher", "/oauth2/authorization/google",
                                 "/api/email/initial/prove","/email/initial/prove","/api/email/locked/prove","/email/locked/prove",
@@ -83,6 +93,8 @@ public class WebSecurityConfig{
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
 
                 )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customEntryPoint))
                 // oAUTH 2.0 로그인
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
                         .loginPage("/login")

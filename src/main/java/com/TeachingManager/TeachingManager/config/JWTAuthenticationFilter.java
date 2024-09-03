@@ -91,7 +91,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("inputToken = " + inputToken);
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                sendErrorResponse(request,response,"404");
             }
 
             // 토큰 유효성 검사.
@@ -100,7 +100,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
             else{
-                throw new RuntimeException("유효하지 않은 토큰으로 접근 시도함.");
+                sendErrorResponse(request,response,"404");
             }
             return;
         }
@@ -120,8 +120,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         else{
             System.out.println("유효하지 않은 토큰이었음, token = " + token);
-            throw new ForbiddenAccessException("접근불가능합니다.");
-
+            sendErrorResponse(request,response,"404");
         }
 
         // Spring Security 에 있는 다양한 필터가 연쇄적으로 인증 검사를 하는데, 다음 필터 검사로 넘어가라는 뜻.
@@ -143,5 +142,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         return queryParams;
+    }
+
+    private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response, String state) {
+        if(state.equals("404")) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        if(state.equals("403")) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
     }
 }
