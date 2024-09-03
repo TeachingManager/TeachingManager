@@ -37,6 +37,9 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+//	테스트용 H2 DB
+	testImplementation 'com.h2database:h2'
+
 	
 //	스프링 시큐리티 관련
 	implementation 'org.springframework.boot:spring-boot-starter-security'
