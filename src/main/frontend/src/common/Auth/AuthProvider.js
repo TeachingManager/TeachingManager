@@ -33,11 +33,29 @@ export const AuthProvider = ({ children }) => {
             );
             console.log(response);
             if (response.status === 201) {
-                setToken(response.data.accessToken);
-                localStorage.setItem('token', response.data.accessToken);
-                setIsAuthenticated(true);
-                console.log('token 설정완료');
-                return true;
+                // if문으로 작성..
+                if(checkTokenValidity(response.data.accessToken)){
+                    // 토큰이 유효 하면
+                    setToken(response.data.accessToken);
+                    localStorage.setItem('token', response.data.accessToken);
+                    setIsAuthenticated(true);
+                    console.log('토큰 설정 완료')
+                    return true
+                }
+                else {
+                    // 토큰 유효 하지 않다면
+                    return false;
+
+                }
+
+
+
+
+                // setToken(response.data.accessToken);
+                // localStorage.setItem('token', response.data.accessToken);
+                // setIsAuthenticated(true);
+                // console.log('token 설정완료');
+                // return true;
             }
         } catch (error) {
             console.error('Login error', error);
