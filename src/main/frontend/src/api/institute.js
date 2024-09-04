@@ -28,3 +28,20 @@ export const loginUser = async (requestData) => {
         console.error(error)
     }
 }
+
+export const getUserInfo = async() => {
+    const token = localStorage.getItem('token')
+    console.log(`기관조회 토큰${token} `)
+    try {
+        const response = await axios.get('http://localhost:8080/api/institute', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        
+        console.log(response.data)
+        return(response.data)
+    } catch(error) {
+        console.error(error);
+        throw error;
+    }}

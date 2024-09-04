@@ -29,19 +29,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/students",
-    element: <Students />,
+    element: <ProtectedRoute><Students /></ProtectedRoute>,
   },
   {
     path: "/students/attendance/:id",
-    element: <StudentAttendance/>
+    element: <ProtectedRoute><StudentAttendance/></ProtectedRoute>
   },
   {
     path: "/teachers",
-    element: <Teachers />
+    element: <ProtectedRoute><Teachers /></ProtectedRoute>
   },
   {
     path: "/calendar",
-    element: <Calendars />
+    element: <ProtectedRoute><Calendars /></ProtectedRoute>
   },
   {
     path: "/login",

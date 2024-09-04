@@ -16,7 +16,9 @@ import logo from '../../assets/TeachingManager.svg';
 import { useAuth } from '../../common/Auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { loginUser } from '../../api/institute';
+import { getUserInfo, loginUser } from '../../api/institute';
+import { useRecoilState } from 'recoil';
+import { institueListState } from '../../common/Auth/recoilAtom';
 
 function Copyright(props) {
   return (
@@ -40,6 +42,7 @@ export default function SignIn() {
   const { login, isAuthenticated } = useAuth(); // useAuth 훅 사용
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [institute, setInstitute] = useRecoilState(institueListState);
   console.log("login page is")
   console.log(isAuthenticated)
   
@@ -67,10 +70,16 @@ export default function SignIn() {
 
     const result = await login(requestData)
     console.log(result)
-    if (result === true)
-      navigate('/home')
+    if (result === true){
+      // const userInfo = await getUserInfo(); // getUserInfo 호출
+      //   setInstitute(userInfo); // Recoil 상태에 학원 정보 저장
+      //   console.log("User info:", userInfo);
+
+        navigate('/home');
+    }
       
-   
+      
+    
 
     // try {
     //   await login(email, password);

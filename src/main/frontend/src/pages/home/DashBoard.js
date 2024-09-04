@@ -6,6 +6,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import PeopleIcon from '@mui/icons-material/People';
 import dayjs from 'dayjs';
+import { useRecoilState } from 'recoil';
+import { institueListState } from '../../common/Auth/recoilAtom';
 
 const data = [
   { icon: <EventIcon />, label: "Events left this week", value: 0 },
@@ -55,11 +57,11 @@ const eventsData = {
 const DashBoard = () => {
   const selectedDate = dayjs(); // 오늘 날짜로 고정
   const events = eventsData[selectedDate.format('YYYY-MM-DD')] || [];
-
+  const [userInfo, setUserInfo] = useRecoilState(institueListState)
   return (
     <Box sx={{ padding: 4, backgroundColor: '#e3f2fd', minHeight: '100vh' }}>
       <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-        Welcome back, Amanda!
+        {userInfo.institute_name}님 환영합니다!
       </Typography>
       
       <Grid container spacing={3} justifyContent="space-between">
