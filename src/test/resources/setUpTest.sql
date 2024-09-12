@@ -15,3 +15,7 @@ values ('2024-08-08T15:30:15', '메모', '2024-08-08T14:30:15', '타이틀', 'bf
 alter table student alter column id restart with 1;
 insert into student (age, gender, grade, level, name, parent_name, parent_number, phone_number, institute_id)
 values (20, '남', 3, '상', '이학생', '이부모', '01011111111', '01011111111', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c');
+
+alter table attend alter column attend_id restart with 1;
+insert into attend (attendance, schedule_id, student_id)
+values (1, 1, 1);
