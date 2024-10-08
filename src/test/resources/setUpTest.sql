@@ -7,15 +7,25 @@ values ('0dda6019-71af-478c-bd93-0cc55517cbe0', 1, 'ROLE_TEACHER', 'qwe123@gmail
 alter table lecture alter column lecture_id restart with 1;
 insert into lecture (category, fee, grade, name, time, institute_id, teacher_id)
 values ('수학', 100000, '상', '미적', 'TUESDAY-12:30~13:20', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c', '0dda6019-71af-478c-bd93-0cc55517cbe0');
+insert into lecture (category, fee, grade, name, time, institute_id, teacher_id)
+values ('수학', 100000, '상', '미적11', 'TUESDAY-12:30~13:20', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c', '0dda6019-71af-478c-bd93-0cc55517cbe0');
 
 alter table schedule alter column schedule_id restart with 1;
 insert into schedule (end_date, memo, start_date, title, institute_id)
 values ('2024-08-08T15:30:15', '메모', '2024-08-08T14:30:15', '타이틀', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c');
+insert into schedule (end_date, memo, start_date, title, institute_id, lecture_id)
+values ('2024-08-06T15:30:15', '-', '2024-08-06T14:30:15', '미적', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c', '1');
 
 alter table student alter column id restart with 1;
 insert into student (age, gender, grade, level, name, parent_name, parent_number, phone_number, institute_id)
 values (20, '남', 3, '상', '이학생', '이부모', '01011111111', '01011111111', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c');
+insert into student (age, gender, grade, level, name, parent_name, parent_number, phone_number, institute_id)
+values (20, '남', 3, '상', '이학생11', '이부모', '01011111111', '01011111111', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c');
 
 alter table attend alter column attend_id restart with 1;
 insert into attend (attendance, schedule_id, student_id)
 values (1, 1, 1);
+
+alter table enroll alter column enroll_id restart with 1;
+insert into enroll (full_payment, month, payed_fee, year, lecture_id, student_id)
+values (0, 8, 0, 2024, 1, 1);
