@@ -1,24 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Checkbox, Box, Typography } from '@mui/material';
-
+import axios from 'axios';
+import { selectedDateState } from '../../common/Auth/recoilAtom';
+import { useRecoilState } from 'recoil';
 
 const CheckTutionTable = () => {
-  const initialRows = [
-    { id: 1, name: '홍길동', course: 'React 기초', teacher: '김선생', fee: 50000, paymentstatus: false },
-    { id: 2, name: '이순신', course: '자바스크립트 고급', teacher: '박선생', fee: 75000, paymentstatus: false },
-    { id: 3, name: '강감찬', course: 'CSS 디자인', teacher: '이선생', fee: 60000, paymentstatus: false },
-    { id: 4, name: '김유신', course: 'HTML 기초', teacher: '최선생', fee: 45000, paymentstatus: false },
-    { id: 5, name: '유관순', course: 'Python 기초', teacher: '장선생', fee: 55000, paymentstatus: false },
-    { id: 6, name: '안중근', course: 'JavaScript 고급', teacher: '박선생', fee: 80000, paymentstatus: false },
-    { id: 7, name: '윤봉길', course: 'React 고급', teacher: '이선생', fee: 70000, paymentstatus: false },
-    { id: 8, name: '신사임당', course: 'HTML/CSS 디자인', teacher: '김선생', fee: 48000, paymentstatus: false },
-    { id: 9, name: '세종대왕', course: 'Kotlin 기초', teacher: '최선생', fee: 60000, paymentstatus: false },
-    { id: 10, name: '장보고', course: 'Swift 기초', teacher: '박선생', fee: 65000, paymentstatus: false },
-  ];
-
-  const [rows, setRows] = useState(initialRows);
+  const [feeList, setFeeList] = useState([]);
+  const [rows, setRows] = useState([]);
   const [editing, setEditing] = useState(false);
+  const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
+
+  useEffect(() => {
+    const fetchFeebyMonth = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://localhost:8080/api/fee?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
+          },
+        });
+        
+        const dataWithId = response.data.map((item, index) => ({
+          ...item,
+          id: `${item.student_id}-${item.lecture_id}-${index}`, // Create a unique ID
+          paymentstatus: item.fullPaid, // Set initial payment status
+        }));
+
+        setFeeList(dataWithId); // Store data with IDs
+        setRows(dataWithId); // Set the rows for DataGrid
+
+      } catch (error) {
+        console.error("월별 수강료 조회 중 오류 발생", error);
+      }
+    };
+
+    fetchFeebyMonth();
+  }, [selectedDate]);
 
   const handleEditToggle = () => {
     setEditing(!editing);
@@ -41,21 +59,21 @@ const CheckTutionTable = () => {
       align: 'center',
     },
     {
-      field: 'name',
+      field: 'student_name',
       headerName: '이름',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'course',
+      field: 'lecture_name',
       headerName: '강좌제목',
       flex: 2,
       headerAlign: 'center',
       align: 'center',
     },
     {
-      field: 'teacher',
+      field: 'teacher_name',
       headerName: '담당 선생님',
       flex: 1,
       headerAlign: 'center',
@@ -70,7 +88,7 @@ const CheckTutionTable = () => {
       align: 'center',
     },
     {
-      field: 'paymentstatus',
+      field: 'fullPaid',
       headerName: '납부 현황',
       flex: 1,
       headerAlign: 'center',
@@ -92,8 +110,10 @@ const CheckTutionTable = () => {
   return (
     <div className='check-tution-table'>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'flex-end', alignItems: 'center', mb: 1, mr: 7, height: '100%' }}>
-        <Typography sx = {{fontSize: 20, align: 'center', flexGrow: 1, ml: 1}}>
-          8월 총 수강료 : 100,0000
+        <Typography sx={{ fontSize: 20, align: 'center', flexGrow: 1, ml: 1 }}>
+          {selectedDate.month() + 1}월 총 수강료 : {
+            feeList.reduce((acc, fee) => acc + fee.fee, 0).toLocaleString()
+          }
         </Typography>
         <Button onClick={handleEditToggle} sx={{ fontSize: 16 }}>
           {editing ? '납부 상태 수정 완료' : '납부 상태 수정'}

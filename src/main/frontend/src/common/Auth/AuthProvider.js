@@ -40,11 +40,11 @@ export const AuthProvider = ({ children }) => {
                     localStorage.setItem('token', response.data.accessToken);
                     setIsAuthenticated(true);
                     console.log('토큰 설정 완료')
-                    return true
+                    return {isVaild : true}
                 }
                 else {
                     // 토큰 유효 하지 않다면
-                    return false;
+                    return {isVaild : false, response}
 
                 }
 
@@ -57,10 +57,12 @@ export const AuthProvider = ({ children }) => {
                 // console.log('token 설정완료');
                 // return true;
             }
+
         } catch (error) {
             console.error('Login error', error);
             setIsAuthenticated(false);
-            throw error;
+            const response = error.response ? error.response : null;
+            return {isVaild : false, response}
         }
     };
 

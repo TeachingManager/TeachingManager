@@ -1,15 +1,64 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Box, TextField, Avatar, Checkbox, Button, Modal, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { getStudent } from '../../api/student';
+import { enrollLecture } from '../../api/lecture';
 
-export default function StudentListModal({ open, handleClose, students, selectedStudentIds, handleToggle }) {
+export default function StudentListModal({ open, handleClose, selectedLectureId}) {
+  // 연도와 월을 저장하는 변수
+  const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const years = [2024, 2025, 2026];
+
   const colors = ['#f44336', '#3f51b5', '#4caf50', '#ff9800', '#9c27b0'];
+  // 연도와 월을 설정하는 변수
+  const [year, setYear] = useState(null);
+  const [month, setMonth] = useState(null);
+  // 학생 관련 변수
+  const [studentList, setStudentList] = useState([])
+  const [selectedStudentIds, setSelectedStudentIds] = useState([])
+  const handleYearChange = (event)=> {
+    setYear(event.target.value)
+  }
+  const handleMonthChange = (event)=> {
+    setMonth(event.target.value)
+  }
+  // 정보 초기화
+  const clearInfo = ()=> {
+    setYear(null)
+    setMonth(null)
+    setSelectedStudentIds([])
+  }
+  // 모든 학생 조회
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        // getStudent는 학생들의 리스트를 반환한다.
+        const result = await getStudent();
+        setStudentList(result)
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
+    fetchStudents();
+  }, []);
+
+  // 체크 박스 클릭
+  const handleToggle = (id) => {
+    setSelectedStudentIds((prev) =>
+      prev.includes(id) ? prev.filter((studentId) => studentId !== id) : [...prev, id]
+    );
+  };
+  
   const columns = [
     {
       field: 'checkbox',
-      headerName: '체크 박스',
-      width: 150,
+      headerName: '',
+      width: 70,
       renderCell: (params) => (
         <Checkbox
           checked={selectedStudentIds.includes(params.row.id)}
@@ -21,11 +70,71 @@ export default function StudentListModal({ open, handleClose, students, selected
     { field: 'age', headerName: '나이', width: 110 },
   ];
 
-  const rows = students.map((student) => ({
+  const handleToggleStudent = (studentId) => {
+    setSelectedStudentIds((prevSelectedIds) => {
+      if (prevSelectedIds.includes(studentId)) {
+        return prevSelectedIds.filter((id) => id !== studentId);
+      } else {
+        return [...prevSelectedIds, studentId];
+      }
+    });
+  };
+
+
+  const rows = studentList.map((student) => ({
     id: student.id,
     name: student.name,
     age: student.age,
   }));
+
+  // 강의 개설 관련
+
+  const requestOpenLecture = async ()=> {
+    
+    if (!isFormValid()) {
+      alert("연도와 월을 선택하고 최소 한 명의 학생을 선택해야 합니다.");
+      return;
+    }
+
+    const selectedIds = selectedStudentIds.map((studentId) => studentId);
+
+    const openLectureDTO = {
+      lecture_id : selectedLectureId,
+      year : year,
+      month: month,
+      studentIdList : selectedIds
+    }
+    
+    const requestEnroll = await enrollLecture(openLectureDTO);
+
+    if(requestEnroll.isValid == true){
+      alert('강의가 개설되었습니다!')
+
+      handleClose()
+      clearInfo()
+    }
+    else{
+      alert('이미 개설된 강의입니다.')
+
+      handleClose()
+      clearInfo()
+    }
+
+    
+
+
+
+
+  }
+
+  const isFormValid = () => {
+    return year !== null && month !== null && selectedStudentIds.length > 0;
+  };
+
+
+
+
+
 
   return (
     <Modal
@@ -33,6 +142,7 @@ export default function StudentListModal({ open, handleClose, students, selected
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      handleToggle = {handleToggleStudent}
     >
       <Box 
         sx={{ 
@@ -47,6 +157,49 @@ export default function StudentListModal({ open, handleClose, students, selected
           borderRadius: 2 
         }}
       > 
+        <Typography sx = {{
+            mb: 1,
+            pb: 1,
+            fontFamily: 'Roboto', fontSize: '18px', fontWeight: 500, 
+            textAlign: 'center',
+        }}>
+            개설 연도와 월을 선택해주세요.
+        </Typography>
+      
+        <Box display="flex" gap={1}>
+          <FormControl sx={{ width: '50%' }}>
+            <InputLabel id="year-label">연도</InputLabel>
+            <Select
+              labelId="year-label"
+              id="year-select"
+              value={year}
+              label="연도"
+              onChange={handleYearChange}
+            > 
+              {years.map(year => (
+                <MenuItem key={year} value={year}>{year}년</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ width: '50%' }}>
+            <InputLabel id="month-label">월</InputLabel>
+            <Select
+              labelId="month-label"
+              id="month-select"
+              value={month}
+              label="월"
+              onChange={handleMonthChange}
+            >
+              {months.map(month => (
+                <MenuItem key = {month} value = {month}>{month}월</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+
+
         <Typography sx = {{
             mb: 1,
             pb: 1,
@@ -74,26 +227,25 @@ export default function StudentListModal({ open, handleClose, students, selected
                   p: 1,
                 }}
               >
-                {selectedStudentIds.map((studentId, index) => {
-                  const student = students.find((s) => s.id === studentId);
-                  return (
+                {rows
+                  .filter((s) => selectedStudentIds.includes(s.id)) // Only show selected students
+                  .map((s, index) => (
                     <Avatar
-                      key={studentId}
+                      key={s.id}
                       sx={{
                         fontSize: 14,
-                        width: 40,
-                        height: 40,
+                        width: 50,
+                        height: 50,
                         backgroundColor: colors[index % colors.length],
                         color: '#fff',
                       }}
                     >
-                      {student.name}
+                      {s.name}
                     </Avatar>
-                  );
-                })}
-              </Box>
-            ),
-          }}
+                  ))}
+                      </Box>
+                    ),
+                  }}
           sx={{
             '& .MuiOutlinedInput-root': {
               display: 'flex',
@@ -121,7 +273,8 @@ export default function StudentListModal({ open, handleClose, students, selected
         </Box>
 
         <Box sx={{ textAlign: 'right', mt: 2 }}>
-          <Button sx={{
+          <Button onClick = {requestOpenLecture}
+            sx={{
                 fontSize: '14px', // 폰트 크기 설정
                 fontWeight: 'bold', // 폰트 굵기 설정
             }}>

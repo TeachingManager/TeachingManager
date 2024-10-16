@@ -12,7 +12,7 @@ export default function Calendars(){
         <div className='calendarpage-container'>
             <Topbar/> 
             <Sidenavbar/>
-            <ScheduleManager/>
+            <CalendarContents/>
             
         </div>
     )

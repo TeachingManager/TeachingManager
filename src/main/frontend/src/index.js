@@ -21,7 +21,7 @@ import LectureAttendancePage from './pages/lecture/LectureAttendancePage';
 import HomePage from './pages/home/HomePage';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import TeacherSignUp from './pages/login/TeacherSignUp'
 const router = createBrowserRouter([
   {
     path: "/home",
@@ -48,8 +48,12 @@ const router = createBrowserRouter([
     element: <LoginPage />
   },
   {
-    path: "/signup",
+    path: "/signup/institute",
     element: <SignUp />
+  },
+  {
+    path: "/signup/teacher",
+    element: <TeacherSignUp />
   },
   {
     path: "/example",

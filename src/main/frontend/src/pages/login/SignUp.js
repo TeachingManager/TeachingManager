@@ -80,7 +80,7 @@ export default function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            회원가입
+            학원 회원가입
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -166,11 +166,11 @@ export default function SignUp() {
               sx={{ mt: 3, mb: 2 }}
               disabled={!isFormValid} // 폼이 유효하지 않으면 버튼을 비활성화
             >
-              회원가입
+               회원가입
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   이미 계정이 있으신가요? 로그인하러가기
                 </Link>
               </Grid>

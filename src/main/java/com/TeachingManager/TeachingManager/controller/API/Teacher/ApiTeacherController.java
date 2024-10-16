@@ -42,9 +42,9 @@ public class ApiTeacherController {
     }
 
 
-    // 요청한 기관의 모든 선생님 정보 정달하는 api
+    // 요청한 기관의 모든 선생님 정보 정달하는 api @RequestBody FindOneTeacherRequest request
     @GetMapping("/api/teacher")
-    public ResponseEntity<FindAllTeacherResponse> search_allTeacher(@AuthenticationPrincipal CustomUser user, @RequestBody FindOneTeacherRequest request) {
+    public ResponseEntity<FindAllTeacherResponse> search_allTeacher(@AuthenticationPrincipal CustomUser user) {
         if (user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_allTeacher(user.getPk()));
         }

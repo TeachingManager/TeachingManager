@@ -1,19 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, IconButton, Button, Stack, TextField, Modal, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import BookIcon from '@mui/icons-material/Book';
+import { fetchLectureByMonth, getOneLecture } from '../../api/lecture';
+import { teacherListState, lectureListState } from '../../common/Auth/recoilAtom';
+import { getTeachersInfo } from '../../api/institute';
+import { selectedDateState } from '../../common/Auth/recoilAtom';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import { CourseModal } from './CourseModal';
 
 export default function OpenLectureList() {
     const navigate = useNavigate();
-  const [rows, setRows] = useState([
-    { id: 1, subject: '수학', name: '기초 수학', teacher: '홍길동', day: '월', time: '10:00-11:30', fee: '100000' },
-    { id: 2, subject: '영어', name: '기초 영어', teacher: '김철수', day: '화', time: '13:00-14:30', fee: '120000' }
-  ]);
+    const [teachers, setTeachers] = useRecoilState(teacherListState);
+    const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
+  // const [rows, setRows] = useState([
+  //   { id: 1, category: '수학', name: '기초 수학', teacher: '홍길동', day: '월', time: '10:00-11:30', fee: '100000' },
+
+  // ]); 지워도됨
+
+
+
+
+  const [lectureIdList, setLectureIdList] = useState([])
+  const [lectureList, setLectureList] = useState([])
+
+
+  useEffect(() => {
+    const fetchLectureListByMonth = async () => {
+      try {
+        const fetchResult = await fetchLectureByMonth({
+          "month" : selectedDate.month() + 1,
+           "year" : selectedDate.year()
+        });
+        // fetchResult는 강의 리스트의 배열을 반환함.
+        console.log(fetchResult)
+
+        // 해당 월에 해당하는 강의 id 리스트
+        const ids = fetchResult.map((r) => r.lecture_id)
+        setLectureIdList(ids)
+
+
+
+        const lectures = await Promise.all(
+          ids.map((id) => getOneLecture(id))
+        )
+        setLectureList(lectures);
+        console.log(lectures)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchTeachers = async () => {
+      try {
+        const fetchResult = await getTeachersInfo();
+        const teacherdata = fetchResult.data.teacherList;
+        setTeachers(teacherdata);
+        console.log(teacherdata)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+
+
+    fetchLectureListByMonth();
+    fetchTeachers();
+
+    console.log('wait');
+    console.log(selectedDate)
+
+
+  }, [selectedDate]);
+
+
+
+
+
+
+
+
+
+
 
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -31,17 +106,20 @@ export default function OpenLectureList() {
 
   const handleClose = () => {
     setOpen(false);
-    setIsEditing(false);
-    setNewLecture({
-      id: '',
-      subject: '',
-      name: '',
-      teacher: '',
-      day: [],
-      time: [null, null],
-      fee: ''
-    });
-  };
+  }
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   setIsEditing(false);
+  //   setNewLecture({
+  //     id: '',
+  //     subject: '',
+  //     name: '',
+  //     teacher: '',
+  //     day: [],
+  //     time: [null, null],
+  //     fee: ''
+  //   });
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,6 +177,13 @@ export default function OpenLectureList() {
 
   const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
 
+  const formatTimeForDisplayMultiLine = (convertedTime) => {
+    if (!Array.isArray(convertedTime)) {
+      return '';  // convertedTime이 배열이 아니면 빈 문자열 반환
+    }
+    return convertedTime.map(item => `${item.day}: ${item.time}`).join('\n');
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ height: 600}}>
@@ -108,32 +193,122 @@ export default function OpenLectureList() {
         <Button>선택 강의 폐강</Button>
         <DataGrid
           columns={[
-            { field: 'id', headerName: 'ID', width: 70 },
-            { field: 'subject', headerName: '과목', width: 90 },
-            { field: 'name', headerName: '강의명', width: 130 },
-            { field: 'teacher', headerName: '담당선생님', width: 90 },
-            { field: 'day', headerName: '요일', width: 150 },
-            { field: 'time', headerName: '강의 시각', width: 130 },
-            { field: 'fee', headerName: '수강료', width: 130 },
+            { field: 'id', headerName: 'ID', width: 70, align: 'center', headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  {params.value}
+                </div>
+              )
+             },
+             { field: 'category', headerName: '과목', width: 90, align: 'center', headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  {params.value}
+                </div>
+              )
+             },
+             { field: 'name', headerName: '강의명', width: 130, align: 'center', headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  {params.value}
+                </div>
+              )
+             },
+             { field: 'grade', headerName: '학년', width: 90 , align: 'center', headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  {params.value}
+                </div>
+              )
+            },
+            { field: 'teacherId', headerName: '담당선생님', width: 90, headerAlign: 'center',
+              renderCell: (params) => {
+                const teacher = teachers.find((t) => t.teacher_id === params.value);
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    {teacher ? teacher.teacher_name : 'Unknown'}
+                  </div>
+                );
+              },
+            },
+            {
+              field: 'convetedTime',
+              headerName: '시간',
+              width: 300,
+              headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  <Typography style={{ whiteSpace: 'pre-line', lineHeight: 2, textAlign: 'center' }}>
+                    {params.value ? formatTimeForDisplayMultiLine(params.value) : '시간 정보 없음'}
+                  </Typography>
+                </div>
+              )
+            },
+            { field: 'fee', headerName: '수강료', width: 130, headerAlign: 'center',
+              renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  {params.value}
+                </div>
+              )
+             },
             {
                 field: 'attendance',
                 headerName: '출석현황',
+                headerAlign: 'center',
                 width: 150,
                 renderCell: (params) => {
                   const handleClick = () => {
-                    const studentId = params.row.id;
-                    navigate(`/openlecture/attendance/${studentId}`); // useNavigate로 URL 이동
+                    const lectureId = params.row.id;
+                    const year = selectedDate.year();
+                    const month = selectedDate.month() + 1; // month는 0부터 시작하므로 +1
+                  
+                    // URL에 lectureId와 year, month를 파라미터로 추가
+                    navigate(`/openlecture/attendance/${lectureId}?year=${year}&month=${month}`);
                   };
+                  
     
                   return (
+                    <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  >
                     <IconButton onClick={handleClick}>
                       <BookIcon />
                     </IconButton>
+                    </div>
                   );
                 },
-              },
+              },{
+                field : 'courseAdjustment',
+                headerName: '수강 정정',
+                headerAlign: 'center',
+                width: 150,
+                renderCell: (params) => {
+                  return(
+                    <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '100%',
+                    }}>
+                      <IconButton onClick={()=>setOpen(true)}>
+                        <HowToRegIcon/>
+                      </IconButton>
+                      <CourseModal open={open} handleClose={handleClose} lectureId={params.row.id} month = {selectedDate.month() + 1} year = {selectedDate.year()} />
+                    </div>
+                  )
+                }
+
+              }
           ]}
-          rows={rows}
+          rows={lectureList}
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
@@ -141,8 +316,29 @@ export default function OpenLectureList() {
             setSelectedRows(newSelectionModel);
           }}
           onRowDoubleClick={handleRowDoubleClick}
+          getRowHeight={() => 'auto'}
         />
-        <Modal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {/* <Modal
           open={open}
           onClose={handleClose}
         >
@@ -188,8 +384,8 @@ export default function OpenLectureList() {
               )}
             </Stack>
           </Box>
-        </Modal>
-      </Box>
+        </Modal> */}
+      </Box> 
     </LocalizationProvider>
   );
 }
