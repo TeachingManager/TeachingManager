@@ -22,6 +22,10 @@ public interface ScheduleRepository {
 
     Set<ScheduleResponse> filter_by_date (UUID institute_id, LocalDate date_info);
 
+    Set<ScheduleResponse> find_by_day (UUID institute_id, LocalDate date_info);
+
+
+
     // 특정 강의의 이번달 일정 가져오는 함수
     Set<Schedule> filter_by_lecture(UUID institute_id, Long lecture_id, LocalDate date_info);
 

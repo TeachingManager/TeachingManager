@@ -29,9 +29,9 @@ public class EnrollRepositoryImpl implements EnrollRepository {
     @Override
     public List<EnrolledStudentsResponse> findEnrolledStudentsByDate(UUID institute_id, Long lecture_id, Short year, Short month) {
         return em.createQuery(
-                "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse(en.lecture.lecture_id, en.student.id, " +
-                        "en.student.name, en.year, en.month, en.payed_fee," +
-                        " en.fullPayment, en.lecture.fee) " +
+                "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledStudentsResponse(en.lecture.lecture_id, en.student.id, en.enroll_id, " +
+                        "en.student.name, en.year, en.month, en.payed_fee, " +
+                        "en.fullPayment, en.lecture.fee) " +
                         "FROM Enroll en " +
                         "WHERE en.lecture.institute.pk = : instituteId " +
                         "AND en.lecture.lecture_id = :lectureId " +
