@@ -122,6 +122,28 @@ public class JpaScheduleRepository  implements ScheduleRepository{
                 .collect(Collectors.toSet()); // Stream을 Set으로 변환
     }
 
+    // 학원의 특정 하루의 일정
+    @Override
+    public Set<ScheduleResponse> find_by_day(UUID institute_id, LocalDate date_info) {
+        // 시작시간과 끝 시간
+        LocalDateTime startOfDay = date_info.atStartOfDay();
+        LocalDateTime endOfDay = date_info.atTime(LocalTime.MAX);
+        return em.createQuery(
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse(sc.schedule_id, sc.title, sc.start_date, sc.end_date, sc.memo," +
+                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName))" +
+                                "FROM Schedule sc " +
+                                "LEFT JOIN sc.lecture lec " + // 이걸 추가해야, lecture 가 null 인 경우도 추가할 수 있다는 듯 하다.
+                                "WHERE sc.institute.pk = :institute_id " +
+                                "AND sc.start_date <= :endOfMonth " +
+                                "AND sc.end_date >= :startOfMonth", ScheduleResponse.class)
+                .setParameter("defaultLectureName", "기본일정")
+                .setParameter("institute_id", institute_id)
+                .setParameter("startOfMonth", startOfDay)
+                .setParameter("endOfMonth", endOfDay)
+                .getResultStream() // Stream<Schedule> 반환
+                .collect(Collectors.toSet()); // Stream을 Set으로 변환
+    }
+
     // 특정강의의 이번달 일정 가져오는 함수.
     @Override
     public Set<Schedule> filter_by_lecture(UUID institute_id, Long lecture_id, LocalDate date_info) {

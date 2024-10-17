@@ -23,8 +23,8 @@ public class FeeRepositoryImpl implements FeeRepository{
 
         return em.createQuery(
                     "SELECT new com.TeachingManager.TeachingManager.DTO.Fee.EnrollYearFeeResponse(" +
-                                " :currentYear," +
-                                " :currentMonth," +
+                                " fee.year," +
+                                " fee.month," +
                                 " COALESCE(fee.totalMonthFee, 0), " + // 없으면 0 반환.
                                 " COALESCE(fee.payedMonthFee, 0)) " + // 없으면 0 반환.
                         "FROM Fee fee " +

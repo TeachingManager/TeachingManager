@@ -40,6 +40,16 @@ public class ApiScheduleController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+//  자기 자신학원, 또는 소속되어있는 학원의 하루 일정을 가져오는 API
+    @GetMapping("/api/Schedule/day")
+    public ResponseEntity<DayScheduleResponse> OneDaySchedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
+        System.out.println("request = " + request.getDate_info());
+        if (user != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDay(user, request.getDate_info()));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
     /*     일정 디테일    */
     @GetMapping("/api/Schedule/{pk}")
     public ResponseEntity<ScheduleResponse> Detail_Schedule(@PathVariable("pk") Long pk,@AuthenticationPrincipal CustomUser user ) {
