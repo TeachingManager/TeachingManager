@@ -2,6 +2,7 @@ package com.TeachingManager.TeachingManager.Service.Schedule;
 
 
 import com.TeachingManager.TeachingManager.DTO.Schedule.AddScheduleRequest;
+import com.TeachingManager.TeachingManager.DTO.Schedule.*;
 import com.TeachingManager.TeachingManager.DTO.Schedule.MonthScheduleResponse;
 import com.TeachingManager.TeachingManager.DTO.Schedule.UpdateScheduleRequest;
 import com.TeachingManager.TeachingManager.domain.CustomUser;
@@ -20,7 +21,7 @@ public interface ScheduleService {
     Schedule create_schedule(AddScheduleRequest request, CustomUser user);
 
 
-    Schedule update_schedule(CustomUser user,Long scid, UpdateScheduleRequest request);
+    Schedule update_schedule(CustomUser user, Long scid, UpdateScheduleRequest request);
 
     void delete_schedule(CustomUser user, Long scid);
 
@@ -35,9 +36,12 @@ public interface ScheduleService {
 //    전체 검색
 
     MonthScheduleResponse searchAll_schedule(CustomUser user);
-//    날짜 단위
 
+
+//    날짜 단위
+// 특정 달의 일정 가져오기
     MonthScheduleResponse searchAll_scheduleByDate(CustomUser user, LocalDate date_info);
-//    강의 단위 검색
-//    강사 단위 검색
+
+// 특정 하루의 일정 가져오기
+    DayScheduleResponse searchAll_scheduleByDay(CustomUser user, LocalDate date_info);
 }

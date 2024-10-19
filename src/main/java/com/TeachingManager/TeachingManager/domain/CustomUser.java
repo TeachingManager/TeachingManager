@@ -25,14 +25,8 @@ public class CustomUser implements UserDetails {
     // 학원과 강사 모두가 사용할 속성들
     @Id
     @GeneratedValue(generator = "UUID")
-//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "pk", nullable = false, updatable = false)
     private UUID pk;
-
-//    @PrePersist
-//    public void generateId() {
-//        this.pk = UUID.randomUUID(); // UUID 자동 생성
-//    }
 
     @Column(name = "email",updatable = false, nullable = false, unique = true)
     private String email;

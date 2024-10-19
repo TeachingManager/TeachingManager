@@ -16,7 +16,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleServiceImpl  implements  ScheduleService{
+public class  ScheduleServiceImpl  implements  ScheduleService{
 
     private final ScheduleRepository scheduleRepo;
     private final InstituteRepository instituteRepo;
@@ -100,6 +100,19 @@ public class ScheduleServiceImpl  implements  ScheduleService{
 
         return new MonthScheduleResponse(scheduleRepo.filter_by_date(institute_id, date_info));
 
+    }
+
+    @Override
+    public DayScheduleResponse searchAll_scheduleByDay(CustomUser user, LocalDate date_info) {
+        UUID institute_id;
+
+        if (user instanceof Teacher){
+            institute_id = ((Teacher) user).getInstitutePk();
+        } else {
+            institute_id = user.getPk();
+        }
+
+        return new DayScheduleResponse(scheduleRepo.find_by_day(institute_id, date_info));
     }
 
 

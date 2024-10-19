@@ -59,7 +59,6 @@ public class ApiTeacherController {
                     .body(new TeacherInfo(sc));
         }
         return ResponseEntity.badRequest().build();
-
     }
 
     // 회원탈퇴 api
