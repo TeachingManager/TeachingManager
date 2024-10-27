@@ -69,19 +69,6 @@ export default function LectureList() {
 
   }, []);
 
-  const getTeacherName = (id) => {
-    let result = ''; // let으로 선언하여 값을 재할당 가능하게 함
-  teachers.forEach((teacher) => {
-    if (teacher.teacher_id === id) {
-      result = teacher.teacher_name;
-    }
-  });
-
-  return result;
-  }
-
-
-
 
   const handleTeacherChange = (event) => {
     setNewLecture(prevState => ({
@@ -189,9 +176,6 @@ const formatTimeForDisplay = (time) => {
   
     const result = await addLecture(lectureWithFormattedTime);
 
-
-    console.log(lectureWithFormattedTime)
-    console.log(result)
     if (result.isValid === true) {
       alert("강의가 추가 되었습니다!");
   
@@ -247,21 +231,18 @@ const formatTimeForDisplay = (time) => {
       // ChangeLecture 함수에 pk와 lectureWithFormattedTime 전달
       const result = await changeLecture(lectureWithFormattedTime, pk); // pk 추가
   
-      console.log(lectureWithFormattedTime);
-      console.log(result);
-  
-      if (result.isValid === true) {
+      if (result.status === 200) {
         alert("강의가 수정되었습니다!");
   
         // 강의 목록을 업데이트
-        setRows(prevRows =>
+        setLectures(prevRows =>
           prevRows.map(row =>
             row.id === newLecture.id
               ? {
                   ...lectureWithFormattedTime,
                   category: lectureWithFormattedTime.subject,
                   teacherId: lectureWithFormattedTime.teacher,
-                  convetedTime: convertTimeStringToArray(result.response.data.time) // 시간 변환
+                  convetedTime: convertTimeStringToArray(result.data.time) // 시간 변환
                 }
               : row
           )
@@ -368,16 +349,6 @@ const formatTimeForDisplay = (time) => {
 
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
 
-  // const handleToggleStudent = (studentId) => {
-  //   setSelectedStudentIds((prevSelectedIds) => {
-  //     if (prevSelectedIds.includes(studentId)) {
-  //       return prevSelectedIds.filter((id) => id !== studentId);
-  //     } else {
-  //       return [...prevSelectedIds, studentId];
-  //     }
-  //   });
-  // };
-
   const areFieldsFilled = () => {
     const { subject, name, teacher, fee, time } = newLecture;
 
@@ -407,7 +378,7 @@ const formatTimeForDisplay = (time) => {
         </Stack>
         <DataGrid
           columns={[
-            { field: 'id', headerName: 'ID', width: 70, align: 'center', headerAlign: 'center',
+            { field: 'id', headerName: 'ID', width: 70, align: 'center', headerAlign: 'center', 
               renderCell: (params) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
                   {params.value}
@@ -489,6 +460,9 @@ const formatTimeForDisplay = (time) => {
           onRowSelectionModelChange={(newSelectionModel) => setSelectedRows(newSelectionModel)}
           onRowDoubleClick={handleRowDoubleClick}
           getRowHeight={() => 'auto'}
+          columnVisibilityModel={{
+            id: false, // ID 열을 숨김
+          }}
         />
         <Modal
           open={open}
@@ -547,13 +521,13 @@ const formatTimeForDisplay = (time) => {
                             label={`${korean} 시작 시간`}  // 한글 요일로 시작 시간 표시
                             value={newLecture.time[englishDay]?.startTime || null}
                             onChange={(newValue) => handleTimeChange(englishDay, newValue, newLecture.time[englishDay]?.endTime || null)}
-                            renderInput={(params) => <TextField {...params} />}
+                            slotProps={{ textField: { fullWidth: true } }}
                           />
                           <TimePicker
                             label={`${korean} 종료 시간`}  // 한글 요일로 종료 시간 표시
                             value={newLecture.time[englishDay]?.endTime || null}
                             onChange={(newValue) => handleTimeChange(englishDay, newLecture.time[englishDay]?.startTime || null, newValue)}
-                            renderInput={(params) => <TextField {...params} />}
+                            slotProps={{ textField: { fullWidth: true } }}
                           />
                         </Stack>
                       </Box>
@@ -562,7 +536,7 @@ const formatTimeForDisplay = (time) => {
 
               <TextField label="수강료" name="fee" value={newLecture.fee} onChange={handleChange} />
               {isEditing ? (
-                <Button variant="contained" onClick={handleEditLecture}>수정</Button>
+                <Button variant="contained" onClick={handleEditLecture} disabled={!areFieldsFilled()} >수정</Button>
               ) : (
                 <Button variant="contained" onClick={handleAddLecture} disabled={!areFieldsFilled()}>추가</Button>
               )}

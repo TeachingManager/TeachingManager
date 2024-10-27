@@ -8,6 +8,7 @@ import {
   ListItemText,
   Button,
   Grid,
+  Backdrop
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
@@ -19,11 +20,14 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 600,
+  height: 800,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  display: 'flex',
+  flexDirection: 'column', // Column layout to ensure '닫기' button stays at the bottom
 };
 
 const listStyle = {
@@ -72,12 +76,10 @@ export const CourseModal = ({ open, handleClose, lectureId, year, month }) => {
 }, [lectureId]);
     
 useEffect(() => {
-    const enrolledStudentsId = enrolledStudents.map(student => student.student_id);
-    const notEnrolled = allStudents.filter(student => !enrolledStudentsId.includes(student.id));
+  const enrolledStudentsId = enrolledStudents.map(student => student.student_id);
+  const notEnrolled = allStudents.filter(student => !enrolledStudentsId.includes(student.id));
 
-    setNotEnrolledStudents(notEnrolled); // 상태 업데이트
-    console.log(notEnrolled); // 필터링된 결과를 로그로 출력
-
+  setNotEnrolledStudents(notEnrolled); // 상태 업데이트
 }, [enrolledStudents, allStudents]);
 
 
@@ -95,16 +97,18 @@ useEffect(() => {
     try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-            `http://localhost:8080/api/enroll/student?lecture_id=35&student_id=${studentId}&year=${year}&month=${month}`,{},
+            `http://localhost:8080/api/enroll/student?lecture_id=${lectureId}&student_id=${studentId}&year=${year}&month=${month}`,{},
             {
                 headers: {
                     Authorization: `Bearer ${token}`,  // Bearer 토큰 설정
                   },
             }
           )
-        
+        console.log(response.data)
+        const enroll_id = response.data.enroll_id
         if (response.status === 200) {
             const student = notEnrolledStudents.find((s) => s.id === studentId);
+            console.log(student)
             setEnrolledStudents([...enrolledStudents,
                 {
                     lecture_id: lectureId,
@@ -115,9 +119,11 @@ useEffect(() => {
                     lecture_fee: 40000, 
                     payed_fee: 0, 
                     fullPaid: false,
+                    enroll_id : enroll_id
                 },
     ]);
-    setNotEnrolledStudents(notEnrolledStudents.filter((s) => s.id !== studentId));
+    setNotEnrolledStudents((prev) => prev.filter((s) => s.id !== studentId));
+    alert("수강 신청 완료.")
 
         }
     } catch(error) {
@@ -127,20 +133,58 @@ useEffect(() => {
 
   };
 
-  const handleUnenroll = (studentId) => {
-    const student = enrolledStudents.find((s) => s.id === studentId);
-    setEnrolledStudents(enrolledStudents.filter((s) => s.student_id !== studentId));
-    setNotEnrolledStudents([...notEnrolledStudents,
+  const handleUnenroll = async (studentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      // Find the student with the given studentId
+      const student = enrolledStudents.find((s) => s.student_id === studentId);
+  
+      if (!student) {
+        console.error("학생을 찾을 수 없습니다.");
+        return;
+      }
+      console.log(student)
+      // Make the API call to unenroll the student
+      const response = await axios.put(
+        `http://localhost:8080/api/delete/enroll/student?lecture_id=${student.lecture_id}&student_id=${student.student_id}&enroll_id=${student.enroll_id}&year=${year}&month=${month}`,{},
         {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer token 설정
+          },
+        }
+      );
+      
+      if (response.status === 200) {
+        // Update the enrolledStudents and notEnrolledStudents lists
+        setEnrolledStudents(enrolledStudents.filter((s) => s.student_id !== studentId));
+        setNotEnrolledStudents([
+          ...notEnrolledStudents,
+          {
             id: student.student_id, 
             name: student.student_name,
-            // you may add other fields like age, grade if needed
+            // You may add other fields like age, grade if needed
           },
-    ]);
+        ]);
+        alert("수강 취소 완료.")
+      } else {
+        console.error("수강 취소 중 오류 발생:", response.statusText);
+      }
+    } catch (error) {
+      console.error("수강 취소 중 오류 발생:", error);
+    }
   };
+  
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleClose} slots={{
+      backdrop: Backdrop, // 새로운 방식으로 백드롭을 지정
+    }}
+    slotProps={{
+      backdrop: {
+        sx: { backgroundColor: "rgba(0, 0, 0, 0.2)" }, // 50% 불투명한 검정 배경
+      },
+    }}>
       <Box sx={style}>
         <Typography variant="h6" component="h2">
           수강 정정 - 강의 ID: {lectureId}
@@ -187,9 +231,11 @@ useEffect(() => {
             </List>
           </Grid>
         </Grid>
-        <Button onClick={handleClose} sx={{ mt: 2 }} fullWidth variant="outlined">
-          닫기
-        </Button>
+        <Box mt="auto">
+          <Button onClick={handleClose} sx={{ mt: 2 }} fullWidth variant="outlined">
+            닫기
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

@@ -49,9 +49,6 @@ public class Enroll {
 
     public void updatePaidFee(int payed_amount){
         this.payed_fee = payed_amount;
-        if(this.payed_fee >= lecture.getFee()){
-            this.fullPayment = true;
-        }
+        this.fullPayment = this.payed_fee >= lecture.getFee();
     }
-
 }

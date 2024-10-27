@@ -140,10 +140,7 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="아이디 기억하기"
-            />
+
             <Button
               type="submit"
               fullWidth

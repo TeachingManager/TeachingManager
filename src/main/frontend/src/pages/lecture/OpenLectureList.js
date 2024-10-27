@@ -19,14 +19,14 @@ export default function OpenLectureList() {
     const navigate = useNavigate();
     const [teachers, setTeachers] = useRecoilState(teacherListState);
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
-  // const [rows, setRows] = useState([
-  //   { id: 1, category: '수학', name: '기초 수학', teacher: '홍길동', day: '월', time: '10:00-11:30', fee: '100000' },
+    const [selectedLecture, setSelectedLecture] = useState(null); // 선택된 강의 상태 추가
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태 추가
 
-  // ]); 지워도됨
-
-
-
-
+    const handleOpenModal = (lecture) => {
+      setSelectedLecture(lecture); // 선택된 강의 정보 저장
+      setIsModalOpen(true); // 모달 열림 상태로 설정
+  };
+  
   const [lectureIdList, setLectureIdList] = useState([])
   const [lectureList, setLectureList] = useState([])
 
@@ -78,16 +78,7 @@ export default function OpenLectureList() {
     console.log(selectedDate)
 
 
-  }, [selectedDate]);
-
-
-
-
-
-
-
-
-
+  }, [selectedDate, isModalOpen]);
 
 
   const [open, setOpen] = useState(false);
@@ -107,19 +98,6 @@ export default function OpenLectureList() {
   const handleClose = () => {
     setOpen(false);
   }
-  // const handleClose = () => {
-  //   setOpen(false);
-  //   setIsEditing(false);
-  //   setNewLecture({
-  //     id: '',
-  //     subject: '',
-  //     name: '',
-  //     teacher: '',
-  //     day: [],
-  //     time: [null, null],
-  //     fee: ''
-  //   });
-  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -152,17 +130,6 @@ export default function OpenLectureList() {
     return timeRange.map(time => time ? time.format('HH:mm') : '').join('-');
   };
 
-  const handleRowDoubleClick = (params) => {
-    const lecture = { 
-      ...params.row, 
-      time: params.row.time.split('-').map(time => dayjs(`1970-01-01T${time}:00`)),
-      day: params.row.day.split(', ')
-    };
-    setNewLecture(lecture);
-    setIsEditing(true);
-    setOpen(true);
-  };
-
   const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -184,13 +151,18 @@ export default function OpenLectureList() {
     return convertedTime.map(item => `${item.day}: ${item.time}`).join('\n');
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedLecture(null); // 선택된 강의 정보 초기화
+};
+
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ height: 600}}>
         <Button onClick={()=> {
             navigate("/lecture")
         }}>강의 개설</Button>
-        <Button>선택 강의 폐강</Button>
         <DataGrid
           columns={[
             { field: 'id', headerName: 'ID', width: 70, align: 'center', headerAlign: 'center',
@@ -298,11 +270,18 @@ export default function OpenLectureList() {
                       width: '100%',
                       height: '100%',
                     }}>
-                      <IconButton onClick={()=>setOpen(true)}>
-                        <HowToRegIcon/>
+                      <IconButton onClick={() => handleOpenModal(params.row)}>
+                       <HowToRegIcon/>
                       </IconButton>
-                      <CourseModal open={open} handleClose={handleClose} lectureId={params.row.id} month = {selectedDate.month() + 1} year = {selectedDate.year()} />
-                    </div>
+                      {selectedLecture && (
+                      <CourseModal
+                          open={isModalOpen}
+                          handleClose={handleCloseModal}
+                          lectureId={selectedLecture.id}
+                          month={selectedDate.month() + 1}
+                          year={selectedDate.year()}
+                      />
+                  )}                    </div>
                   )
                 }
 
@@ -315,76 +294,11 @@ export default function OpenLectureList() {
           onRowSelectionModelChange={(newSelectionModel) => {
             setSelectedRows(newSelectionModel);
           }}
-          onRowDoubleClick={handleRowDoubleClick}
           getRowHeight={() => 'auto'}
+          columnVisibilityModel={{
+            id: false, // ID 열을 숨김
+          }}
         />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {/* <Modal
-          open={open}
-          onClose={handleClose}
-        >
-          <Box sx={modalStyle}>
-            <Typography variant="h6" component="h2">{isEditing ? '강의 정보 수정' : '강의 정보 입력'}</Typography>
-            <Stack spacing={2} mt={2}>
-              <TextField label="과목" name="subject" value={newLecture.subject} onChange={handleChange} />
-              <TextField label="강의명" name="name" value={newLecture.name} onChange={handleChange} />
-              <TextField label="담당선생님" name="teacher" value={newLecture.teacher} onChange={handleChange} />
-              <FormControl>
-                <InputLabel>요일</InputLabel>
-                <Select
-                  multiple
-                  value={newLecture.day}
-                  onChange={handleDayChange}
-                  renderValue={(selected) => selected.join(', ')}
-                >
-                  {daysOfWeek.map((day) => (
-                    <MenuItem key={day} value={day}>
-                      <Checkbox checked={newLecture.day.indexOf(day) > -1} />
-                      <ListItemText primary={day} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TimePicker
-                label="시작 시간"
-                value={newLecture.time[0]}
-                onChange={(newValue) => handleTimeChange(0, newValue)}
-                renderInput={(params) => <TextField {...params} />}
-              />
-              <TimePicker
-                label="종료 시간"
-                value={newLecture.time[1]}
-                onChange={(newValue) => handleTimeChange(1, newValue)}
-                renderInput={(params) => <TextField {...params} />}
-              />
-              <TextField label="수강료" name="fee" value={newLecture.fee} onChange={handleChange} />
-              {isEditing ? (
-                <Button variant="contained" onClick={()=>{}}>수정</Button>
-              ) : (
-                <Button variant="contained" onClick={()=>{}}>추가</Button>
-              )}
-            </Stack>
-          </Box>
-        </Modal> */}
       </Box> 
     </LocalizationProvider>
   );

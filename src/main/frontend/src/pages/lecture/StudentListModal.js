@@ -15,8 +15,8 @@ export default function StudentListModal({ open, handleClose, selectedLectureId}
 
   const colors = ['#f44336', '#3f51b5', '#4caf50', '#ff9800', '#9c27b0'];
   // 연도와 월을 설정하는 변수
-  const [year, setYear] = useState(null);
-  const [month, setMonth] = useState(null);
+  const [year, setYear] = useState('');
+  const [month, setMonth] = useState('');
   // 학생 관련 변수
   const [studentList, setStudentList] = useState([])
   const [selectedStudentIds, setSelectedStudentIds] = useState([])

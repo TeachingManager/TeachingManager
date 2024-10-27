@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
 @RequiredArgsConstructor
 public class ApiScheduleController {
@@ -32,20 +34,20 @@ public class ApiScheduleController {
 
     // 자기 자신학원, 또는 소속되어있는 학원의 특정 달 정보를 가져온다. (이번달)
     @GetMapping("/api/Schedule")
-    public ResponseEntity<MonthScheduleResponse> Schedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
-        System.out.println("request = " + request.getDate_info());
+    public ResponseEntity<MonthScheduleResponse> Schedule(@AuthenticationPrincipal CustomUser user, @RequestParam LocalDate date_info){
+        System.out.println("request = " + date_info);
         if (user != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDate(user, request.getDate_info()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDate(user, date_info));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 //  자기 자신학원, 또는 소속되어있는 학원의 하루 일정을 가져오는 API
     @GetMapping("/api/Schedule/day")
-    public ResponseEntity<DayScheduleResponse> OneDaySchedule(@AuthenticationPrincipal CustomUser user, @RequestBody MonthScheduleRequest request){
-        System.out.println("request = " + request.getDate_info());
+    public ResponseEntity<DayScheduleResponse> OneDaySchedule(@AuthenticationPrincipal CustomUser user, @RequestParam LocalDate date_info){
+        System.out.println("request = " + date_info);
         if (user != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDay(user, request.getDate_info()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.searchAll_scheduleByDay(user, date_info));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

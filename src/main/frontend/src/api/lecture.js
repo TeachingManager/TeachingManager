@@ -94,11 +94,18 @@ export const changeLecture = async (LectureData, pk) => {
     // if(isTokenExpired(token)){
     //     return true;
     // }
-    console.log(pk)
-    console.log(token)
     console.log(LectureData)
+
+    const formmatedLectureData = {
+        name : LectureData.name,
+        category : LectureData.subject,
+        grade : LectureData.grade,
+        fee : LectureData.fee,
+        time : LectureData.time,
+        teacherId : LectureData.teacher
+    }
     try {
-        const response = await axios.put(`http://localhost:8080/api/lectures/${pk}`, LectureData, {
+        const response = await axios.put(`http://localhost:8080/api/lectures/${pk}`, formmatedLectureData, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

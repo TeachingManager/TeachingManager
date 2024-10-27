@@ -22,6 +22,7 @@ import HomePage from './pages/home/HomePage';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TeacherSignUp from './pages/login/TeacherSignUp'
+import NotFound from './common/NotFound.js';
 const router = createBrowserRouter([
   {
     path: "/home",
@@ -56,34 +57,32 @@ const router = createBrowserRouter([
     element: <TeacherSignUp />
   },
   {
-    path: "/example",
-    element: (
-        <ProtectedRoute><Example /></ProtectedRoute>
-    )
-  },
-  {
     path:"/lecture",
-    element: <LecturePage/>
+    element: <ProtectedRoute><LecturePage/></ProtectedRoute>
   },
   {
     path:'/openlecture',
-    element: <OpenLecturePage/>
+    element: <ProtectedRoute><OpenLecturePage/></ProtectedRoute>
   },
   {
     path: "/openlecture/attendance/:id",
-    element: <LectureAttendancePage/>
+    element: <ProtectedRoute><LectureAttendancePage/></ProtectedRoute>
   },
   {
     path: "/fee",
-    element : <FeePage/>
+    element : <ProtectedRoute><FeePage/></ProtectedRoute>
   },
   {
     path: "/studentfee",
-    element : <StudentFeePage/>
+    element : <ProtectedRoute><StudentFeePage/></ProtectedRoute>
   },
   {
     path: '/home',
-    element: <HomePage/>
+    element: <ProtectedRoute><HomePage/></ProtectedRoute>
+  },
+  {
+    path: "*", // 정의되지 않은 모든 경로를 잡아내는 와일드카드 경로
+    element: <NotFound />, // NotFound 컴포넌트로 처리
   }
 ]);
 

@@ -10,7 +10,7 @@ const CheckTutionTable = () => {
   const [rows, setRows] = useState([]);
   const [editing, setEditing] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
-
+  const [monthFee, setMonthFee] = useState(0)
   useEffect(() => {
     const fetchFeebyMonth = async () => {
       try {
@@ -21,9 +21,9 @@ const CheckTutionTable = () => {
           },
         });
         
-        const dataWithId = response.data.map((item, index) => ({
+        const dataWithId = response.data.map((item) => ({
           ...item,
-          id: `${item.student_id}-${item.lecture_id}-${index}`, // Create a unique ID
+          id: item.enroll_id,
           paymentstatus: item.fullPaid, // Set initial payment status
         }));
 
@@ -35,11 +35,61 @@ const CheckTutionTable = () => {
       }
     };
 
-    fetchFeebyMonth();
-  }, [selectedDate]);
+    const fetchFee = async () => {
+      try{
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`http://localhost:8080/api/fee/year?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
+          },
+        })
+        console.log("fetchfee", response.data)
+        const matchingMonthFee = response.data.find(item => item.year === selectedDate.year() && item.month === selectedDate.month() + 1);
+        setMonthFee(matchingMonthFee.payedMonthFee);
+      } catch (error) {
+        console.error("수강료 조회중 오류 발생", error)
+      }
+    }
 
-  const handleEditToggle = () => {
-    setEditing(!editing);
+    fetchFeebyMonth();
+    fetchFee();
+  }, [selectedDate, editing]);
+  //
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const handleEditToggle = async () => {
+    if (editing) {
+      // Save changes to the server when editing is finished
+      try {
+        const token = localStorage.getItem("token");
+        
+        // Iterate through each row and send an update request if the payment status has changed
+        for (const row of rows) {
+          const paidAmount = row.paymentstatus ? row.fee : 0; // If checked, full fee; otherwise, set 0
+  
+          await axios.put(`http://localhost:8080/api/fee`, {}, {
+            params: {
+              year: selectedDate.year(),
+              month: selectedDate.month() + 1,
+              enroll_id: row.id,
+              paid_amount: paidAmount,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          // Add a slight delay between each request
+          await sleep(300); // Delay in milliseconds (e.g., 300ms)
+        }
+  
+        alert("납부 상태가 성공적으로 업데이트되었습니다.");
+      } catch (error) {
+        console.error("납부 상태 업데이트 중 오류 발생:", error);
+      }
+    }
+  
+    setEditing(!editing); // Toggle edit mode
   };
 
   const handleCheckboxChange = (id) => {
@@ -88,22 +138,21 @@ const CheckTutionTable = () => {
       align: 'center',
     },
     {
-      field: 'fullPaid',
+      field: 'paymentstatus',
       headerName: '납부 현황',
       flex: 1,
       headerAlign: 'center',
       align: 'center',
-      renderCell: (params) =>
-        editing ? (
+      renderCell: (params) => {
+        return editing ? (
           <Checkbox
             checked={params.row.paymentstatus}
             onChange={() => handleCheckboxChange(params.row.id)}
           />
-        ) : params.value ? (
-          '납부완료'
         ) : (
-          '미납'
-        ),
+          <span>{params.row.paymentstatus ? '납부완료' : '미납'}</span>
+        );
+      },
     },
   ];
 
@@ -113,7 +162,7 @@ const CheckTutionTable = () => {
         <Typography sx={{ fontSize: 20, align: 'center', flexGrow: 1, ml: 1 }}>
           {selectedDate.month() + 1}월 총 수강료 : {
             feeList.reduce((acc, fee) => acc + fee.fee, 0).toLocaleString()
-          }
+          } &nbsp;&nbsp;  납입된 수강료 : {monthFee}
         </Typography>
         <Button onClick={handleEditToggle} sx={{ fontSize: 16 }}>
           {editing ? '납부 상태 수정 완료' : '납부 상태 수정'}
@@ -127,6 +176,9 @@ const CheckTutionTable = () => {
         rowHeight={50}
         autoHeight
         style={{ width: '100%' }}
+        columnVisibilityModel={{
+          id: false, // ID 열을 숨김
+        }}
       />
     </div>
   );

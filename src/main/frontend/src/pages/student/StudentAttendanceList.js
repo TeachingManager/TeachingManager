@@ -143,7 +143,7 @@ const StudentAttendanceList = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', p: 3, mx: 'auto', maxWidth: 1600 }}>
+    <Box sx={{ width: '100%', p: 3, mx: 'auto', maxWidth: 1400 }}>
       <Box
         sx={{
           display: 'flex',
