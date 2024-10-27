@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +28,11 @@ public class ApiTokenController {
     public ResponseEntity<SetTokenResponse> login(
             @RequestBody SetTokenRequest request
     ) {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        // Log the incoming request
+        logger.debug("Received login request: {}", request);
+
         // 리캡챠 인증 성공시 로그인 단계
         if(recaptchaService.RecaptchaTest(request.getRecaptchaResponse(),"login")){
             String email = request.getEmail();

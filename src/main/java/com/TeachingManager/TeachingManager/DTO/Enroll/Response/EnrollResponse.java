@@ -32,9 +32,9 @@ public class  EnrollResponse {
     }
 
     public EnrollResponse(Enroll enroll) {
-        this.enroll_id = getEnroll_id();
-        this.year = getYear();
-        this.month = getMonth();
+        this.enroll_id = enroll.getEnroll_id();//getEnroll_id();
+        this.year = enroll.getYear();
+        this.month = enroll.getMonth();
         this.lecture_name = getLecture_name();
         this.lecture_id = getLecture_id();
         this.student_id = getStudent_id();

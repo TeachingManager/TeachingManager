@@ -1,144 +1,117 @@
-import React, { useState } from 'react';
-import { Box, TextField, Avatar, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Grid,
+} from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600, // 크기를 넉넉히 조정
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+const listStyle = {
+  maxHeight: 200, // 스크롤을 위한 최대 높이 설정
+  overflow: 'auto', // 내용이 넘칠 경우 스크롤 활성화
+};
 
 export default function Example() {
-  const students = [
-    { id: 1, name: '홍길동', age: 20 },
-    { id: 2, name: '김철수', age: 15 },
-    { id: 3, name: '아이유', age: 28 },
+  const dummyEnrolledStudents = [
+    { id: 1, name: "학생 A" },
+    { id: 2, name: "학생 B" },
+    { id: 3, name: "학생 C" },
   ];
 
-  const colors = ['#f44336', '#3f51b5', '#4caf50', '#ff9800', '#9c27b0'];
+  const dummyNotEnrolledStudents = [
+    { id: 4, name: "학생 D" },
+    { id: 5, name: "학생 E" },
+    { id: 6, name: "학생 F" },
+    { id: 7, name: "학생 G" },
+    { id: 8, name: "학생 H" },
+  ];
 
-  // 선택된 학생들의 ID만 저장
-  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState(dummyEnrolledStudents);
+  const [notEnrolledStudents, setNotEnrolledStudents] = useState(dummyNotEnrolledStudents);
 
-  const handleToggle = (studentId) => {
-    setSelectedStudentIds((prevSelectedIds) => {
-      if (prevSelectedIds.includes(studentId)) {
-        return prevSelectedIds.filter((id) => id !== studentId);
-      } else {
-        return [...prevSelectedIds, studentId];
-      }
-    });
+  const handleEnroll = (studentId) => {
+    const student = notEnrolledStudents.find((s) => s.id === studentId);
+    setEnrolledStudents([...enrolledStudents, student]);
+    setNotEnrolledStudents(notEnrolledStudents.filter((s) => s.id !== studentId));
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleUnenroll = (studentId) => {
+    const student = enrolledStudents.find((s) => s.id === studentId);
+    setEnrolledStudents(enrolledStudents.filter((s) => s.id !== studentId));
+    setNotEnrolledStudents([...notEnrolledStudents, student]);
+  };
 
   return (
-    <div>
-      <Button variant="contained" onClick={handleOpen}>
-        학생 선택하기
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box 
-          sx={{ 
-            position: 'absolute', 
-            top: '50%', 
-            left: '50%', 
-            transform: 'translate(-50%, -50%)', 
-            width: 600, 
-            bgcolor: 'background.paper', 
-            boxShadow: 24, 
-            p: 4, 
-            borderRadius: 2 
-          }}
-        >
-          {/* 선택된 학생을 보여주는 입력 박스 */}
-          <TextField
-            variant="outlined"
-            fullWidth
-            label="선택된 학생"
-            disabled
-            InputProps={{
-              startAdornment: (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: 1,
-                    height: '100%',
-                    overflow: 'hidden',
-                    p:1
-                  }}
-                >
-                  {selectedStudentIds.map((studentId, index) => {
-                    const student = students.find((s) => s.id === studentId);
-                    return (
-                      <Avatar
-                        key={studentId}
-                        sx={{
-                          fontSize: 14,
-                          width: 40,
-                          height: 40,
-                          backgroundColor: colors[index % colors.length],
-                          color: '#fff',
-                        }}
-                      >
-                        {student.name}
-                      </Avatar>
-                    );
-                  })}
-                </Box>
-              ),
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                display: 'flex',
-                alignItems: 'center',
-                paddingTop: 0.5,
-                paddingBottom: 0.5,
-              },
-              '& .MuiInputBase-input': {
-                padding: 0,
-                minWidth: 0,
-                width: '1px',
-                flexGrow: 0,
-              },
-            }}
-          />
+    <Modal open={true} onClose={() => {}}>
+      <Box sx={style}>
+        <Typography variant="h6" component="h2">
+          수강 정정 - 강의 ID: 101
+        </Typography>
 
-          {/* 학생 목록 테이블 */}
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">체크 박스</TableCell>
-                  <TableCell align="center">학생 이름</TableCell>
-                  <TableCell align="center">나이</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {students.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell align="center">
-                      <Checkbox
-                        checked={selectedStudentIds.includes(student.id)}
-                        onChange={() => handleToggle(student.id)}
-                      />
-                    </TableCell>
-                    <TableCell align="center">{student.name}</TableCell>
-                    <TableCell align="center">{student.age}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box sx={{ textAlign: 'right', mt: 2 }}>
-            <Button variant="contained" onClick={handleClose}>
-              닫기
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-    </div>
+        <Grid container spacing={2}>
+          {/* 수강 중인 학생 목록 */}
+          <Grid item xs={6}>
+            <Typography variant="subtitle1">수강 중인 학생</Typography>
+            <List sx={listStyle}>
+              {enrolledStudents.map((student) => (
+                <ListItem key={student.id}>
+                  <ListItemText primary={student.name} />
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<PersonRemoveIcon />}
+                    onClick={() => handleUnenroll(student.id)}
+                  >
+                    수강 취소
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+
+          {/* 수강하지 않은 학생 목록 */}
+          <Grid item xs={6}>
+            <Typography variant="subtitle1">수강하지 않은 학생</Typography>
+            <List sx={listStyle}>
+              {notEnrolledStudents.map((student) => (
+                <ListItem key={student.id}>
+                  <ListItemText primary={student.name} />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<PersonAddIcon />}
+                    onClick={() => handleEnroll(student.id)}
+                  >
+                    수강 신청
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+        </Grid>
+        <Button onClick={() => {}} sx={{ mt: 2 }} fullWidth variant="outlined">
+          닫기
+        </Button>
+      </Box>
+    </Modal>
   );
+
 }
