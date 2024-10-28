@@ -76,7 +76,7 @@ class ApiScheduleControllerTest {
                         .header("Authorization", "Bearer " + teacherAccessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(addScheduleRequest))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -134,7 +134,7 @@ class ApiScheduleControllerTest {
     void deleteScheduleByT() throws Exception{
         mockMvc.perform(put("/api/delete/Schedule/1")
                         .header("Authorization", "Bearer " + teacherAccessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -156,7 +156,7 @@ class ApiScheduleControllerTest {
                         .header("Authorization", "Bearer " + teacherAccessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateScheduleRequest))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 }

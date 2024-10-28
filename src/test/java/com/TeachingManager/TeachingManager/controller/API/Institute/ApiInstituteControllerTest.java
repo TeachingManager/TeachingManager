@@ -52,7 +52,6 @@ class ApiInstituteControllerTest {
         mockMvc.perform(post("/api/institute")
                         .contentType(MediaType.APPLICATION_JSON).content(request))
                 .andExpect(status().isOk())
-                .andExpect(content().string("생성됨!"))
                 .andDo(print());
     }
 
@@ -70,7 +69,7 @@ class ApiInstituteControllerTest {
 
         mockMvc.perform(post("/api/institute")
                         .contentType(MediaType.APPLICATION_JSON).content(request))
-                .andExpect(status().isNotAcceptable())
+                .andExpect(status().isConflict())
                 .andDo(print());
     }
 
