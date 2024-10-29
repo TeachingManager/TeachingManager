@@ -85,8 +85,7 @@ class ApiScheduleControllerTest {
     void scheduleByI() throws Exception{
         mockMvc.perform(get("/api/Schedule")
                         .header("Authorization", "Bearer " + instituteAccessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(monthScheduleRequest))
+                        .param("date_info", "2024-08-08"))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
@@ -96,8 +95,7 @@ class ApiScheduleControllerTest {
     void scheduleByT() throws Exception{
         mockMvc.perform(get("/api/Schedule")
                         .header("Authorization", "Bearer " + teacherAccessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(monthScheduleRequest))
+                        .param("date_info", "2024-08-08"))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
