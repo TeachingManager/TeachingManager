@@ -46,10 +46,9 @@ export default function CalendarContents() {
     const fetchTeacher = async(teacher_id) => {
       try{
         const token = localStorage.getItem("token")
-        const response = await axios.get("http://localhost:8080/api/teacher",{
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/teacher`,{
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
-
           },
         })
 
@@ -70,10 +69,9 @@ export default function CalendarContents() {
     const fetchLecture = async(lecture_id) => {
       try {
         const token = localStorage.getItem("token")
-        const response = await axios.get(`http://localhost:8080/api/lectures/${lecture_id}`,{
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/lectures/${lecture_id}`,{
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
-
           },
         })
         
@@ -94,10 +92,9 @@ export default function CalendarContents() {
         const token = localStorage.getItem("token");
         const currentDate = new Date().toISOString().split('T')[0];
 
-        const response = await axios.get("http://localhost:8080/api/Schedule",{
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/Schedule`,{
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
-
           },
           params: {
             date_info: currentDate
@@ -126,13 +123,7 @@ export default function CalendarContents() {
     }
   
     fetchSchedule();
-
-
-
-  
   }, []);
-  
-
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -300,17 +291,13 @@ export default function CalendarContents() {
         initialView="dayGridMonth"
         events={events}
         locale='ko'
-        //dateClick={handleDateClick}
         editable={false}
-        //eventDrop={handleEventDrop}
-        //eventClick={handleEventClick}
         eventContent={renderEventContent}
         eventTimeFormat={{
           hour: 'numeric',
           minute: '2-digit',
           meridiem: true
-        }
-        }
+        }}
         aspectRatio={1.5}
         displayEventEnd= {true}
       />

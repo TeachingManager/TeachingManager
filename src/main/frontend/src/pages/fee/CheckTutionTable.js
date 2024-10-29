@@ -11,11 +11,12 @@ const CheckTutionTable = () => {
   const [editing, setEditing] = useState(false);
   const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
   const [monthFee, setMonthFee] = useState(0)
+  
   useEffect(() => {
     const fetchFeebyMonth = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/fee?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/fee?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -38,7 +39,7 @@ const CheckTutionTable = () => {
     const fetchFee = async () => {
       try{
         const token = localStorage.getItem("token")
-        const response = await axios.get(`http://localhost:8080/api/fee/year?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/fee/year?year=${selectedDate.year()}&month=${selectedDate.month() + 1}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -54,20 +55,18 @@ const CheckTutionTable = () => {
     fetchFeebyMonth();
     fetchFee();
   }, [selectedDate, editing]);
-  //
+  
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const handleEditToggle = async () => {
     if (editing) {
-      // Save changes to the server when editing is finished
       try {
         const token = localStorage.getItem("token");
         
-        // Iterate through each row and send an update request if the payment status has changed
         for (const row of rows) {
-          const paidAmount = row.paymentstatus ? row.fee : 0; // If checked, full fee; otherwise, set 0
+          const paidAmount = row.paymentstatus ? row.fee : 0;
   
-          await axios.put(`http://localhost:8080/api/fee`, {}, {
+          await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/fee`, {}, {
             params: {
               year: selectedDate.year(),
               month: selectedDate.month() + 1,
@@ -79,7 +78,6 @@ const CheckTutionTable = () => {
             },
           });
   
-          // Add a slight delay between each request
           await sleep(300); // Delay in milliseconds (e.g., 300ms)
         }
   

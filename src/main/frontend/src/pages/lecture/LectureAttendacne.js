@@ -36,10 +36,10 @@ const LectureAttendance = () => {
     const fetchAttendanceData = async () => {
       const token = localStorage.getItem("token")
       try {
-        const response = await axios.get(`http://localhost:8080/api/attend/lecture?lecture_id=${lectureId}&date_info=${year}-${month}-01`,{
-            headers: {
-                Authorization: `Bearer ${token}`  // Authorization 헤더에 Bearer 토큰 설정
-            }
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/attend/lecture?lecture_id=${lectureId}&date_info=${year}-${month}-01`, {
+          headers: {
+            Authorization: `Bearer ${token}`  // Authorization 헤더에 Bearer 토큰 설정
+          }
         });
         const data = response.data;
 
@@ -108,7 +108,7 @@ const LectureAttendance = () => {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.put('http://localhost:8080/api/attend', {
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/attend`, {
         attendList: updatedAttendList
       }, {
         headers: {

@@ -27,7 +27,7 @@ const style = {
   boxShadow: 24,
   p: 4,
   display: 'flex',
-  flexDirection: 'column', // Column layout to ensure '닫기' button stays at the bottom
+  flexDirection: 'column',
 };
 
 const listStyle = {
@@ -41,12 +41,12 @@ export const CourseModal = ({ open, handleClose, lectureId, year, month }) => {
   const [notEnrolledStudents, setNotEnrolledStudents] = useState([]);
   const [allStudents, setAllStudents] = useState([]);
   useEffect(() => {
-    const token = localStorage.getItem("token"); // 토큰을 localStorage에서 가져온다고 가정
+    const token = localStorage.getItem("token");
     
     axios
-        .get(`http://localhost:8080/api/enroll/students?lecture_id=${lectureId}&year=${year}&month=${month}`, {
+        .get(`${process.env.REACT_APP_API_BASE_URL}/api/enroll/students?lecture_id=${lectureId}&year=${year}&month=${month}`, {
             headers: {
-                Authorization: `Bearer ${token}`  // Authorization 헤더에 Bearer 토큰 설정
+                Authorization: `Bearer ${token}`
             }
         })
         .then((response) => {
@@ -60,7 +60,6 @@ export const CourseModal = ({ open, handleClose, lectureId, year, month }) => {
     
         const fetchStudents = async () => {
             try {
-              // getStudent는 학생들의 리스트를 반환한다.
               const result = await getStudent();
               setAllStudents(result)
               console.log(result)
@@ -70,7 +69,6 @@ export const CourseModal = ({ open, handleClose, lectureId, year, month }) => {
           };
         
 
-
         fetchStudents();
 
 }, [lectureId]);
@@ -79,28 +77,17 @@ useEffect(() => {
   const enrolledStudentsId = enrolledStudents.map(student => student.student_id);
   const notEnrolled = allStudents.filter(student => !enrolledStudentsId.includes(student.id));
 
-  setNotEnrolledStudents(notEnrolled); // 상태 업데이트
+  setNotEnrolledStudents(notEnrolled);
 }, [enrolledStudents, allStudents]);
-
-
-
-
-
-
-
-
-
-
-  // 수강 신청
 
   const handleEnroll = async (studentId) => {
     try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-            `http://localhost:8080/api/enroll/student?lecture_id=${lectureId}&student_id=${studentId}&year=${year}&month=${month}`,{},
+            `${process.env.REACT_APP_API_BASE_URL}/api/enroll/student?lecture_id=${lectureId}&student_id=${studentId}&year=${year}&month=${month}`,{},
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,  // Bearer 토큰 설정
+                    Authorization: `Bearer ${token}`
                   },
             }
           )
@@ -129,15 +116,12 @@ useEffect(() => {
     } catch(error) {
         console.error("수강 신청 중 오류 발생", error);
     }
-
-
   };
 
   const handleUnenroll = async (studentId) => {
     try {
       const token = localStorage.getItem("token");
       
-      // Find the student with the given studentId
       const student = enrolledStudents.find((s) => s.student_id === studentId);
   
       if (!student) {
@@ -145,25 +129,22 @@ useEffect(() => {
         return;
       }
       console.log(student)
-      // Make the API call to unenroll the student
       const response = await axios.put(
-        `http://localhost:8080/api/delete/enroll/student?lecture_id=${student.lecture_id}&student_id=${student.student_id}&enroll_id=${student.enroll_id}&year=${year}&month=${month}`,{},
+        `${process.env.REACT_APP_API_BASE_URL}/api/delete/enroll/student?lecture_id=${student.lecture_id}&student_id=${student.student_id}&enroll_id=${student.enroll_id}&year=${year}&month=${month}`,{},
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Bearer token 설정
+            Authorization: `Bearer ${token}`
           },
         }
       );
       
       if (response.status === 200) {
-        // Update the enrolledStudents and notEnrolledStudents lists
         setEnrolledStudents(enrolledStudents.filter((s) => s.student_id !== studentId));
         setNotEnrolledStudents([
           ...notEnrolledStudents,
           {
             id: student.student_id, 
             name: student.student_name,
-            // You may add other fields like age, grade if needed
           },
         ]);
         alert("수강 취소 완료.")
@@ -178,11 +159,11 @@ useEffect(() => {
 
   return (
     <Modal open={open} onClose={handleClose} slots={{
-      backdrop: Backdrop, // 새로운 방식으로 백드롭을 지정
+      backdrop: Backdrop,
     }}
     slotProps={{
       backdrop: {
-        sx: { backgroundColor: "rgba(0, 0, 0, 0.2)" }, // 50% 불투명한 검정 배경
+        sx: { backgroundColor: "rgba(0, 0, 0, 0.2)" },
       },
     }}>
       <Box sx={style}>
@@ -191,7 +172,6 @@ useEffect(() => {
         </Typography>
 
         <Grid container spacing={2}>
-          {/* 수강 중인 학생 목록 */}
           <Grid item xs={6}>
             <Typography variant="subtitle1">수강 중인 학생</Typography>
             <List>
@@ -211,7 +191,6 @@ useEffect(() => {
             </List>
           </Grid>
 
-          {/* 수강하지 않은 학생 목록 */}
           <Grid item xs={6}>
             <Typography variant="subtitle1">수강하지 않은 학생</Typography>
             <List>
@@ -240,5 +219,3 @@ useEffect(() => {
     </Modal>
   );
 };
-
-
