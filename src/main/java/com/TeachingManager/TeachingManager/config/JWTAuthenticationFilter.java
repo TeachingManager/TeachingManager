@@ -44,6 +44,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader  = request.getHeader("Authorization");
         String token;
 
+        System.out.println("필터 요청된 url = " + url);
+
 
         //OAuth 2.0 관련 url 들
         if("/login/oauth2/code/naver".equals(url)
@@ -69,6 +71,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 || ("/password/change".equals(url) && "GET".equalsIgnoreCase(method))
                 || ("/invite/teacher".equals(url) && "GET".equalsIgnoreCase(method))
         ) {
+            System.out.println("토큰 없이 접근하는 링크임!");
             filterChain.doFilter(request, response);
             return;
         }
@@ -79,12 +82,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 || ("/password/change".equals(url) && queryParams.containsKey("token")) // 비밀번호 변경
                 || ("/invite/teacher".equals(url) && queryParams.containsKey("token")) // 선생님 초대 api
         ){
+            System.out.println("resetToken, joinToken 이 있음!");
+            System.out.println("해당 토큰 = " + queryParams.get("token"));
             // 토큰 가져와서 복호화
             String inputToken = null;
             try {
-
+                System.out.println("복호화 직전");
                 String decodedToken = URLDecoder.decode(queryParams.get("token"), StandardCharsets.UTF_8);
                 inputToken = JweUtil.decrypt(decodedToken, jweInfo.getSecretKey());
+                System.out.println("복호화 직후");
 
                 System.out.println("queryParams = " + queryParams.get("token"));
                 System.out.println("decodedToken = " + decodedToken);
