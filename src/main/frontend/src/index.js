@@ -23,6 +23,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TeacherSignUp from './pages/login/TeacherSignUp'
 import NotFound from './common/NotFound.js';
+import ChangePassword from './pages/login/ChangePassword.js';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
   {
     path: "*", // 정의되지 않은 모든 경로를 잡아내는 와일드카드 경로
     element: <NotFound />, // NotFound 컴포넌트로 처리
+  },
+  {
+    path: '/change/password',
+    element: <ChangePassword />
   }
 ]);
 
