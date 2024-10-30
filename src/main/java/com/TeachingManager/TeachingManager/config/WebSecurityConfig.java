@@ -50,12 +50,11 @@ public class WebSecurityConfig{
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 허용할 출처
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://teachingmanager.online/")); // 허용할 출처
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메소드
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
         configuration.setAllowCredentials(true);
 
-        //
         CorsConfiguration configurationEmail = new CorsConfiguration();
         configurationEmail.setAllowedOriginPatterns(Arrays.asList("*"));
         configurationEmail.setAllowedMethods(Arrays.asList("GET", "POST"));
@@ -64,7 +63,6 @@ public class WebSecurityConfig{
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration); // 모든 경로에 대해 적용
-
         source.registerCorsConfiguration("/password/change", configurationEmail); // 이메일 링크에서 오는 것
         source.registerCorsConfiguration("/email/locked/prove", configurationEmail); // 이메일 링크에서 오는 것
         source.registerCorsConfiguration("/email/initial/prove", configurationEmail); // 이메일 링크에서 오는 것
@@ -72,6 +70,7 @@ public class WebSecurityConfig{
 
         return source;
     }
+
 
 //     HTTP 의 웹 기반 보안 구성
     @Bean

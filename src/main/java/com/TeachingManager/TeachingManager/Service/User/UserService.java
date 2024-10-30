@@ -78,6 +78,7 @@ public class UserService {
         // mod setNewPassword : 비번 오입력 잠금 풀기
         if (Objects.equals(mod, "setNewPassword")) {
             // email 보내기
+            sendEmail(email,"TeachingManager - 비밀번호 변경용 이메일입니다.","EmailForm/FixPasswordEmail", resetToken);
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
