@@ -188,7 +188,12 @@ public class EnrollServiceImpl implements EnrollService{
 
 
         // 2. 수강 테이블 생성
-        Enroll newEnroll = new Enroll(lecture, student, year, month);
+        Enroll newEnroll = Enroll.builder()
+                .lecture(lecture)
+                .student(student)
+                .year(year)
+                .month(month)
+                .build();
         enrollRepo.save(newEnroll);
         System.out.println("newEnroll = " + newEnroll.getPayed_fee());
         

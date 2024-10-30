@@ -55,7 +55,7 @@ public class WebSecurityConfig{
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
         configuration.setAllowCredentials(true);
 
-        // 구글, 네이버, 다음만
+        //
         CorsConfiguration configurationEmail = new CorsConfiguration();
         configurationEmail.setAllowedOriginPatterns(Arrays.asList("*"));
         configurationEmail.setAllowedMethods(Arrays.asList("GET", "POST"));
