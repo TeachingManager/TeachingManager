@@ -20,7 +20,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../common/Auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { getUserInfo, loginUser, proveUser } from '../../api/institute';
+import { getUserInfo, loginUser, proveUser, sendRecoverPasswordEmail } from '../../api/institute';
 import { useRecoilState } from 'recoil';
 import { institueListState } from '../../common/Auth/recoilAtom';
 
@@ -34,6 +34,7 @@ export default function SignIn() {
   const [institute, setInstitute] = useRecoilState(institueListState);
   const [open, setOpen] = useState(false);  // 모달 열림 상태
   const [email, setEmail] = useState('');   // 입력한 이메일 상태
+  const [openPasswordRecovery, setOpenPasswordRecovery] = useState(false); // Password recovery modal state
 
   console.log("login page is");
   console.log(isAuthenticated);
@@ -80,6 +81,7 @@ export default function SignIn() {
   // 모달 닫기
   const handleClose = () => {
     setOpen(false);
+    setEmail('');
   };
 
   // 이메일 전송 핸들러
@@ -94,6 +96,33 @@ export default function SignIn() {
         console.error("이메일 활성화 요청 실패:", error);
       });
     setOpen(false);
+    setEmail('');
+  };
+
+  // 비밀번호 모달 부분
+  const handleOpenPasswordRecovery = () => {
+    setOpenPasswordRecovery(true);
+  };
+
+  // Function to handle password recovery modal close
+  const handleClosePasswordRecovery = () => {
+    setOpenPasswordRecovery(false);
+    setEmail('');  // Reset email
+  };
+
+  const handleSendPasswordRecoveryEmail = () => {
+    // Here you would call the API function to send the recovery email
+    // For example:
+    sendRecoverPasswordEmail({ email })
+      .then(response => {
+        alert(response.data.message);
+      })
+      .catch(error => {
+        console.error("비밀번호 복구 요청 실패:", error);
+        alert("이메일 전송에 실패했습니다.");
+      });
+    setOpenPasswordRecovery(false);
+    setEmail('');
   };
 
   return (
@@ -151,8 +180,8 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  비밀번호 찾기
+              <Link onClick={handleOpenPasswordRecovery} variant="body2" style={{ cursor: 'pointer' }}>
+              비밀번호 찾기
                 </Link>
               </Grid>
 
@@ -209,6 +238,30 @@ export default function SignIn() {
           <Button onClick={handleSendEmail}>전송</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={openPasswordRecovery} onClose={handleClosePasswordRecovery}>
+        <DialogTitle>비밀번호 찾기</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            비밀번호를 복구할 이메일을 입력해주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="이메일 주소"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordRecovery}>취소</Button>
+          <Button onClick={handleSendPasswordRecoveryEmail}>전송</Button>
+        </DialogActions>
+      </Dialog>
+
     </ThemeProvider>
   );
 }

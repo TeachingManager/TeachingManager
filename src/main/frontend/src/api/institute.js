@@ -113,3 +113,30 @@ export const getTeachersInfo = async () => {
         console.error(error);
     }
 };
+
+export const sendRecoverPasswordEmail = async (requestDTO) => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/password/change`, requestDTO, {
+            headers : {
+                'Authorization': `Bearer ${token}`
+            }
+       })
+       return response
+    } catch(error){
+        console.error("이메일 전송 실패", error)
+    }
+}
+
+export const changepassword = async (requestDTO, token) => {
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_BASE_URL}/api/password/change?token=${token}`, 
+            requestDTO
+        );
+        return response;
+    } catch (error) {
+        console.error("비밀번호 변경 실패", error)
+    }
+}
