@@ -132,7 +132,7 @@ export const sendRecoverPasswordEmail = async (requestDTO) => {
 export const changepassword = async (requestDTO, token) => {
     try {
         const response = await axios.post(
-            `${process.env.REACT_APP_API_BASE_URL}/api/password/change?token=${token}`, 
+            `${process.env.REACT_APP_API_BASE_URL}/password/change?token=${token}`, 
             requestDTO
         );
         return response;
