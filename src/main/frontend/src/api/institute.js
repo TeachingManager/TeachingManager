@@ -2,19 +2,18 @@ import axios from 'axios';
 
 export const registerUser = async (userData) => {
     try {
-        const response = await axios.post('http://localhost:8080/api/institute', userData);
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/institute`, userData);
         console.log(response);
         return response;
     } catch (error) {
-        throw error;  // 필요에 따라 에러를 다시 던질 수 있습니다.
+        throw error;
     }
 };
 
-
 export const loginUser = async (requestData) => {
-    try{
+    try {
         const response = await axios.post(
-            'http://localhost:8080/api/login', 
+            `${process.env.REACT_APP_API_BASE_URL}/api/login`, 
             JSON.stringify(requestData), 
             {
                 headers: {
@@ -22,42 +21,39 @@ export const loginUser = async (requestData) => {
                 }
             }
         );
-       console.log(response)
+        console.log(response);
         return response.data;
-    } catch(error) {
-        console.error(error)
+    } catch (error) {
+        console.error(error);
     }
-}
+};
 
-export const getUserInfo = async() => {
-    const token = localStorage.getItem('token')
-    console.log(`기관조회 토큰${token} `)
+export const getUserInfo = async () => {
+    const token = localStorage.getItem('token');
+    console.log(`기관조회 토큰${token}`);
     try {
-        const response = await axios.get('http://localhost:8080/api/institute', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/institute`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-        })
+        });
         
-        console.log(response.data)
-        return(response.data)
-    } catch(error) {
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
         console.error(error);
         throw error;
-    }}
-
-
-
-
+    }
+};
 
 export const registerTeacher = async (userData, isJson = true) => {
     try {
         const response = await axios.post(
-            'http://localhost:8080/api/teacher', 
-            isJson ? JSON.stringify(userData) : userData, // JSON 타입일 때 stringify
+            `${process.env.REACT_APP_API_BASE_URL}/api/teacher`, 
+            isJson ? JSON.stringify(userData) : userData,
             {
                 headers: {
-                    'Content-Type': isJson ? 'application/json' : 'text/plain' // JSON 타입이면 application/json 사용
+                    'Content-Type': isJson ? 'application/json' : 'text/plain'
                 }
             }
         );
@@ -68,60 +64,52 @@ export const registerTeacher = async (userData, isJson = true) => {
     }
 };
 
-
-
-export const proveUser = async(userData)=> {
+export const proveUser = async (userData) => {
     try {
         const response = await axios.post(
-           'http://localhost:8080/api/email/initial/prove',
-           userData,
-        )
-
-        return response;
-    }
-    catch(error){
-        console.error(error);
-    }
-}
-
-export const inviteTeacher = async(userData) => {
-    const token = localStorage.getItem('token')
-
-    const fetchUserInfo = await getUserInfo();
-    const institute_email = fetchUserInfo.institute_email;
-
-    const requestdata = {
-        "institute_email" : institute_email,
-        "teacher_email" : userData,
-    }
-    try{
-        const response = await axios.post('http://localhost:8080/api/invite/teacher', requestdata, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        return {isValid : true, response};
-
-    }
-    catch(error){
-        console.error(error);
-        if(error.status === 404)
-            return {isValid: false};
-    }
-}
-
-export const getTeachersInfo = async ()=> {
-    const token = localStorage.getItem('token')
-
-    try {
-        const response = await axios.get('http://localhost:8080/api/teacher', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-
+           `${process.env.REACT_APP_API_BASE_URL}/api/email/initial/prove`,
+           userData
+        );
         return response;
     } catch (error) {
         console.error(error);
     }
-}
+};
+
+export const inviteTeacher = async (userData) => {
+    const token = localStorage.getItem('token');
+    const fetchUserInfo = await getUserInfo();
+    const institute_email = fetchUserInfo.institute_email;
+
+    const requestdata = {
+        "institute_email": institute_email,
+        "teacher_email": userData
+    };
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/invite/teacher`, requestdata, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return { isValid: true, response };
+    } catch (error) {
+        console.error(error);
+        if (error.status === 404)
+            return { isValid: false };
+    }
+};
+
+export const getTeachersInfo = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/teacher`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};

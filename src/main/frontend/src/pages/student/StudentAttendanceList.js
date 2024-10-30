@@ -32,13 +32,12 @@ const StudentAttendanceList = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // 학생 출석 정보 API 호출
     const fetchAttendanceData = async () => {
       const token = localStorage.getItem('token');
       try {
         console.log(selectedDate.month());
         const response = await axios.get(
-          `http://localhost:8080/api/attend/student?student_id=${studentId}&date_info=${selectedDate.year()}-${String(
+          `${process.env.REACT_APP_API_BASE_URL}/api/attend/student?student_id=${studentId}&date_info=${selectedDate.year()}-${String(
             selectedDate.month() + 1
           ).padStart(2, '0')}-15`,
           {
@@ -49,13 +48,12 @@ const StudentAttendanceList = () => {
         );
         const data = response.data;
 
-        // 출석 데이터를 필요한 형태로 변환, attend_id 포함
         const formattedAttendance = data.reduce((acc, course) => {
           acc[course.lecture_name] = {
             dates: course.attendInfoList.map((info) => info.start_date),
             records: course.attendInfoList.reduce((records, info) => {
               records[info.start_date] = {
-                attendId: info.attend_id, // attend_id 포함
+                attendId: info.attend_id,
                 status:
                   info.attendance === 3
                     ? true
@@ -104,23 +102,22 @@ const StudentAttendanceList = () => {
   const handleSave = async () => {
     const updatedAttendList = {};
 
-    // attend_id와 수정된 상태를 저장
     Object.keys(attendance).forEach((course) => {
       Object.keys(attendance[course].records).forEach((date) => {
         const record = attendance[course].records[date];
         updatedAttendList[record.attendId] =
           record.status === true
-            ? 3 // 출석
+            ? 3
             : record.status === null
-            ? 2 // 지각
-            : 1; // 결석
+            ? 2
+            : 1;
       });
     });
 
     const token = localStorage.getItem('token');
     try {
       await axios.put(
-        'http://localhost:8080/api/attend',
+        `${process.env.REACT_APP_API_BASE_URL}/api/attend`,
         {
           attendList: updatedAttendList,
         },
@@ -207,7 +204,7 @@ const StudentAttendanceList = () => {
                           />
                         ) : (
                           attendance[course].records[date].status === null
-                            ? '△' // 지각
+                            ? '△'
                             : attendance[course].records[date].status === true
                             ? 'O'
                             : 'X'

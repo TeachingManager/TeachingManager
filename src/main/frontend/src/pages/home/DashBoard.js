@@ -25,7 +25,7 @@ const DashBoard = () => {
     const fetchTeacher = async (teacher_id) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/api/teacher", {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/teacher`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -43,7 +43,7 @@ const DashBoard = () => {
     const fetchLecture = async (lecture_id) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/lectures/${lecture_id}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/lectures/${lecture_id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -62,7 +62,7 @@ const DashBoard = () => {
         const token = localStorage.getItem("token");
         const formattedDate = selectedDate.format('YYYY-MM-DD');
 
-        const response = await axios.get("http://localhost:8080/api/Schedule/day", {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/Schedule/day`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -96,7 +96,7 @@ const DashBoard = () => {
         const token = localStorage.getItem("token");
         const currentDate = new Date().toISOString().split('T')[0];
 
-        const response = await axios.get("http://localhost:8080/api/Schedule",{
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/Schedule`,{
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
 
@@ -127,7 +127,7 @@ const DashBoard = () => {
     const fetchFee = async () => {
       try{
         const token = localStorage.getItem("token")
-        const response = await axios.get(`http://localhost:8080/api/fee/year?year=${selectedDates.year()}&month=${selectedDate.month() + 1}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/fee/year?year=${selectedDates.year()}&month=${selectedDate.month() + 1}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -143,7 +143,7 @@ const DashBoard = () => {
     const fetchFeebyMonth = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/fee?year=${selectedDates.year()}&month=${selectedDate.month() + 1}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/fee?year=${selectedDates.year()}&month=${selectedDate.month() + 1}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -171,7 +171,7 @@ const DashBoard = () => {
     const fetchStudentNumber = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get('http://localhost:8080/api/students', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/students`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },

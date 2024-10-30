@@ -25,6 +25,10 @@ import TeacherSignUp from './pages/login/TeacherSignUp'
 import NotFound from './common/NotFound.js';
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <LoginPage /> 
+  },
+  {
     path: "/home",
     element: <ProtectedRoute><HomePage/></ProtectedRoute>
   },

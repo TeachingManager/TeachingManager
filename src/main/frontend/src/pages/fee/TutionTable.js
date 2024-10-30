@@ -9,7 +9,7 @@ const TutionTable = () => {
     const fetchFeebyMonth = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/fee?year=2024&month=8`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/fee?year=2024&month=8`, {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
@@ -26,11 +26,6 @@ const TutionTable = () => {
     fetchFeebyMonth();
   }, []);
   
-  
-  
-  
-  
-  
   const columns = [
         { field: 'id', headerName: 'ID', flex: 0.5, headerAlign: 'center', align: 'center' },
         { field: 'name', headerName: '이름', flex: 1, headerAlign: 'center', align: 'center' },
@@ -39,9 +34,7 @@ const TutionTable = () => {
         { field: 'fee', headerName: '수강료', type: 'number', flex: 1, headerAlign: 'center', align: 'center' },
       ];
     
-      // API로 요청해야하는 부분.
     const rows = [
-
         { id: 2, name: '이순신', course: '자바스크립트 고급', teacher: '박선생', fee: 75000 },
         { id: 3, name: '강감찬', course: 'CSS 디자인', teacher: '이선생', fee: 60000 },
         { id: 4, name: '김유신', course: 'HTML 기초', teacher: '최선생', fee: 45000 },
@@ -51,9 +44,7 @@ const TutionTable = () => {
         { id: 8, name: '강철수', course: 'HTML/CSS 디자인', teacher: '김선생', fee: 48000 },
         { id: 9, name: '오철수', course: 'Kotlin 기초', teacher: '최선생', fee: 60000 },
         { id: 10, name: '장철수', course: 'Swift 기초', teacher: '박선생', fee: 65000 },
-       
-    ]
-    ;
+    ];
 
     return (
     <div>
@@ -63,9 +54,8 @@ const TutionTable = () => {
         pageSize={10}
         rowsPerPageOptions={[10]}
         rowHeight={50}
-        autoHeight={true}  // 자동 높이 설정
-
-        style={{ width: '100%' }}  // 100% 너비로 설정
+        autoHeight={true}
+        style={{ width: '100%' }}
       />
     </div>
   )

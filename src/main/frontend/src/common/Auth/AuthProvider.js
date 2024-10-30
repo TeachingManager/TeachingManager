@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (requestData) => {
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/login',
+                `${process.env.REACT_APP_API_BASE_URL}/api/login`,
                 JSON.stringify(requestData),
                 {
                     headers: {
@@ -33,36 +33,21 @@ export const AuthProvider = ({ children }) => {
             );
             console.log(response);
             if (response.status === 201) {
-                // if문으로 작성..
-                if(checkTokenValidity(response.data.accessToken)){
-                    // 토큰이 유효 하면
+                if (checkTokenValidity(response.data.accessToken)) {
                     setToken(response.data.accessToken);
                     localStorage.setItem('token', response.data.accessToken);
                     setIsAuthenticated(true);
-                    console.log('토큰 설정 완료')
-                    return {isVaild : true}
+                    console.log('토큰 설정 완료');
+                    return { isVaild: true };
+                } else {
+                    return { isVaild: false, response };
                 }
-                else {
-                    // 토큰 유효 하지 않다면
-                    return {isVaild : false, response}
-
-                }
-
-
-
-
-                // setToken(response.data.accessToken);
-                // localStorage.setItem('token', response.data.accessToken);
-                // setIsAuthenticated(true);
-                // console.log('token 설정완료');
-                // return true;
             }
-
         } catch (error) {
             console.error('Login error', error);
             setIsAuthenticated(false);
             const response = error.response ? error.response : null;
-            return {isVaild : false, response}
+            return { isVaild: false, response };
         }
     };
 
@@ -74,14 +59,13 @@ export const AuthProvider = ({ children }) => {
 
     const decodeToken = (token) => {
         try {
-            // JWT는 세 개의 '.'으로 나누어진 부분으로 구성되며, 두 번째 부분이 페이로드임
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
 
-            return JSON.parse(jsonPayload); // 페이로드 JSON 변환
+            return JSON.parse(jsonPayload);
         } catch (error) {
             console.error('Failed to decode token', error);
             return null;
@@ -91,14 +75,10 @@ export const AuthProvider = ({ children }) => {
     const checkTokenValidity = (token) => {
         const decodedToken = decodeToken(token);
         if (decodedToken && decodedToken.exp) {
-            const currentTime = Math.floor(Date.now() / 1000); // 현재 시간을 초 단위로 변환
-            if (decodedToken.exp > currentTime) {
-                return true; // 토큰이 아직 유효함
-            } else {
-                return false; // 토큰이 만료됨
-            }
+            const currentTime = Math.floor(Date.now() / 1000);
+            return decodedToken.exp > currentTime;
         }
-        return false; // 토큰 디코딩 실패 또는 exp 필드가 없음
+        return false;
     };
 
     const value = {
@@ -107,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         token,
         login,
         logout,
-        checkTokenValidity, // 필요할 경우 외부에서 사용할 수 있게 추가
+        checkTokenValidity,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
