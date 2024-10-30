@@ -46,12 +46,16 @@ export default function OpenLectureList() {
         setLectureIdList(ids)
 
 
-
+        console.log(ids)
         const lectures = await Promise.all(
           ids.map((id) => getOneLecture(id))
         )
-        setLectureList(lectures);
-        console.log(lectures)
+        if(lectures === false)
+          setLectureList([])
+        else
+          setLectureList(lectures);
+          console.log(lectures)
+
       } catch (error) {
         console.error(error);
       }
