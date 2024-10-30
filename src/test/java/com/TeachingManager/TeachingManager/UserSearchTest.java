@@ -1,21 +1,23 @@
-package com.TeachingManager.TeachingManager;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
+//package com.TeachingManager.TeachingManager;
+//
+//import org.junit.jupiter.api.AfterEach;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.test.context.ActiveProfiles;
+//import org.springframework.test.context.jdbc.Sql;
+//import org.springframework.transaction.PlatformTransactionManager;
+//import org.springframework.transaction.TransactionStatus;
+//import org.springframework.transaction.support.DefaultTransactionDefinition;
+//
+//import javax.sql.DataSource;
+//import java.sql.Connection;
+//import java.sql.ResultSet;
+//import java.sql.Statement;
+//
 //
 //@SpringBootTest
 //@ActiveProfiles("test")

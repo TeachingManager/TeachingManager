@@ -52,3 +52,4 @@ public class Enroll {
         this.fullPayment = this.payed_fee >= lecture.getFee();
     }
 }
+

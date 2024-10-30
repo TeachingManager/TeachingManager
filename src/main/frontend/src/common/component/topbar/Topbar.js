@@ -1,12 +1,18 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './topbar.css';
-
+import { useAuth } from '../../Auth/AuthProvider';
+import { useRecoilState } from 'recoil';
+import { institueListState } from '../../Auth/recoilAtom';
+import { getUserInfo } from '../../../api/institute';
 export default function Topbar() {
     const location = useLocation();
     const path = location.pathname;
+    const { logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const [userInfo, setUserInfo] = useRecoilState(institueListState)
 
-    let pageTitle = 'Home'; // default title
+    let pageTitle = '메인화면'; // default title
     if (path.includes('/students/attendance')) {
         pageTitle  = '학생 출석현황';
     } else if (path.includes('/calendar')) {
@@ -26,16 +32,34 @@ export default function Topbar() {
         pageTitle  = '수강료';
     }
 
+    const handleLogout = ()=> {
+        logout();
+        navigate('/login')
+
+    }
+    useEffect(() => {
+        // 비동기 함수를 선언하고 호출
+        const fetchUserInfo = async () => {
+            try {
+                const userInfo = await getUserInfo(); // getUserInfo 호출
+                setUserInfo(userInfo); // Recoil 상태에 학원 정보 저장
+                console.log("User info:", userInfo);
+            } catch (error) {
+                console.error("Error fetching user info:", error);
+            }
+        };
+
+        fetchUserInfo(); // 비동기 함수 호출
+    }, []);
     return (
         <div className="topbar-container">
             <div className="topbar-left">
                 <span>{pageTitle}</span>
             </div>
             <div className="topbar-right">
-                <i className="fas fa-bell"></i>
-                <i className="fas fa-question-circle"></i>
-                <span className="user-name">seungchan kim</span>
-                <div className="user-icon">KS</div>
+                <span className="user-name">{userInfo.institute_name}님</span>
+
+                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
             </div>
         </div>
     );

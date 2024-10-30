@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
+import axios from 'axios';
 import { Button, Box, Stack, TextField, Modal, Typography, IconButton } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -42,6 +42,98 @@ export default function CalendarContents() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
 
+  useEffect(() => {
+    const fetchTeacher = async(teacher_id) => {
+      try{
+        const token = localStorage.getItem("token")
+        const response = await axios.get("http://localhost:8080/api/teacher",{
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
+
+          },
+        })
+
+        const teacher = response.data.teacherList.find(teacher => teacher.teacher_id === teacher_id);
+
+        if (teacher) {
+          const teacher_name = teacher.teacher_name;
+          return teacher_name;  // Return the teacher's name if found
+        } else {
+          console.log("Teacher not found");
+          return "Unknown Teacher";  // Return fallback value if teacher is not found
+        }
+
+      } catch (error){
+        console.error("선생님 조회 중 오류 발생")
+      }
+    }
+    const fetchLecture = async(lecture_id) => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`http://localhost:8080/api/lectures/${lecture_id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
+
+          },
+        })
+        
+        const teacher_id = response.data.teacherId;
+
+        if(teacher_id) {
+          return teacher_id
+        } else {
+          console.log('선생님 id를 찾지 못하였습니다')
+          return "선생님 찾기 실패"
+        }
+      } catch(error){
+        console.error("강의 조회중 오류 발생", error)
+      }
+    }
+    const fetchSchedule = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        const response = await axios.get("http://localhost:8080/api/Schedule",{
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
+
+          },
+          params: {
+            date_info: currentDate
+          }
+        })
+
+        const formatted_data = await Promise.all(response.data.scheduleList.map(async (data) => {
+          const teacher_id = await fetchLecture(data.lecture_id);
+          const teacher_name = teacher_id ? await fetchTeacher(teacher_id) : "Unknown Teacher";
+  
+          return {
+            id: data.schedule_id,
+            title: data.title,
+            start: data.start_date,
+            end: data.end_date,
+            description: `선생님: ${teacher_name}`  // Adding teacher name to description
+          };
+        }));
+
+        setEvents(formatted_data)
+  
+        console.log(response.data);
+      } catch (error) {
+        console.error("일정 조회 중 오류 발생", error);
+      }
+    }
+  
+    fetchSchedule();
+
+
+
+  
+  }, []);
+  
+
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -74,6 +166,8 @@ export default function CalendarContents() {
   const renderEventContent = (eventInfo) => (
     <div className="fc-event-custom-content">
       <b>{eventInfo.timeText}</b>
+      <br/>
+      <br/>
       <i>{eventInfo.event.title}</i>
       <p dangerouslySetInnerHTML={{ __html: eventInfo.event.extendedProps.description }}></p>
     </div>
@@ -198,18 +292,27 @@ export default function CalendarContents() {
     });
   };
 
+
   return (
     <div className='calendar-container'>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
-        dateClick={handleDateClick}
-        editable={true}
-        eventDrop={handleEventDrop}
-        eventClick={handleEventClick}
+        locale='ko'
+        //dateClick={handleDateClick}
+        editable={false}
+        //eventDrop={handleEventDrop}
+        //eventClick={handleEventClick}
         eventContent={renderEventContent}
+        eventTimeFormat={{
+          hour: 'numeric',
+          minute: '2-digit',
+          meridiem: true
+        }
+        }
         aspectRatio={1.5}
+        displayEventEnd= {true}
       />
 
       <Modal
