@@ -4,6 +4,12 @@ values ('bf78c61b-eb1e-46e6-be19-2fd99ee7140c', 1, 'ROLE_PRESIDENT', 'asd123@gma
 insert into teacher
 values ('0dda6019-71af-478c-bd93-0cc55517cbe0', 1, 'ROLE_TEACHER', 'qwe123@gmail.com', 1, 0, '$2a$10$buQVLPUj9r77XaJHQ/n0cOsAwr4GZk1WV9Lm4kAGdnhzAUWWqAZMy', 23, '123', '2000-02-03', 'M', 'qwe', '01012345678', 'Local', '123', 'qwe', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c');
 
+insert into teacher
+values ('f1184991-7942-411e-a2fe-6c23f996aeb8', 1, 'ROLE_TEACHER', 'zxc123@gmail.com', 1, 0, '$2a$10$buQVLPUj9r77XaJHQ/n0cOsAwr4GZk1WV9Lm4kAGdnhzAUWWqAZMy', 23, '123', '2000-02-03', 'M', 'zxc', '01012345678', 'Local', '123', 'zxc', NULL);
+
+--insert into teacher (pk, account_non_locked, authorities, email, enabled, failed_count, password, age, bank_account, birth, gender, nickname, phone_number, provider, salary, teacher_name)
+--values ('f1184991-7942-411e-a2fe-6c23f996aeb8', 1, 'ROLE_TEACHER', 'zxc123@gmail.com', 1, 0, '$2a$10$buQVLPUj9r77XaJHQ/n0cOsAwr4GZk1WV9Lm4kAGdnhzAUWWqAZMy', 23, '123', '2000-02-03', 'M', 'zxc', '01012345678', 'Local', '123', 'zxc');
+
 alter table lecture alter column lecture_id restart with 1;
 insert into lecture (category, fee, grade, name, time, institute_id, teacher_id)
 values ('수학', 100000, '상', '미적', 'TUESDAY-12:30~13:20', 'bf78c61b-eb1e-46e6-be19-2fd99ee7140c', '0dda6019-71af-478c-bd93-0cc55517cbe0');

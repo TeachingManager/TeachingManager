@@ -76,7 +76,7 @@ class ApiScheduleControllerTest {
                         .header("Authorization", "Bearer " + teacherAccessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(addScheduleRequest))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -85,8 +85,7 @@ class ApiScheduleControllerTest {
     void scheduleByI() throws Exception{
         mockMvc.perform(get("/api/Schedule")
                         .header("Authorization", "Bearer " + instituteAccessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(monthScheduleRequest))
+                        .param("date_info", "2024-08-08"))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
@@ -96,8 +95,7 @@ class ApiScheduleControllerTest {
     void scheduleByT() throws Exception{
         mockMvc.perform(get("/api/Schedule")
                         .header("Authorization", "Bearer " + teacherAccessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(monthScheduleRequest))
+                        .param("date_info", "2024-08-08"))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
@@ -134,7 +132,7 @@ class ApiScheduleControllerTest {
     void deleteScheduleByT() throws Exception{
         mockMvc.perform(put("/api/delete/Schedule/1")
                         .header("Authorization", "Bearer " + teacherAccessToken))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -156,7 +154,7 @@ class ApiScheduleControllerTest {
                         .header("Authorization", "Bearer " + teacherAccessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateScheduleRequest))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 }
