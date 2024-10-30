@@ -38,4 +38,4 @@ out/
 
 
 *.properties
-*.yml
+*.env

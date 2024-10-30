@@ -81,11 +81,11 @@ public class UserService {
             return "사용자 정보 확인. 비밀번호 변경 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "initialAuthentication")) {
             // email 보내기
-            sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","/EmailForm/InitialAuthenticationEmail", resetToken);
+            sendEmail(email,"TeachingManager - 본인 확인용 이메일입니다.","EmailForm/InitialAuthenticationEmail", resetToken);
             return "사용자 정보 확인. 초기 인증용 메일이 보내졌습니다.";
         } else if (Objects.equals(mod, "unLockUser")) {
             // email 보내기
-            sendEmail(email,"TeachingManager - 잠금 해제용 이메일입니다.","/EmailForm/UnlockAccountEmail", resetToken);
+            sendEmail(email,"TeachingManager - 잠금 해제용 이메일입니다.","EmailForm/UnlockAccountEmail", resetToken);
             return "사용자 정보 확인. 잠금해제용 메일이 보내졌습니다.";
         }
 
@@ -246,15 +246,16 @@ public class UserService {
     /////////////////////////////////////////////////////////////
 
     public void sendEmail(String to, String subject, String templateLocation, String token) {
-        String host = "smtp.outlook.com";
-        final String username = "teachingmanager@outlook.com";
-        final String password = "$xlcld123$";
+        String host = "email-smtp.ap-northeast-2.amazonaws.com";
+        final String username = "AKIA5FTZCSHK523ULN56";
+        final String password = "BAYxpeOZmEwyflRaXcQkRu6CwVqbJTYAV8QPB7HQmLvC";
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "587");
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
+//        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.starttls.enable", "true"); // TLS 사용
 
         Session session = Session.getInstance(properties,
                 new Authenticator() {
@@ -269,7 +270,7 @@ public class UserService {
             String htmlBody = templateEngine.process(templateLocation, context);
 
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
+            message.setFrom(new InternetAddress("teachingmanager@outlook.com"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
             // 이메일 제목을 인코딩하여 설정
@@ -279,7 +280,7 @@ public class UserService {
             message.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Transport.send(message);
-            System.out.println("Sent message successfully...");
+            System.out.println("Email was successfully sent!");
 
         } catch (MessagingException | java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
