@@ -294,7 +294,7 @@ export default function OpenLectureList() {
           rows={lectureList}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
+          //checkboxSelection
           onRowSelectionModelChange={(newSelectionModel) => {
             setSelectedRows(newSelectionModel);
           }}

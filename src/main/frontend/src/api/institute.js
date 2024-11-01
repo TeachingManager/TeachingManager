@@ -140,3 +140,12 @@ export const changepassword = async (requestDTO, token) => {
         console.error("비밀번호 변경 실패", error)
     }
 }
+
+export const unlockUserAccount = async (requestDTO) => {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/email/locked/prove`, requestDTO)
+        return response;
+    } catch (error) {
+        console.error("계정 잠금 해제 실패", error)
+    }
+}
