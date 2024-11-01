@@ -20,10 +20,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../common/Auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { getUserInfo, loginUser, proveUser, sendRecoverPasswordEmail } from '../../api/institute';
+import { getUserInfo, loginUser, proveUser, sendRecoverPasswordEmail, unlockUserAccount } from '../../api/institute';
 import { useRecoilState } from 'recoil';
 import { institueListState } from '../../common/Auth/recoilAtom';
-
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -35,6 +34,7 @@ export default function SignIn() {
   const [open, setOpen] = useState(false);  // 모달 열림 상태
   const [email, setEmail] = useState('');   // 입력한 이메일 상태
   const [openPasswordRecovery, setOpenPasswordRecovery] = useState(false); // Password recovery modal state
+  const [openUnlockAccount, setOpenUnlockAccount] = useState(false); // Account unlock modal state
 
   console.log("login page is");
   console.log(isAuthenticated);
@@ -125,6 +125,35 @@ export default function SignIn() {
     setEmail('');
   };
 
+  // 계정 잠금 해제
+
+  // 계정 잠금 해제 모달 열기
+  const handleOpenUnlockAccount = () => {
+    setOpenUnlockAccount(true);
+  };
+
+  // 계정 잠금 해제 모달 닫기
+  const handleCloseUnlockAccount = () => {
+    setOpenUnlockAccount(false);
+    setEmail(''); // Reset email
+  };
+
+  // 계정 잠금 해제 요청
+  const handleUnlockAccount = () => {
+    unlockUserAccount({ email })
+      .then(response => {
+        alert(response.data.message);
+      })
+      .catch(error => {
+        console.error("계정 잠금 해제 요청 실패:", error);
+        alert("계정 잠금 해제 요청에 실패했습니다.");
+      });
+    setOpenUnlockAccount(false);
+    setEmail('');
+  };
+
+
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -211,6 +240,16 @@ export default function SignIn() {
               </Grid>
             </Grid>
 
+            <Grid container>
+              <Grid item>
+                <Grid item>
+                  <Link variant='body2' onClick = {handleActivateAccount} style={{ cursor: 'pointer' }}>
+                  {"계정 잠금 해제"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Grid>
+
           </Box>
         </Box>
       </Container>
@@ -261,6 +300,33 @@ export default function SignIn() {
           <Button onClick={handleSendPasswordRecoveryEmail}>전송</Button>
         </DialogActions>
       </Dialog>
+
+
+      {/* 계정 잠금 해제 모달 */}
+      <Dialog open={openUnlockAccount} onClose={handleCloseUnlockAccount}>
+        <DialogTitle>계정 잠금 해제</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            잠금 해제할 계정의 이메일을 입력해주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="이메일 주소"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUnlockAccount}>취소</Button>
+          <Button onClick={handleUnlockAccount}>전송</Button>
+        </DialogActions>
+      </Dialog>
+
+      
 
     </ThemeProvider>
   );

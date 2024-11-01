@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button } from '@mui/material';
 import { changepassword } from '../../api/institute';
 
@@ -7,25 +7,31 @@ const ChangePassword = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
-
+  const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handlePasswordChange = () => {
+  const handlePasswordChange = async () => {
+    console.log("Password change function called"); // 함수 호출 확인용 로그
+
     if (newPassword !== confirmPassword) {
       alert('같은 비밀번호를 입력해주세요.');
       return;
     }
     // 비밀번호 변경
-    changepassword({newPassword}, token)
-    .then(response => {
-        alert(response.data.message)
-    })
-    .catch(error => {
-        console.error("비밀번호 변경 실패", error)
-    })
-    console.log('Password changed:', newPassword);
-  };
+    try {
+        console.log("hello")
+
+        const response = await changepassword({ newPassword }, token);
+        alert(response.data.message);
+        console.log("Password changed successfully:", response.data);
+
+        navigate('/login'); // 비밀번호 변경 후 로그인 페이지로 이동
+      } catch (error) {
+        console.error("비밀번호 변경 실패", error);
+        alert('비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
+      }
+    };
 
   return (
     <Container component="main" maxWidth="xs">

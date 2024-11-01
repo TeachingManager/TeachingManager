@@ -13,23 +13,33 @@ export default function Topbar() {
     const [userInfo, setUserInfo] = useRecoilState(institueListState)
 
     let pageTitle = '메인화면'; // default title
+    let pagePath = '/home'
     if (path.includes('/students/attendance')) {
         pageTitle  = '학생 출석현황';
+        pagePath = '/students/attendance';
     } else if (path.includes('/calendar')) {
         pageTitle = '달력';
+        pagePath = '/calendar';
     } else if (path.includes('/students')) {
         pageTitle = '학생';
+        pagePath = '/students';
     } else if (path.includes('/teachers')) {
         pageTitle = '선생님';
+        pagePath = '/teachers';
     } else if (path.includes('/lecture')) {
         pageTitle  = '강의';
+        pagePath = '/openlecture';
     } else if (path.includes('/openlecture')) {
         pageTitle  = '강의';
+        pagePath = '/openlecture';
     }
     else if (path.includes('/fee')) {
         pageTitle  = '수강료';
+        pagePath = '/fee';
     }else if (path.includes('/studentfee')) {
         pageTitle  = '수강료';
+        pagePath = '/studentfee';
+
     }
 
     const handleLogout = ()=> {
@@ -51,10 +61,16 @@ export default function Topbar() {
 
         fetchUserInfo(); // 비동기 함수 호출
     }, []);
+
+    const handleTitleClick = () => {
+        navigate(pagePath);
+    };
+
     return (
         <div className="topbar-container">
             <div className="topbar-left">
-                <span>{pageTitle}</span>
+            <span className="page-title" onClick={handleTitleClick} style={{ cursor: 'pointer' }}>
+            {pageTitle}</span>
             </div>
             <div className="topbar-right">
                 <span className="user-name">{userInfo.institute_name}님</span>
