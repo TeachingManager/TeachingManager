@@ -220,6 +220,7 @@ export default function StudentList() {
   pageSize={5}
   rowsPerPageOptions={[5]}
   checkboxSelection
+  disableRowSelectionOnClick={true}  
   onRowSelectionModelChange={(newSelectionModel) => {
     setSelectedRows(newSelectionModel);
   }}

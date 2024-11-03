@@ -457,6 +457,7 @@ const formatTimeForDisplay = (time) => {
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
+          disableRowSelectionOnClick={true}  
           onRowSelectionModelChange={(newSelectionModel) => setSelectedRows(newSelectionModel)}
           onRowDoubleClick={handleRowDoubleClick}
           getRowHeight={() => 'auto'}
