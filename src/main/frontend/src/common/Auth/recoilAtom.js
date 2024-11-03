@@ -36,3 +36,18 @@ export const selectedDateState = atom({
   key: 'selectedDateState',
   default: dayjs(), // 초기값으로 현재 날짜 설정
 });
+
+export const nameState = atom({
+  key: 'nameState',
+  default: '',
+});
+
+export const rolesState = atom({
+  key: 'rolesState',
+  default: [],
+});
+
+export const instIdState = atom({
+  key: 'instIdState',
+  default: null,
+});
