@@ -88,12 +88,14 @@ public class JpaScheduleRepository  implements ScheduleRepository{
     public Set<ScheduleResponse> search_all(UUID institute_id) {
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse(sc.schedule_id, sc.title, sc.start_date, sc.end_date, sc.memo," +
-                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName))" +
+                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName), COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Schedule sc " +
                                 "LEFT JOIN sc.lecture lec " + // 이걸 추가해야, lecture 가 null 인 경우도 추가할 수 있다는 듯 하다.
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE sc.institute.pk = :institute_id ", ScheduleResponse.class)
                 .setParameter("defaultLectureName", "기본일정")
                 .setParameter("institute_id", institute_id)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .getResultStream() // Stream<Schedule> 반환
                 .collect(Collectors.toSet()); // Stream을 Set으로 변환
     }
@@ -108,14 +110,16 @@ public class JpaScheduleRepository  implements ScheduleRepository{
 
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse(sc.schedule_id, sc.title, sc.start_date, sc.end_date, sc.memo," +
-                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName))" +
+                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName), COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Schedule sc " +
                                 "LEFT JOIN sc.lecture lec " + // 이걸 추가해야, lecture 가 null 인 경우도 추가할 수 있다는 듯 하다.
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE sc.institute.pk = :institute_id " +
                                 "AND sc.start_date <= :endOfMonth " +
                                 "AND sc.end_date >= :startOfMonth", ScheduleResponse.class)
                 .setParameter("defaultLectureName", "기본일정")
                 .setParameter("institute_id", institute_id)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .setParameter("startOfMonth", startOfMonth)
                 .setParameter("endOfMonth", endOfMonth)
                 .getResultStream() // Stream<Schedule> 반환
@@ -130,14 +134,16 @@ public class JpaScheduleRepository  implements ScheduleRepository{
         LocalDateTime endOfDay = date_info.atTime(LocalTime.MAX);
         return em.createQuery(
                         "SELECT new com.TeachingManager.TeachingManager.DTO.Schedule.ScheduleResponse(sc.schedule_id, sc.title, sc.start_date, sc.end_date, sc.memo," +
-                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName))" +
+                                "COALESCE(lec.lecture_id, 0L), COALESCE(lec.name, :defaultLectureName), COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Schedule sc " +
                                 "LEFT JOIN sc.lecture lec " + // 이걸 추가해야, lecture 가 null 인 경우도 추가할 수 있다는 듯 하다.
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE sc.institute.pk = :institute_id " +
                                 "AND sc.start_date <= :endOfMonth " +
                                 "AND sc.end_date >= :startOfMonth", ScheduleResponse.class)
                 .setParameter("defaultLectureName", "기본일정")
                 .setParameter("institute_id", institute_id)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .setParameter("startOfMonth", startOfDay)
                 .setParameter("endOfMonth", endOfDay)
                 .getResultStream() // Stream<Schedule> 반환

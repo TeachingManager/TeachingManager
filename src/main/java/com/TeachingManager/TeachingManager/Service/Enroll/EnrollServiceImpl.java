@@ -151,7 +151,7 @@ public class EnrollServiceImpl implements EnrollService{
         for (Long student_id : request.getStudentIdList()) {
             addOneStudentToEnroll(user, lecture_id, student_id, (short) year, monthShort);
         }
-        return new EnrolledLecturesResponse(lecture_id, lecture.getName(), (short)year, monthShort, lecture.getFee());
+        return new EnrolledLecturesResponse(lecture_id, lecture.getName(), (short)year, monthShort, lecture.getFee(), lecture.getTeacher().getTeacher_name());
     }
 
     // 학생 한명이 강의를 수강하는 요청

@@ -48,8 +48,9 @@ public class EnrollRepositoryImpl implements EnrollRepository {
     @Override
     public List<EnrolledLecturesResponse> findEnrolledLecturesByDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee) " +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee, COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Lecture lec " +
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE lec.institute.pk = :instituteId " +
                                 "AND lec.lecture_id IN ( SELECT en.lecture.lecture_id " +
                                                             "FROM Enroll en " +
@@ -60,14 +61,16 @@ public class EnrollRepositoryImpl implements EnrollRepository {
                 ).setParameter("instituteId", institute_id)
                 .setParameter("year", year)
                 .setParameter("month", month)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .getResultList();
     }
     // 특정달에 특정 강사에 의해 개설된 강의 리스트 변환
     @Override
     public List<EnrolledLecturesResponse> findEnrolledLecturesByTeacherAndDate(UUID institute_id, UUID teacher_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee) " +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.EnrolledLecturesResponse(lec.lecture_id, lec.name, :year, :month, lec.fee, COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Lecture lec " +
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE lec.institute.pk = :instituteId " +
                                 "AND lec.lecture_id IN ( SELECT en.lecture.lecture_id " +
                                                         "FROM Enroll en " +
@@ -78,6 +81,7 @@ public class EnrollRepositoryImpl implements EnrollRepository {
                         , EnrolledLecturesResponse.class
                 ).setParameter("instituteId", institute_id)
                 .setParameter("teacherId", teacher_id)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .setParameter("year", year)
                 .setParameter("month", month)
                 .getResultList();
@@ -88,8 +92,9 @@ public class EnrollRepositoryImpl implements EnrollRepository {
     @Override
     public List<NotEnrolledLecturesResponse> findNotEnrolledLecturesByDate(UUID institute_id, Short year, Short month) {
         return em.createQuery(
-                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse(lec.lecture_id, lec.name) " +
+                        "SELECT new com.TeachingManager.TeachingManager.DTO.Enroll.Response.NotEnrolledLecturesResponse(lec.lecture_id, lec.name, COALESCE(tech.teacher_name, :defaultTeacherName)) " +
                                 "FROM Lecture lec " +
+                                "LEFT JOIN lec.teacher tech " +
                                 "WHERE lec.institute.pk = :instituteId " +
                                 "AND lec.lecture_id NOT IN ( SELECT en.lecture.lecture_id " +
                                                                     "FROM Enroll en " +
@@ -100,6 +105,7 @@ public class EnrollRepositoryImpl implements EnrollRepository {
                 ).setParameter("instituteId", institute_id)
                 .setParameter("year", year)
                 .setParameter("month", month)
+                .setParameter("defaultTeacherName", "배정 선생님 x")
                 .getResultList();
     }
 
