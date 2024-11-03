@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
 public class ScheduleResponse {
@@ -21,6 +20,17 @@ public class ScheduleResponse {
     private Long lecture_id;
     private String lecture_name;
     private String teacher_name;
+
+    public ScheduleResponse(Long schedule_id, String title, LocalDateTime start_date, LocalDateTime end_date, String memo, Long lecture_id, String lecture_name,String teacher_name) {
+        this.schedule_id = schedule_id;
+        this.title = title;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.memo = memo;
+        this.lecture_id = lecture_id;
+        this.lecture_name = lecture_name;
+        this.teacher_name = teacher_name;
+    }
 
     public ScheduleResponse( Schedule sc) {
         this.schedule_id = sc.getSchedule_id();
