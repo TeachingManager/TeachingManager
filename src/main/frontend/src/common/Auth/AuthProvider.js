@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { isAuthenticatedState } from './recoilAtom'; // recoilAtoms.js에서 가져옴
+import { isAuthenticatedState, nameState, rolesState, instIdState } from './recoilAtom'; // recoilAtoms.js에서 가져옴
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -8,6 +8,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
     const [token, setToken] = useState(localStorage.getItem('token') || '');
+    const [name, setName] = useRecoilState(nameState);
+    const [roles, setRoles] = useRecoilState(rolesState);
+    const [instId, setInstId] = useRecoilState(instIdState);
 
     useEffect(() => {
         if (token) {
@@ -33,11 +36,20 @@ export const AuthProvider = ({ children }) => {
             );
             console.log(response);
             if (response.status === 201) {
-                if (checkTokenValidity(response.data.accessToken)) {
-                    setToken(response.data.accessToken);
-                    localStorage.setItem('token', response.data.accessToken);
+                const accessToken = response.data.accessToken;
+                if (checkTokenValidity(accessToken)) {
+                    setToken(accessToken);
+                    localStorage.setItem('token', accessToken);
                     setIsAuthenticated(true);
-                    console.log('토큰 설정 완료');
+
+                    // 토큰 디코드 후 name, roles, instId 설정
+                    const decodedToken = decodeToken(accessToken);
+                    if (decodedToken) {
+                        setName(decodedToken.name);
+                        setRoles(decodedToken.roles);
+                        setInstId(decodedToken.inst_id || null);
+                    }
+                    console.log('토큰 설정 및 사용자 정보 저장 완료');
                     return { isVaild: true };
                 } else {
                     return { isVaild: false, response };
