@@ -6,8 +6,9 @@ import axios from 'axios';
 import { Button, Box, Stack, TextField, Modal, Typography, IconButton } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import dayjs from 'dayjs';
 import "./calendarcontainer.css"
+import { setDate } from 'date-fns';
 
 export default function CalendarContents() {
   
@@ -41,6 +42,19 @@ export default function CalendarContents() {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+
+  const [dateInfo, setDateInfo] = useState(dayjs().format('YYYY-MM-DD'))
+
+  const handlePrev = () => {
+    const newDate = dayjs(dateInfo).subtract(1,'month').format('YYYY-MM-DD');
+    setDateInfo(newDate)
+  }
+
+  const handleNext = () => {
+    const newDate = dayjs(dateInfo).add(1, 'month').format('YYYY-MM-DD');
+    setDateInfo(newDate)
+  }
+
 
   useEffect(() => {
     const fetchTeacher = async(teacher_id) => {
@@ -87,7 +101,7 @@ export default function CalendarContents() {
         console.error("강의 조회중 오류 발생", error)
       }
     }
-    const fetchSchedule = async () => {
+    const fetchSchedule = async (dateInfo) => {
       try {
         const token = localStorage.getItem("token");
         const currentDate = new Date().toISOString().split('T')[0];
@@ -97,7 +111,7 @@ export default function CalendarContents() {
             Authorization: `Bearer ${token}`, // Bearer 토큰 설정
           },
           params: {
-            date_info: currentDate
+            date_info: dateInfo
           }
         })
 
@@ -122,8 +136,8 @@ export default function CalendarContents() {
       }
     }
   
-    fetchSchedule();
-  }, []);
+    fetchSchedule(dateInfo);
+  }, [dateInfo]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -287,8 +301,10 @@ export default function CalendarContents() {
   return (
     <div className='calendar-container'>
       <FullCalendar
+        key = {dateInfo}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
+        initialDate={dateInfo}
         events={events}
         locale='ko'
         editable={false}
@@ -300,6 +316,22 @@ export default function CalendarContents() {
         }}
         aspectRatio={1.5}
         displayEventEnd= {true}
+        headerToolbar={{
+          right: 'customPrev,customNext today', // customPrev와 customNext 버튼을 추가
+        }}
+        customButtons={{
+          customPrev: {
+            text: '이전달',
+            click: handlePrev
+          },
+          customNext: {
+            text: '다음달',
+            click: handleNext
+          },
+          today : {
+            text :'오늘'
+          }
+        }}
       />
 
       <Modal

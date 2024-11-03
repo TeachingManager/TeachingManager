@@ -98,6 +98,7 @@ export default function StudentList() {
         pageSize={5}
         rowsPerPageOptions={5}
         checkboxSelection
+        disableRowSelectionOnClick={true}
         onRowSelectionModelChange={(newSelectionModel) => {
           console.log(newSelectionModel); // 디버그용 콘솔 로그
           setSelectedRows(newSelectionModel);
