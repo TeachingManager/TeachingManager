@@ -10,9 +10,11 @@ import java.time.LocalDate;
 public class NotEnrolledLecturesResponse {
     private Long lecture_id;
     private String lecture_name;
+    private String teacher_name;
 
-    public NotEnrolledLecturesResponse(Long lecture_id, String lecture_name) {
+    public NotEnrolledLecturesResponse(Long lecture_id, String lecture_name, String teacher_name) {
         this.lecture_id = lecture_id;
         this.lecture_name = lecture_name;
+        this.teacher_name = teacher_name;
     }
 }
