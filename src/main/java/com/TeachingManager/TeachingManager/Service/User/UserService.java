@@ -212,7 +212,7 @@ public class UserService {
 
             // email 보내기
             sendEmail(request.getTeacher_email(),"TeachingManager  - " + institute.getInstitute_name() + "으로부터의 초대가 도착했습니다.",
-                    "/EmailForm/InviteAccountEmail", joinToken);
+                    "EmailForm/InviteAccountEmail", joinToken);
             return "강사에게 초대 이메일을 전송했습니다..";
         }
         else{

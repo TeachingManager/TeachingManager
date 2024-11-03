@@ -20,6 +20,8 @@ public class ScheduleResponse {
     private String memo;
     private Long lecture_id;
     private String lecture_name;
+    private String teacher_name;
+
     public ScheduleResponse( Schedule sc) {
         this.schedule_id = sc.getSchedule_id();
         this.title = sc.getTitle();
@@ -29,6 +31,7 @@ public class ScheduleResponse {
         if(sc.getLecture() != null) {
             this.lecture_name = sc.getLecture().getName();
             this.lecture_id = sc.getLecture().getLecture_id();
+            this.teacher_name = sc.getLecture().getTeacher().getTeacher_name();
         }
         else{
             this.lecture_name = "기본강의";
