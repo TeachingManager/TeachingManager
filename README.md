@@ -26,7 +26,7 @@
 - Jenkins 을 이용한 CI/CD
 
 
-양현 : 44개 API
+양현 : 48개 API
 - (Student, Schedule, Teacher, Institute, Enroll, Attend, Fee) CRUD & 인증 & 메일전송 API 작성 
 - DB 초기 세팅 & 등록
 - 유저 타입별로 도메인 별도 구현

@@ -48,4 +48,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RegisteredInstituteEmailToOauthException.class)
+    public ResponseEntity<String> handleRegisteredInstituteEmailToOauthException(ForbiddenAccessException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }

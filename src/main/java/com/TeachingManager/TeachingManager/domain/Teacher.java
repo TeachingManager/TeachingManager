@@ -91,6 +91,7 @@ public class Teacher extends CustomUser {
         this.salary = 0L;
         this.provider = provider;
         this.institute = null;
+        this.setEnabled(true);
     }
     
     @Builder
