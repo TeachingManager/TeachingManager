@@ -61,6 +61,20 @@ public class ApiTeacherController {
         return ResponseEntity.badRequest().build();
     }
 
+    // 선생님 등록 취소 api
+    // 등록 취소시킬 선생님의 UUID 를 전송해주면 된다!
+    @PutMapping("/api/teacher/out") ResponseEntity<String> fire_Teacher(@RequestBody FireTeacherRequest request, @AuthenticationPrincipal CustomUser user){
+        if(user != null) {
+            Teacher sc = teacherService.fire_Teacher(request.getTeacherPK());
+            if (sc != null) {
+                return ResponseEntity.ok()
+                        .body("등록 취소 완료!");
+            }
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     // 회원탈퇴 api
     @PutMapping("/api/delete/teacher") ResponseEntity<String> delete_Teacher(@AuthenticationPrincipal CustomUser user){
         if(user != null && user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {

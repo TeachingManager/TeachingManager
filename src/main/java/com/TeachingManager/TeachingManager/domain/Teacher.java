@@ -122,6 +122,10 @@ public class Teacher extends CustomUser {
         this.nickname = nickname;
     }
 
+    public void update_institute_to_NULL() {
+        this.setInstitute(null);
+    }
+
     public void setTempPassword(){
         this.setPassword(setRandomString());
     }
