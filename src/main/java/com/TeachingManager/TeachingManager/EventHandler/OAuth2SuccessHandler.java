@@ -113,10 +113,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         SetTokenResponse STR = OAuth2TokenService.OAuthLoginTokenCreate(email, name);
 
+        System.out.println("Before OAuthSucessHandler Redirect");
         String targetUrl = String.format("https://www.teachingmanager.online/oauth2/response?accessToken=%s&refreshToken=%s",
                 URLEncoder.encode(STR.getAccessToken(), StandardCharsets.UTF_8),
                 URLEncoder.encode(STR.getRefreshToken(), StandardCharsets.UTF_8));
         response.sendRedirect(targetUrl);
+
+        System.out.println("After OAuthSucessHandler Redirect");
     }
 
     public void deleteCookie(HttpServletResponse response, String cookieName) {

@@ -98,10 +98,10 @@ public class WebSecurityConfig{
                 // oAUTH 2.0 로그인
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
                         .loginPage("/login")
+                        .successHandler(oAuth2SuccessHandler)
                         .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
                                 .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                         )
-                        .successHandler(oAuth2SuccessHandler)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login/institute")
