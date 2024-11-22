@@ -64,6 +64,7 @@ public class EnrollRepositoryImpl implements EnrollRepository {
                 .setParameter("defaultTeacherName", "배정 선생님 x")
                 .getResultList();
     }
+
     // 특정달에 특정 강사에 의해 개설된 강의 리스트 변환
     @Override
     public List<EnrolledLecturesResponse> findEnrolledLecturesByTeacherAndDate(UUID institute_id, UUID teacher_id, Short year, Short month) {

@@ -50,7 +50,7 @@ public class WebSecurityConfig{
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://teachingmanager.online/")); // 허용할 출처
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://teachingmanager.online/", "https://teachingmanager.run/","https://accounts.google.com/")); // 허용할 출처
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메소드
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 허용할 헤더
         configuration.setAllowCredentials(true);
@@ -67,6 +67,8 @@ public class WebSecurityConfig{
         source.registerCorsConfiguration("/email/locked/prove", configurationEmail); // 이메일 링크에서 오는 것
         source.registerCorsConfiguration("/email/initial/prove", configurationEmail); // 이메일 링크에서 오는 것
         source.registerCorsConfiguration("/invite/teacher", configurationEmail); // 이메일 링크에서 오는 것
+        source.registerCorsConfiguration("/login/oauth2/code/naver", configurationEmail);
+        source.registerCorsConfiguration("/login/oauth2/code/google", configurationEmail);
 
         return source;
     }
@@ -90,18 +92,16 @@ public class WebSecurityConfig{
                         .requestMatchers(HttpMethod.PUT, "/api/teacher", "/api/delete/teacher").hasRole("TEACHER") // 선생님 정보 수정은, 선생님만.
                         .requestMatchers("/api/fee", "/api/teacher", "/teacher", "/api/lecture").hasRole("PRESIDENT")// 수강료, 선생님 api 등은 학원장만
                         .anyRequest().authenticated() // 다른 모든 요청은 인증 필요.
-
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(customEntryPoint))
                 // oAUTH 2.0 로그인
                 .oauth2Login(oauth2 -> oauth2 // OAuth2를 통한 로그인 사용
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true) // 로그인 성공시 이동할 URL
+                        .successHandler(oAuth2SuccessHandler)
                         .userInfoEndpoint(userInfo -> userInfo // 사용자가 로그인에 성공하였을 경우,
                                 .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
                         )
-                        .successHandler(oAuth2SuccessHandler)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login/institute")

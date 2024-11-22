@@ -103,9 +103,13 @@ public class TeacherServiceImpl {
 
     }
 
-    // 선생님 학원 변경
-//    @Transactional
-//    public Teacher updateInstitue_InTeacher(CustomUser user)
+    // 선생님 학원 등록 취소
+    @Transactional
+    public Teacher fire_Teacher(UUID teacherPK){
+        Teacher sc = teacherRepo.findByPk(teacherPK).orElseThrow(() -> new IllegalArgumentException("not found : " + teacherPK));
+        sc.update_institute_to_NULL();
+        return sc;
+    }
 
     // 선생님 삭제
     @Transactional

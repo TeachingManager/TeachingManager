@@ -2,11 +2,13 @@ package com.TeachingManager.TeachingManager.EventHandler;
 
 
 import com.TeachingManager.TeachingManager.DTO.Teacher.SocialTeacherInfo;
+import com.TeachingManager.TeachingManager.DTO.Token.SetTokenResponse;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
 import com.TeachingManager.TeachingManager.Service.User.TokenForOAuth2Service;
 import com.TeachingManager.TeachingManager.Service.User.TokenService;
 import com.TeachingManager.TeachingManager.config.exceptions.AlreadyRegisteredException;
+import com.TeachingManager.TeachingManager.config.exceptions.RegisteredInstituteEmailToOauthException;
 import com.TeachingManager.TeachingManager.domain.Institute;
 import com.TeachingManager.TeachingManager.domain.Teacher;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,6 +78,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 provider = "google";
                 break;
 
+            case "/login":
+                // 아래는 구글 기준.
+                email = (String) attributes.get("email");
+                name = (String) attributes.get("name");
+                provider = "google";
+                break;
+
             default:
                 break;
         }
@@ -83,12 +92,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         Optional<Institute> institute = instRepo.findByEmail(email);
         if(institute.isPresent()) {
-            throw new AlreadyRegisteredException("이미 학원으로 등록된 계정입니다!");
+            throw new RegisteredInstituteEmailToOauthException("Exists In Institute! OAuth2.0 login must be only teacher!");
         }
         
         Optional<Teacher> teacher = teacherRepo.findByEmail(email);
-        
-
 
         ObjectMapper objectMapper = new ObjectMapper();
         
@@ -97,24 +104,22 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if(teacher.isEmpty()) {
             Teacher newTeacher = new Teacher(email, name, provider);
             teacherRepo.save(newTeacher);
-
 //            deleteCookie(response, "ACCOUNT_CHOOSER");
 //            deleteCookie(response, "ACCOUNT_CHOOSER");
-
-            response.sendRedirect("/newAccountAuthentication?email=" + URLEncoder.encode(newTeacher.getEmail(), StandardCharsets.UTF_8));
         }
-        // enabled 가 0 이면 인증 메일 발송 버튼이 있는 url 로
-        else if(!teacher.get().getEnabled()){
-//            deleteCookie(response, "쿠키명");
-            response.sendRedirect("/newAccountAuthentication?email=" + URLEncoder.encode(teacher.get().getEmail(), StandardCharsets.UTF_8));
-        }
-
-
 //        deleteCookie(response, "쿠키명");
+
         // 로컬 JWT 토큰 생성하여 전달
-        response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(OAuth2TokenService.OAuthLoginTokenCreate(email, name)));
-        response.getWriter().flush();
+
+        SetTokenResponse STR = OAuth2TokenService.OAuthLoginTokenCreate(email, name);
+
+        System.out.println("Before OAuthSucessHandler Redirect");
+        String targetUrl = String.format("https://www.teachingmanager.online/oauth2/response?accessToken=%s&refreshToken=%s",
+                URLEncoder.encode(STR.getAccessToken(), StandardCharsets.UTF_8),
+                URLEncoder.encode(STR.getRefreshToken(), StandardCharsets.UTF_8));
+        response.sendRedirect(targetUrl);
+
+        System.out.println("After OAuthSucessHandler Redirect");
     }
 
     public void deleteCookie(HttpServletResponse response, String cookieName) {

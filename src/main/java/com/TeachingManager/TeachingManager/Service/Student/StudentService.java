@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +37,20 @@ public class StudentService {
 
     //모든 학생 조회 메서드
     public List<StudentResponse>findAll(CustomUser user){
+        // 선생님일 경우 자기가 가르치는
         if(user instanceof Teacher) {
-            throw new RuntimeException("선생님은 권한이 없습니다.");
+            LocalDate today = LocalDate.now();
+            Short Year = (short) today.getYear();
+            Short Month = (short) today.getMonthValue();
+            return studentRepository
+                    .findByInstitute_and_teacher_Pk(
+                            ((Teacher) user).getInstitutePk(),
+                            user.getPk(),
+                            Year,
+                            Month)
+                    .stream()
+                    .map(StudentResponse::new)
+                    .toList();
         }
         else{
             return studentRepository.findByInstitute_Pk(user.getPk()) .stream()

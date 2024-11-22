@@ -18,4 +18,6 @@ public interface LectureRepository {
     void delete(UUID instituteId, Long lectureId);
 
     List<Lecture> findAll(UUID instituteId);
+
+    List<Lecture> findAll_for_teacher(UUID instituteId, UUID teacherId);
 }

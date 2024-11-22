@@ -27,6 +27,29 @@ public class StudentRepositoryImpl implements StudentRepository{
                 .getResultList();
     }
 
+    @Override
+    public List<Student>  findByInstitute_and_teacher_Pk(UUID instituteId, UUID teacherId, Short year, Short month) {
+        return em.createQuery(
+                        "SELECT st " +
+                                "FROM Student st " +
+                                "WHERE st.institute.pk = :instituteId " +
+                                "AND EXISTS ( " +
+                                "    SELECT 1 " +
+                                "    FROM Enroll en " +
+                                "    JOIN en.lecture lec " +
+                                "    JOIN lec.teacher tech " +
+                                "    WHERE en.student = st " +
+                                "    AND tech.pk = :teacherId " +
+                                "    AND en.year = :year " +
+                                "    AND en.month = :month " +
+                                ") ", Student.class)
+                .setParameter("instituteId", instituteId)
+                .setParameter("teacherId", teacherId)
+                .setParameter("year", year)
+                .setParameter("month", month)
+                .getResultList();
+    }
+
     // 새 학생 저장하는 메서드
     @Override
     @Transactional

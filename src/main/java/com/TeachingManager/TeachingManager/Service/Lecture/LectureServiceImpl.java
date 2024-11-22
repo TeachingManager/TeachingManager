@@ -115,7 +115,7 @@ public class LectureServiceImpl implements LectureService{
             }
         }
         else {
-            List<Lecture> lectures = lectureRepository.findAll(((Teacher) user).getInstitute().getPk());
+            List<Lecture> lectures = lectureRepository.findAll_for_teacher(((Teacher) user).getInstitute().getPk(),user.getPk());
             System.out.println("teacher find all lecture");
             System.out.println(((Teacher) user).getInstitute().getPk());
             if (lectures.isEmpty()) {

@@ -44,4 +44,12 @@ public class JpaLectureRepository implements LectureRepository {
                 .setParameter("instituteId", instituteId)
                 .getResultList();
     }
+
+    @Override
+    public List<Lecture> findAll_for_teacher(UUID instituteId, UUID teacherId) {
+        return em.createQuery("select l from Lecture l where l.institute.pk = :instituteId AND l.teacher.pk = :teacherId", Lecture.class)
+                .setParameter("instituteId", instituteId)
+                .setParameter("teacherId", teacherId)
+                .getResultList();
+    }
 }

@@ -91,6 +91,7 @@ public class Teacher extends CustomUser {
         this.salary = 0L;
         this.provider = provider;
         this.institute = null;
+        this.setEnabled(true);
     }
     
     @Builder
@@ -120,6 +121,10 @@ public class Teacher extends CustomUser {
         this.bank_account = bank_account;
         this.salary = salary;
         this.nickname = nickname;
+    }
+
+    public void update_institute_to_NULL() {
+        this.setInstitute(null);
     }
 
     public void setTempPassword(){
