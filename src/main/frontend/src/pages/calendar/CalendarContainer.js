@@ -57,29 +57,7 @@ export default function CalendarContents() {
 
 
   useEffect(() => {
-    const fetchTeacher = async(teacher_id) => {
-      try{
-        const token = localStorage.getItem("token")
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/teacher`,{
-          headers: {
-            Authorization: `Bearer ${token}`, // Bearer 토큰 설정
-          },
-        })
-
-        const teacher = response.data.teacherList.find(teacher => teacher.teacher_id === teacher_id);
-
-        if (teacher) {
-          const teacher_name = teacher.teacher_name;
-          return teacher_name;  // Return the teacher's name if found
-        } else {
-          console.log("Teacher not found");
-          return "Unknown Teacher";  // Return fallback value if teacher is not found
-        }
-
-      } catch (error){
-        console.error("선생님 조회 중 오류 발생")
-      }
-    }
+    
     const fetchLecture = async(lecture_id) => {
       try {
         const token = localStorage.getItem("token")
@@ -90,9 +68,10 @@ export default function CalendarContents() {
         })
         
         const teacher_id = response.data.teacherId;
+        const teacher_Name = response.data.teacherName
 
         if(teacher_id) {
-          return teacher_id
+          return {teacher_id, teacher_Name}
         } else {
           console.log('선생님 id를 찾지 못하였습니다')
           return "선생님 찾기 실패"
@@ -116,9 +95,9 @@ export default function CalendarContents() {
         })
 
         const formatted_data = await Promise.all(response.data.scheduleList.map(async (data) => {
-          const teacher_id = await fetchLecture(data.lecture_id);
-          const teacher_name = teacher_id ? await fetchTeacher(teacher_id) : "Unknown Teacher";
-  
+          const response = await fetchLecture(data.lecture_id);
+          const teacher_name = response.teacher_Name
+          console.log(response.teacher_id, response.teacher_Name)
           return {
             id: data.schedule_id,
             title: data.title,

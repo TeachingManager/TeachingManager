@@ -44,10 +44,12 @@ export const AuthProvider = ({ children }) => {
 
                     // 토큰 디코드 후 name, roles, instId 설정
                     const decodedToken = decodeToken(accessToken);
+                    console.log(decodedToken.roles)
                     if (decodedToken) {
                         setName(decodedToken.name);
                         setRoles(decodedToken.roles);
                         setInstId(decodedToken.inst_id || null);
+                        localStorage.setItem('role', decodedToken.roles)
                     }
                     console.log('토큰 설정 및 사용자 정보 저장 완료');
                     return { isVaild: true };
@@ -67,6 +69,7 @@ export const AuthProvider = ({ children }) => {
         setToken('');
         localStorage.removeItem('token');
         setIsAuthenticated(false);
+        localStorage.removeItem('role')
     };
 
     const decodeToken = (token) => {

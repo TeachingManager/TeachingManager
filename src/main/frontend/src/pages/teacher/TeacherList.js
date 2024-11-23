@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { inviteTeacher, getTeachersInfo } from '../../api/institute';
 import { teacherListState } from '../../common/Auth/recoilAtom';
 import { useRecoilState } from 'recoil';
-
+import axios from 'axios';
 
 export default function StudentList() {
   const [teachers, setTeachers] = useRecoilState(teacherListState);
@@ -49,11 +49,50 @@ export default function StudentList() {
     }));
   };
 
-  const handleDeleteSelected = () => {
-    // const selectedIds = selectedRows.map(Number); // 선택된 행 ID를 숫자로 변환
-    // setRows(prevRows => prevRows.filter(row => !selectedIds.includes(row.id)));
-    // setSelectedRows([]); // 삭제 후 선택 상태를 초기화
+  const handleDeleteSelected = async () => {
+    if (selectedRows.length === 0) {
+      alert("등록 취소할 선생님을 선택해주세요.");
+      return;
+    }
+  
+    const token = localStorage.getItem('token');
+    const errors = [];
+  
+    for (const teacherId of selectedRows) {
+      const requestDTO = { teacherPK: teacherId };
+  
+      try {
+        const response = await axios.put(
+          `${process.env.REACT_APP_API_BASE_URL}/api/teacher/out`,
+          requestDTO,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(`선생님 ID ${teacherId} 등록 취소 성공`);
+      } catch (error) {
+        console.error(`선생님 ID ${teacherId} 등록 취소 실패`, error);
+        errors.push(teacherId); // 실패한 ID를 저장
+      }
+    }
+  
+    if (errors.length > 0) {
+      alert(
+        `등록 취소에 실패한 선생님 ID: ${errors.join(', ')}. 다시 시도해주세요.`
+      );
+    } else {
+      alert("선택된 선생님 등록이 모두 취소되었습니다.");
+    }
+  
+    // 성공적으로 처리된 선생님을 UI에서 제거
+    setTeachers((prevTeachers) =>
+      prevTeachers.filter((teacher) => !selectedRows.includes(teacher.teacher_id))
+    );
+    setSelectedRows([]); // 선택된 행 초기화
   };
+  
 
   const handleInviteTeacher = async() => {
     const result = await inviteTeacher(newTeacher.email);
@@ -82,7 +121,7 @@ export default function StudentList() {
     <Box sx={{ height: 600, mt: 6 }}>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" onClick={handleOpen}>선생님 초대하기</Button>
-        <Button variant="contained" color="error" onClick={handleDeleteSelected}>선택된 선생님 삭제</Button>
+        <Button variant="contained" color="error" onClick={handleDeleteSelected}>선택된 선생님 등록취소</Button>
       </Stack>
       <DataGrid
          columns={[

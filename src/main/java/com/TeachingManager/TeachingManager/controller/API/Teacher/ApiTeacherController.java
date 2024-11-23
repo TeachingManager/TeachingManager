@@ -49,7 +49,7 @@ public class ApiTeacherController {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_allTeacher(user.getPk()));
         }
         return ResponseEntity.badRequest().build();
-    }
+    }                                                                                   
 
     // 선생님 정보 수정 api
     @PutMapping("/api/teacher") ResponseEntity<TeacherInfo> update_Teacher(@RequestBody UpdateTeacherRequest request, @AuthenticationPrincipal CustomUser user){
