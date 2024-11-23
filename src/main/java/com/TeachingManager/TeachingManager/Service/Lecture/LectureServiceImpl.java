@@ -60,7 +60,8 @@ public class LectureServiceImpl implements LectureService{
             Optional<Lecture> lecture = lectureRepository.findOneById(((Teacher) user).getInstitute().getPk(), id);
             System.out.println("teacher find lecture");
             if (lecture.isPresent()) {
-                return new LectureResponse(lecture.get(), ((Teacher) user).getTeacher_name());
+                String teacherName = lecture.get().getTeacher().getTeacher_name();
+                return new LectureResponse(lecture.get(), teacherName);
             }
             else {
                 throw new RuntimeException("선생-강의 잘못된 접근");
@@ -133,7 +134,8 @@ public class LectureServiceImpl implements LectureService{
             else {
                 List<LectureResponse> response = new ArrayList<>();
                 for (Lecture lecture : lectures) {
-                    LectureResponse r = new LectureResponse(lecture, ((Teacher) user).getTeacher_name());
+                    String teacherName = lecture.getTeacher().getTeacher_name();
+                    LectureResponse r = new LectureResponse(lecture, teacherName);
                     response.add(r);
                 }
                 return response;
