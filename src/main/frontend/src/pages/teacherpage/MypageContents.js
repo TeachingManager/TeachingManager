@@ -81,10 +81,14 @@ export default function MypageContents (){
 
     const handleDeleteAccount = async () => {
         const token = localStorage.getItem('token');
+        const decodedToken = decodeToken(token);
+        const teacher_id = decodedToken.id
         const confirmed = window.confirm("정말로 회원 탈퇴를 하시겠습니까? 탈퇴 후에는 복구할 수 없습니다.");
         if (confirmed) {
             try {
                 await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/delete/teacher`, {
+                    
+                }, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

@@ -21,7 +21,7 @@ export default function TeacherSignUp() {
     email: '',
     password: '',
     teacherName: '',
-    age: '',
+    age: null,
     birth: '',
     phoneNum: '',
     gender: '',
@@ -45,7 +45,7 @@ export default function TeacherSignUp() {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
-      [name]: value
+      [name]: name === 'age' ? (value === '' ? null : Number(value)) : value // age를 숫자로 변환
     });
 
     // 유효성 검사
