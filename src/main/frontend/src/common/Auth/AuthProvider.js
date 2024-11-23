@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
     // 구글 로그인
     const googleLogin = async (accessToken, refreshToken) => {
+        console.log(accessToken)
         try {
             if (checkTokenValidity(accessToken)) {
                 setToken(accessToken);
