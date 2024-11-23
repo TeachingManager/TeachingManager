@@ -17,6 +17,8 @@ const OAuthResponseHandler = () => {
                 try {
                     // AuthProvider의 googleLogin 호출
                     const result = await googleLogin(accessToken, refreshToken);
+                    console.log(result)
+                    
                     if (result.isValid) {
                         // 로그인 성공 시 /home으로 이동
                         navigate('/home');
