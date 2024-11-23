@@ -40,6 +40,9 @@ export default function Topbar() {
     } else if (path.includes('/studentfee')) {
         pageTitle = '수강료';
         pagePath = '/studentfee';
+    } else if (path.includes('/mypage')) {
+        pageTitle = '내 정보';
+        pagePath = '/mypage'
     }
 
     const handleLogout = () => {

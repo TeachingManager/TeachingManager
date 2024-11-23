@@ -40,9 +40,9 @@ export default function Sidenavbar() {
                         );
                     } else if (roles === 'ROLE_TEACHER') {
                         return (
-                            <a href="/teachers">
+                            <a href="/mypage">
                                 <PiChalkboardTeacher className="icon" />
-                                <span className="text">마이페이지</span>
+                                <span className="text">내 정보</span>
                             </a>
                         );
                     }

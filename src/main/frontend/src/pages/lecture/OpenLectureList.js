@@ -21,7 +21,7 @@ export default function OpenLectureList() {
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
     const [selectedLecture, setSelectedLecture] = useState(null); // 선택된 강의 상태 추가
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태 추가
-
+    const role = localStorage.getItem('role');
     const handleOpenModal = (lecture) => {
       setSelectedLecture(lecture); // 선택된 강의 정보 저장
       setIsModalOpen(true); // 모달 열림 상태로 설정
@@ -61,22 +61,12 @@ export default function OpenLectureList() {
       }
     };
 
-    const fetchTeachers = async () => {
-      try {
-        const fetchResult = await getTeachersInfo();
-        const teacherdata = fetchResult.data.teacherList;
-        setTeachers(teacherdata);
-        console.log(teacherdata)
-      } catch (error) {
-        console.error(error);
-      }
-    };
+
 
 
 
 
     fetchLectureListByMonth();
-    fetchTeachers();
 
     console.log('wait');
     console.log(selectedDate)
@@ -164,9 +154,12 @@ export default function OpenLectureList() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ height: 600}}>
-        <Button onClick={()=> {
+        {
+          role === "ROLE_PRESIDENT" ?  <Button onClick={()=> {
             navigate("/lecture")
-        }}>강의 개설</Button>
+        }}>강의 개설</Button> : null
+        }
+  
         <DataGrid
           columns={[
             { field: 'id', headerName: 'ID', width: 70, align: 'center', headerAlign: 'center',
@@ -197,12 +190,11 @@ export default function OpenLectureList() {
                 </div>
               )
             },
-            { field: 'teacherId', headerName: '담당선생님', width: 90, headerAlign: 'center',
+            { field: 'teacherName', headerName: '담당선생님', width: 90, headerAlign: 'center',
               renderCell: (params) => {
-                const teacher = teachers.find((t) => t.teacher_id === params.value);
                 return (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                    {teacher ? teacher.teacher_name : 'Unknown'}
+                    {params.value}
                   </div>
                 );
               },

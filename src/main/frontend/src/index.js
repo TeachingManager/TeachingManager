@@ -24,6 +24,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TeacherSignUp from './pages/login/TeacherSignUp'
 import NotFound from './common/NotFound.js';
 import ChangePassword from './pages/login/ChangePassword.js';
+import TeacherMyPage from './pages/teacherpage/TeacherMypage.js';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
   {
     path: '/change/password',
     element: <ChangePassword />
+  },
+  {
+    path :'/mypage',
+    element: <ProtectedRoute><TeacherMyPage/></ProtectedRoute>
   }
 ]);
 
