@@ -1,13 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect,  useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../common/Auth/AuthProvider';
 
 const OAuthResponseHandler = () => {
     const { googleLogin } = useAuth();
     const navigate = useNavigate();
+    const hasRun = useRef(false);
 
     useEffect(() => {
         const handleOAuthResponse = async () => {
+            if (hasRun.current) return; // 이미 실행된 경우 종료
+            hasRun.current = true; // 실행 플래그 설정
+            
             // 현재 URL에서 토큰 추출
             const params = new URLSearchParams(window.location.search);
             const accessToken = params.get('accessToken');
@@ -18,7 +22,7 @@ const OAuthResponseHandler = () => {
                     // AuthProvider의 googleLogin 호출
                     const result = await googleLogin(accessToken, refreshToken);
                     console.log(result)
-                    
+
                     if (result.isValid) {
                         // 로그인 성공 시 /home으로 이동
                         navigate('/home');
