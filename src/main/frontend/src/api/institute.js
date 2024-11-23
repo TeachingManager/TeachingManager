@@ -46,20 +46,17 @@ export const getUserInfo = async () => {
     }
 };
 
-export const registerTeacher = async (userData, isJson = true) => {
+export const registerTeacher = async (userData) => {
+    console.log(userData)
     try {
         const response = await axios.post(
             `${process.env.REACT_APP_API_BASE_URL}/api/teacher`, 
-            isJson ? JSON.stringify(userData) : userData,
-            {
-                headers: {
-                    'Content-Type': isJson ? 'application/json' : 'text/plain'
-                }
-            }
+            userData
         );
         console.log(response);
         return response;
     } catch (error) {
+        console.error("선생님 회원가입 실패", error)
         throw error;
     }
 };
