@@ -13,7 +13,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 export default function Sidenavbar() {
     const [isHovered, setIsHovered] = useState(false);
-
+    const roles = localStorage.getItem('role') || null
     return (
         <div 
             className="sidenav" 
@@ -29,10 +29,27 @@ export default function Sidenavbar() {
                 <FaHome className="icon" />
                 <span className="text">홈</span>
             </a>
-            <a href="/teachers">
-                <PiChalkboardTeacher className="icon" />
-                <span className="text">선생님</span>
-            </a>
+            {
+                (() => {
+                    if (roles === 'ROLE_PRESIDENT') {
+                        return (
+                            <a href="/teachers">
+                                <PiChalkboardTeacher className="icon" />
+                                <span className="text">선생님</span>
+                            </a>
+                        );
+                    } else if (roles === 'ROLE_TEACHER') {
+                        return (
+                            <a href="/teachers">
+                                <PiChalkboardTeacher className="icon" />
+                                <span className="text">마이페이지</span>
+                            </a>
+                        );
+                    }
+                    return null; // 조건에 맞지 않을 경우 null 반환
+                })()}
+
+
             <a href="/students">
                 <IoMdPeople className="icon" />
                 <span className="text">학생</span>
@@ -45,10 +62,16 @@ export default function Sidenavbar() {
                 <MenuBookIcon />
                 <span className='text'>강의</span>
             </a>
-            <a href ="/studentfee">
+
+            {
+                roles === 'ROLE_PRESIDENT' ? (
+                    <a href ="/studentfee">
                 <AttachMoneyIcon/>
-                <span className='text'>수강료</span>
-            </a>
+                <span className='text'>수강료</span>                  
+                </a>
+                ) : null
+            }
+
         </div>
     );
 }
