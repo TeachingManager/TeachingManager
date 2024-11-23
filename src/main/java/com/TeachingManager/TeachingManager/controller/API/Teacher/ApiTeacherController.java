@@ -33,7 +33,7 @@ public class ApiTeacherController {
     }
 
     // 요청한 선생님의 정보를 전달하는 api
-    @GetMapping("/api/teacher/one")
+    @PostMapping("/api/teacher/one")
     public ResponseEntity<TeacherInfo> search_oneTeacher(@AuthenticationPrincipal CustomUser user, @RequestBody FindOneTeacherRequest request) {
         if(user != null ) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(teacherService.search_teacher(request.getTeacher_id(), user.getPk()));

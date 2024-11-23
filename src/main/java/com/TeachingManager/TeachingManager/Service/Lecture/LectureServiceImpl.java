@@ -1,6 +1,7 @@
 package com.TeachingManager.TeachingManager.Service.Lecture;
 
 import com.TeachingManager.TeachingManager.DTO.Lecture.AddLectureRequest;
+import com.TeachingManager.TeachingManager.DTO.Lecture.LectureResponse;
 import com.TeachingManager.TeachingManager.DTO.Lecture.UpdateLectureRequest;
 import com.TeachingManager.TeachingManager.Repository.User.Institute.InstituteRepository;
 import com.TeachingManager.TeachingManager.Repository.User.Teacher.TeacherRepository;
@@ -43,12 +44,13 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public Lecture findLecture(CustomUser user, Long id) {
+    public LectureResponse findLecture(CustomUser user, Long id) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
             System.out.println("institute find lecture");
             if (lecture.isPresent()) {
-                return lecture.get();
+                String teacherName = lecture.get().getTeacher().getTeacher_name();
+                return new LectureResponse(lecture.get(), teacherName);
             }
             else {
                 throw new RuntimeException("학원-강의 잘못된 접근");
@@ -58,7 +60,8 @@ public class LectureServiceImpl implements LectureService{
             Optional<Lecture> lecture = lectureRepository.findOneById(((Teacher) user).getInstitute().getPk(), id);
             System.out.println("teacher find lecture");
             if (lecture.isPresent()) {
-                return lecture.get();
+                String teacherName = lecture.get().getTeacher().getTeacher_name();
+                return new LectureResponse(lecture.get(), teacherName);
             }
             else {
                 throw new RuntimeException("선생-강의 잘못된 접근");
@@ -67,7 +70,7 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public Lecture updateLecture(UpdateLectureRequest request, CustomUser user, Long id) {
+    public LectureResponse updateLecture(UpdateLectureRequest request, CustomUser user, Long id) {
         Optional<Teacher> teacher = teacherRepository.findById(request.getTeacherId());
         System.out.println("teacher = " + teacher);
         Optional<Lecture> lecture = lectureRepository.findOneById(user.getPk(), id);
@@ -75,7 +78,8 @@ public class LectureServiceImpl implements LectureService{
         if (teacher.isPresent() && lecture.isPresent()) {
             lecture.get().update(request.getName(), request.getCategory(), request.getGrade(), request.getFee(), request.getTime(), teacher.get());
             lectureRepository.save(lecture.get());
-            return lecture.get();
+            String teacherName = lecture.get().getTeacher().getTeacher_name();
+            return new LectureResponse(lecture.get(), teacherName);
         }
         else {
             throw new RuntimeException("잘못된 업데이트");
@@ -102,7 +106,7 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public List<Lecture> findAll(CustomUser user) {
+    public List<LectureResponse> findAll(CustomUser user) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PRESIDENT"))) {
             List<Lecture> lectures = lectureRepository.findAll(user.getPk());
             System.out.println("institute find all lecture");
@@ -111,7 +115,13 @@ public class LectureServiceImpl implements LectureService{
                 throw new RuntimeException("학원-강의 잘못된 접근");
             }
             else {
-                return lectures;
+                List<LectureResponse> response = new ArrayList<>();
+                for (Lecture lecture : lectures) {
+                    String teacherName = lecture.getTeacher().getTeacher_name();
+                    LectureResponse r = new LectureResponse(lecture, teacherName);
+                    response.add(r);
+                }
+                return response;
             }
         }
         else {
@@ -122,7 +132,13 @@ public class LectureServiceImpl implements LectureService{
                 throw new RuntimeException("선생-강의 잘못된 접근");
             }
             else {
-                return lectures;
+                List<LectureResponse> response = new ArrayList<>();
+                for (Lecture lecture : lectures) {
+                    String teacherName = lecture.getTeacher().getTeacher_name();
+                    LectureResponse r = new LectureResponse(lecture, teacherName);
+                    response.add(r);
+                }
+                return response;
             }
         }
     }
