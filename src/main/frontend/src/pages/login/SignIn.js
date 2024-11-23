@@ -23,6 +23,7 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { getUserInfo, loginUser, proveUser, sendRecoverPasswordEmail, unlockUserAccount } from '../../api/institute';
 import { useRecoilState } from 'recoil';
 import { institueListState } from '../../common/Auth/recoilAtom';
+import {ReactComponent as GoogleLogo} from './googlelogo.svg';
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -72,6 +73,11 @@ export default function SignIn() {
       }
     }
   };
+
+  const handleOauthLogin = async () => {
+    window.location.href = "https://www.teachingmanager.run/oauth2/authorization/google";
+
+  }
 
   // 계정 활성화 모달 열기
   const handleActivateAccount = () => {
@@ -203,10 +209,29 @@ export default function SignIn() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, width: '400px' }}
             >
               로그인
             </Button>
+            <Button
+              onClick={handleOauthLogin}
+              variant="outlined"
+              fullWidth
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '10px',
+              }}
+            >
+              <GoogleLogo width="30" height="30" style={{ marginRight: '8px' }} />
+              구글 로그인
+            </Button>
+
+
+
+
+
             <Grid container>
               <Grid item xs>
               <Link onClick={handleOpenPasswordRecovery} variant="body2" style={{ cursor: 'pointer' }}>
