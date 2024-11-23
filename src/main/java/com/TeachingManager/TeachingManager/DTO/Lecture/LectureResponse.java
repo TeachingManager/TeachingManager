@@ -24,8 +24,9 @@ public class LectureResponse {
     // 학원 외래키 등록 후 테스트
 //    private Teacher teacher;
     private UUID teacherId;
+    private String teacherName;
 
-    public LectureResponse(Lecture lecture) {
+    public LectureResponse(Lecture lecture, String teacherName) {
         this.id = lecture.getLecture_id();
         this.name = lecture.getName();
         this.category = lecture.getCategory();
@@ -36,6 +37,7 @@ public class LectureResponse {
         this.convetedTime = ConvertTime(lecture.getTime());
         this.jsonTime = ConvertJsonTime(lecture.getTime());
         this.teacherId = lecture.getTeacher().getPk();
+        this.teacherName = teacherName;
     }
 
 

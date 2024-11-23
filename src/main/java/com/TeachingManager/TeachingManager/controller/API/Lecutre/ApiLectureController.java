@@ -30,24 +30,19 @@ public class ApiLectureController {
 
     @GetMapping("/api/lectures")
     public ResponseEntity<List<LectureResponse>> findAllLecture(@AuthenticationPrincipal CustomUser user) {
-        List<Lecture> lectureList = lectureService.findAll(user);
-        List<LectureResponse> response = new ArrayList<>();
-        for (Lecture lecture : lectureList) {
-            LectureResponse r = new LectureResponse(lecture);
-            response.add(r);
-        }
+        List<LectureResponse> response = lectureService.findAll(user);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/lectures/{id}")
     public ResponseEntity<LectureResponse> findLecture(@AuthenticationPrincipal CustomUser user, @PathVariable Long id) {
-        LectureResponse response = new LectureResponse(lectureService.findLecture(user, id));
+        LectureResponse response = lectureService.findLecture(user, id);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/api/lectures/{id}")
     public ResponseEntity<LectureResponse> updateLecture(@AuthenticationPrincipal CustomUser user, @RequestBody UpdateLectureRequest request, @PathVariable Long id) {
-        LectureResponse response = new LectureResponse(lectureService.updateLecture(request, user, id));
+        LectureResponse response = lectureService.updateLecture(request, user, id);
         return ResponseEntity.ok(response);
     }
 
