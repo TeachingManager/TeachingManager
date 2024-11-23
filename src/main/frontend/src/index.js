@@ -25,6 +25,7 @@ import TeacherSignUp from './pages/login/TeacherSignUp'
 import NotFound from './common/NotFound.js';
 import ChangePassword from './pages/login/ChangePassword.js';
 import TeacherMyPage from './pages/teacherpage/TeacherMypage.js';
+import OAuthResponseHandler from './pages/login/OAuthResponseHandler.js';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -97,6 +98,11 @@ const router = createBrowserRouter([
   {
     path :'/mypage',
     element: <ProtectedRoute><TeacherMyPage/></ProtectedRoute>
+  },
+  {
+     path:"/oauth2/response",
+     element: <OAuthResponseHandler />
+
   }
 ]);
 

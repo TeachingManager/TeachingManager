@@ -64,6 +64,36 @@ export const AuthProvider = ({ children }) => {
             return { isVaild: false, response };
         }
     };
+    // 구글 로그인
+    const googleLogin = async (accessToken, refreshToken) => {
+        try {
+            if (checkTokenValidity(accessToken)) {
+                setToken(accessToken);
+                localStorage.setItem('token', accessToken);
+                setIsAuthenticated(true);
+    
+                // 토큰 디코드 후 사용자 정보 저장
+                const decodedToken = decodeToken(accessToken);
+                if (decodedToken) {
+                    setName(decodedToken.name);
+                    setRoles(decodedToken.roles);
+                    setInstId(decodedToken.inst_id || null);
+    
+                    // 추가로 필요한 정보 저장
+                    localStorage.setItem('role', decodedToken.roles);
+                }
+    
+                console.log('Google OAuth 로그인 성공');
+                return { isValid: true };
+            } else {
+                console.error('Google OAuth: 받은 토큰이 유효하지 않습니다.');
+                return { isValid: false };
+            }
+        } catch (error) {
+            console.error('Google OAuth 처리 중 오류 발생', error);
+            return { isValid: false };
+        }
+    };
 
     const logout = () => {
         setToken('');
@@ -103,6 +133,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         checkTokenValidity,
+        googleLogin
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
